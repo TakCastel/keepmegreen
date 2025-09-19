@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     unoptimized: true
   },
   
+  
   // Désactiver ESLint pendant le build pour éviter les erreurs
   eslint: {
     ignoreDuringBuilds: true,

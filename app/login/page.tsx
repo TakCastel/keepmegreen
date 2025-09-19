@@ -7,6 +7,9 @@ import AuthForm from '@/components/auth/AuthForm';
 import { Sprout, ArrowLeft, BarChart3, Calendar, TrendingUp, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
+// Désactiver le pré-rendu pour cette page
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const { user, loading } = useAuth();
