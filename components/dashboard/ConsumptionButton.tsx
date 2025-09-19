@@ -19,6 +19,7 @@ interface ConsumptionButtonProps {
   disabled?: boolean;
 }
 
+
 const CATEGORY_CONFIG = {
   alcohol: {
     icon: Wine,
@@ -83,7 +84,7 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
 
       {/* Menu déroulant */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/30 z-10 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden">
           {Object.entries(categoryData.config).map(([type, config]) => (
             <button
               key={type}
@@ -112,7 +113,7 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
       {/* Overlay pour fermer le menu */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-5" 
+          className="fixed inset-0 z-40" 
           onClick={() => setIsOpen(false)}
         />
       )}

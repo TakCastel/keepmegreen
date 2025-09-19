@@ -26,7 +26,7 @@ export default function CalendarPage() {
         <h2 className="text-2xl font-light text-gray-800 mb-6 text-center">
           Palette de <span className="font-semibold text-emerald-600">bien-être</span>
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
           <div className="text-center p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
             <div className="w-6 h-6 bg-emerald-500 rounded-full mx-auto mb-3 shadow-md"></div>
             <div className="text-emerald-700 font-medium">Sérénité</div>
@@ -65,7 +65,7 @@ export default function CalendarPage() {
             Navigation <span className="font-semibold text-emerald-600">contemplative</span>
           </h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="flex items-start gap-3">
               <Flower className="w-5 h-5 text-emerald-500 mt-1" />

@@ -54,11 +54,8 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Statistiques du jour */}
-      <TodayStats />
-
       {/* Boutons d'ajout de consommations */}
-      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20">
+      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 relative z-10">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-light text-gray-800 mb-2">
             Enregistrer en <span className="font-semibold text-emerald-600">conscience</span>
@@ -68,7 +65,7 @@ export default function Dashboard() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <ConsumptionButton
             category="alcohol"
             onAdd={(type) => handleAddConsumption('alcohol', type as AlcoholType)}
@@ -98,6 +95,9 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* Statistiques du jour */}
+      <TodayStats />
+
       {/* Conseils zen */}
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-8 border border-emerald-100">
         <div className="flex items-center gap-3 mb-6">
@@ -108,7 +108,7 @@ export default function Dashboard() {
             Méditation <span className="font-semibold text-emerald-600">quotidienne</span>
           </h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="flex items-start gap-3">
               <Sprout className="w-5 h-5 text-emerald-500 mt-1" />

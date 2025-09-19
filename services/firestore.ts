@@ -163,6 +163,27 @@ export const removeConsumption = async (
   }
 };
 
+// Déplacer une consommation d'une date à une autre
+export const moveConsumption = async (
+  userId: string,
+  oldDate: string,
+  newDate: string,
+  category: 'alcohol' | 'cigarettes' | 'junkfood',
+  type: AlcoholType | CigaretteType | JunkfoodType,
+  quantity: number
+) => {
+  try {
+    // Supprimer de l'ancienne date
+    await removeConsumption(userId, oldDate, category, type, quantity);
+    
+    // Ajouter à la nouvelle date
+    await addConsumption(userId, newDate, category, type, quantity);
+  } catch (error) {
+    console.error('Erreur lors du déplacement de la consommation:', error);
+    throw error;
+  }
+};
+
 // Obtenir toutes les consommations d'un utilisateur
 export const getAllUserConsumptions = async (userId: string): Promise<DayConsumption[]> => {
   try {

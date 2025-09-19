@@ -6,6 +6,7 @@ import {
   getDayConsumption, 
   addConsumption, 
   removeConsumption, 
+  moveConsumption,
   getConsumptionsInRange,
   getAllUserConsumptions
 } from '@/services/firestore';
@@ -116,6 +117,47 @@ export const useRemoveConsumption = () => {
       // Invalider les requêtes liées à cette date et cet utilisateur
       queryClient.invalidateQueries({ 
         queryKey: ['consumption', variables.userId, variables.date] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'week', variables.userId] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'month', variables.userId] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'all', variables.userId] 
+      });
+    },
+  });
+};
+
+// Hook pour déplacer une consommation
+export const useMoveConsumption = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({
+      userId,
+      oldDate,
+      newDate,
+      category,
+      type,
+      quantity
+    }: {
+      userId: string;
+      oldDate: string;
+      newDate: string;
+      category: 'alcohol' | 'cigarettes' | 'junkfood';
+      type: AlcoholType | CigaretteType | JunkfoodType;
+      quantity: number;
+    }) => moveConsumption(userId, oldDate, newDate, category, type, quantity),
+    onSuccess: (_, variables) => {
+      // Invalider les requêtes liées aux deux dates et cet utilisateur
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumption', variables.userId, variables.oldDate] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumption', variables.userId, variables.newDate] 
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'week', variables.userId] 

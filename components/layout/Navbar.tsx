@@ -37,7 +37,7 @@ export default function Navbar() {
           </Link>
 
           {/* Navigation links */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden xl:flex items-center space-x-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -82,7 +82,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile navigation */}
-        <div className="md:hidden pb-4 pt-2">
+        <div className="xl:hidden pb-4 pt-2">
           <div className="flex items-center justify-around bg-emerald-50 rounded-2xl p-2">
             {navItems.map((item) => {
               const Icon = item.icon;

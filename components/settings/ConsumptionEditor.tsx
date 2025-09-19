@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useAllConsumptions, useRemoveConsumption } from '@/hooks/useConsumptions';
+import { useAllConsumptions, useRemoveConsumption, useMoveConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Trash2, Edit3, Calendar, Search } from 'lucide-react';
@@ -19,9 +19,27 @@ export default function ConsumptionEditor() {
   const { user } = useAuth();
   const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
   const removeConsumption = useRemoveConsumption();
+  const moveConsumption = useMoveConsumption();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  
+  // État pour la modal de modification de date
+  const [editModal, setEditModal] = useState<{
+    isOpen: boolean;
+    date: string;
+    category: 'alcohol' | 'cigarettes' | 'junkfood';
+    type: string;
+    quantity: number;
+    newDate: string;
+  }>({
+    isOpen: false,
+    date: '',
+    category: 'alcohol',
+    type: '',
+    quantity: 0,
+    newDate: ''
+  });
 
   // Filtrer les consommations
   const filteredConsumptions = consumptions.filter(day => {
@@ -62,6 +80,58 @@ export default function ConsumptionEditor() {
       });
     } catch (error) {
       toast.error('Erreur lors de la suppression', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    }
+  };
+
+  const handleEditConsumption = (
+    date: string,
+    category: 'alcohol' | 'cigarettes' | 'junkfood',
+    type: string,
+    quantity: number
+  ) => {
+    setEditModal({
+      isOpen: true,
+      date,
+      category,
+      type,
+      quantity,
+      newDate: date // Initialiser avec la date actuelle
+    });
+  };
+
+  const handleMoveConsumption = async () => {
+    if (!user || !editModal.newDate || editModal.newDate === editModal.date) {
+      setEditModal(prev => ({ ...prev, isOpen: false }));
+      return;
+    }
+
+    try {
+      await moveConsumption.mutateAsync({
+        userId: user.uid,
+        oldDate: editModal.date,
+        newDate: editModal.newDate,
+        category: editModal.category,
+        type: editModal.type,
+        quantity: editModal.quantity
+      });
+
+      toast.success('Date de consommation modifiée !', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+
+      setEditModal(prev => ({ ...prev, isOpen: false }));
+    } catch (error) {
+      toast.error('Erreur lors de la modification', {
         style: {
           background: '#1f2937',
           color: '#fff',
@@ -115,6 +185,15 @@ export default function ConsumptionEditor() {
           <span className="text-gray-800 font-medium">×{item.quantity}</span>
           
           <button
+            onClick={() => handleEditConsumption(day.date, category, item.type, item.quantity)}
+            disabled={moveConsumption.isPending}
+            className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+            title="Modifier la date"
+          >
+            <Edit3 className="w-4 h-4" />
+          </button>
+          
+          <button
             onClick={() => handleRemoveConsumption(day.date, category, item.type, item.quantity)}
             disabled={removeConsumption.isPending}
             className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
@@ -148,7 +227,7 @@ export default function ConsumptionEditor() {
       {/* Filtres */}
       <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
         <h3 className="text-lg font-medium text-gray-800 mb-4">Filtres</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Rechercher par date
@@ -258,6 +337,58 @@ export default function ConsumptionEditor() {
           ))
         )}
       </div>
+
+      {/* Modal de modification de date */}
+      {editModal.isOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Modifier la date de consommation
+            </h3>
+            
+            <div className="mb-6">
+              <p className="text-sm text-gray-600 mb-4">
+                Déplacer cette consommation vers une nouvelle date :
+              </p>
+              
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <div className="text-sm text-gray-700">
+                  <strong>Date actuelle :</strong> {format(new Date(editModal.date), 'dd MMMM yyyy', { locale: fr })}
+                </div>
+                <div className="text-sm text-gray-700">
+                  <strong>Quantité :</strong> ×{editModal.quantity}
+                </div>
+              </div>
+              
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nouvelle date
+              </label>
+              <input
+                type="date"
+                value={editModal.newDate}
+                onChange={(e) => setEditModal(prev => ({ ...prev, newDate: e.target.value }))}
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all"
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setEditModal(prev => ({ ...prev, isOpen: false }))}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleMoveConsumption}
+                disabled={moveConsumption.isPending || !editModal.newDate || editModal.newDate === editModal.date}
+                className="flex-1 px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {moveConsumption.isPending ? 'Modification...' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

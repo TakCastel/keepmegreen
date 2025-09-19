@@ -162,7 +162,7 @@ export default function CalendarGrid() {
       </div>
 
       {/* Statistiques supplémentaires */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
         <div className="bg-emerald-50 rounded-2xl p-6 text-center border border-emerald-100">
           <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
             <Flower className="w-6 h-6 text-white" />

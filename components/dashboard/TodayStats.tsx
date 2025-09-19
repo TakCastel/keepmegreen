@@ -87,7 +87,7 @@ export default function TodayStats() {
           </div>
 
           {/* Détail par catégorie */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             {/* Alcool */}
             {dayConsumption?.alcohol && dayConsumption.alcohol.length > 0 && (
               <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
