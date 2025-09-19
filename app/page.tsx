@@ -2,7 +2,7 @@
 
 import LandingHeader from '@/components/landing/LandingHeader';
 import BackToTop from '@/components/ui/BackToTop';
-import { Sprout, Wine, Cigarette, Utensils, Sparkles, Heart, Leaf, Flower, Calendar, BarChart3, Shield, Star, ArrowRight } from 'lucide-react';
+import { Sprout, Wine, Cigarette, Utensils, Leaf, Calendar, BarChart3, Star, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -36,7 +36,7 @@ export default function Home() {
                 </h1>
                 
                 <p className="text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed px-4 lg:px-0">
-                  Une approche bienveillante pour réduire vos consommations d'alcool, 
+                  Une approche bienveillante pour réduire vos consommations d&apos;alcool, 
                   cigarettes et malbouffe. Visualisez vos progrès avec un calendrier zen.
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default function Home() {
                   <div className="flex-1">
                     <h3 className="text-2xl font-normal text-gray-800 mb-2 tracking-wide font-serif">Alcool</h3>
                     <p className="text-base text-gray-600 leading-relaxed">
-                      Surveillez vos consommations d'alcool pour réduire votre dépendance.
+                      Surveillez vos consommations d&apos;alcool pour réduire votre dépendance.
                     </p>
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Alcool</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Surveillez vos consommations d'alcool pour réduire votre dépendance. 
+                  Surveillez vos consommations d&apos;alcool pour réduire votre dépendance. 
                   Observez vos patterns et reprenez le contrôle de votre consommation.
                 </p>
               </div>

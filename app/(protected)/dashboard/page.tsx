@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 import ConsumptionButton from '@/components/dashboard/ConsumptionButton';
 import TodayStats from '@/components/dashboard/TodayStats';
 import InfoBanner from '@/components/ui/InfoBanner';
-import { ConsumptionButtonSkeleton, PageHeaderSkeleton } from '@/components/ui/Skeleton';
+import { ConsumptionButtonSkeleton } from '@/components/ui/Skeleton';
 import { AlcoholType, CigaretteType, JunkfoodType } from '@/types';
 import { Sprout, Heart, Leaf, Flower, LifeBuoy } from 'lucide-react';
 

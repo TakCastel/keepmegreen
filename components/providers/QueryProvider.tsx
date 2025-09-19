@@ -32,7 +32,7 @@ export default function QueryProvider({
         const cachedData = localStorage.getItem('query-cache');
         if (cachedData) {
           const queries = JSON.parse(cachedData);
-          queries.forEach((query: any) => {
+          queries.forEach((query: unknown) => {
             if (query.data !== undefined) {
               queryClient.setQueryData(query.queryKey, query.data);
             }
