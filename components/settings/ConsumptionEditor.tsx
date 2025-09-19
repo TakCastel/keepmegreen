@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useAllConsumptions, useRemoveConsumption, useMoveConsumption } from '@/hooks/useConsumptions';
+import { useAllConsumptions, useRemoveConsumption, useMoveConsumption, useAddConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Trash2, Edit3, Calendar, Search } from 'lucide-react';
+import { Trash2, Edit3, Calendar, Search, Plus, Minus } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { toast } from 'react-hot-toast';
 import { 
@@ -24,6 +25,7 @@ export default function ConsumptionEditor() {
   const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
   const removeConsumption = useRemoveConsumption();
   const moveConsumption = useMoveConsumption();
+  const addConsumption = useAddConsumption();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -45,6 +47,23 @@ export default function ConsumptionEditor() {
     newDate: ''
   });
 
+  // État pour la modal de suppression
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    date: string;
+    category: 'alcohol' | 'cigarettes' | 'junkfood';
+    type: AlcoholType | CigaretteType | JunkfoodType;
+    quantity: number;
+    label: string;
+  }>({
+    isOpen: false,
+    date: '',
+    category: 'alcohol',
+    type: 'beer' as AlcoholType,
+    quantity: 0,
+    label: ''
+  });
+
   // Filtrer les consommations
   const filteredConsumptions = consumptions.filter(day => {
     const matchesDate = selectedDate ? day.date === selectedDate : true;
@@ -61,9 +80,22 @@ export default function ConsumptionEditor() {
   const handleRemoveConsumption = async (
     date: string,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
-    type: AlcoholType | CigaretteType | JunkfoodType
+    type: AlcoholType | CigaretteType | JunkfoodType,
+    currentQuantity: number
   ) => {
     if (!user) return;
+
+    // Empêcher de descendre en dessous de 1
+    if (currentQuantity <= 1) {
+      toast.error('Quantité minimale atteinte (1)', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+      return;
+    }
 
     try {
       await removeConsumption.mutateAsync({
@@ -74,6 +106,119 @@ export default function ConsumptionEditor() {
         quantity: 1, // Retirer une unité à la fois
       });
 
+      toast.success('Quantité diminuée !', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    } catch {
+      toast.error('Erreur lors de la modification', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    }
+  };
+
+  const handleAddQuantity = async (
+    date: string,
+    category: 'alcohol' | 'cigarettes' | 'junkfood',
+    type: AlcoholType | CigaretteType | JunkfoodType
+  ) => {
+    if (!user) return;
+
+    try {
+      await addConsumption.mutateAsync({
+        userId: user.uid,
+        date,
+        category,
+        type,
+        quantity: 1, // Ajouter une unité à la fois
+      });
+
+      toast.success('Quantité augmentée !', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    } catch {
+      toast.error('Erreur lors de la modification', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    }
+  };
+
+  const handleDeleteConsumption = (
+    date: string,
+    category: 'alcohol' | 'cigarettes' | 'junkfood',
+    type: AlcoholType | CigaretteType | JunkfoodType
+  ) => {
+    if (!user) return;
+
+    // Récupérer les informations de la consommation pour la modal
+    const currentConsumptions = consumptions.find(day => day.date === date);
+    if (!currentConsumptions) return;
+
+    const categoryArray = currentConsumptions[category];
+    const currentItem = categoryArray.find(item => item.type === type);
+    if (!currentItem) return;
+
+    // Récupérer le label de l'élément
+    const configs = {
+      alcohol: ALCOHOL_CONFIG,
+      cigarettes: CIGARETTE_CONFIG,
+      junkfood: JUNKFOOD_CONFIG,
+    };
+    
+    let config: ConsumptionConfig | undefined;
+    switch (category) {
+      case 'alcohol':
+        config = configs.alcohol[type as AlcoholType];
+        break;
+      case 'cigarettes':
+        config = configs.cigarettes[type as CigaretteType];
+        break;
+      case 'junkfood':
+        config = configs.junkfood[type as JunkfoodType];
+        break;
+    }
+
+    if (!config) return;
+
+    // Ouvrir la modal de confirmation
+    setDeleteModal({
+      isOpen: true,
+      date,
+      category,
+      type,
+      quantity: currentItem.quantity,
+      label: config.label
+    });
+  };
+
+  const confirmDeleteConsumption = async () => {
+    if (!user) return;
+
+    try {
+      // Supprimer la quantité totale pour effacer complètement l'élément
+      await removeConsumption.mutateAsync({
+        userId: user.uid,
+        date: deleteModal.date,
+        category: deleteModal.category,
+        type: deleteModal.type,
+        quantity: deleteModal.quantity, // Supprimer toute la quantité
+      });
+
       toast.success('Consommation supprimée !', {
         style: {
           background: '#1f2937',
@@ -81,6 +226,9 @@ export default function ConsumptionEditor() {
           border: '1px solid #374151'
         }
       });
+
+      // Fermer la modal
+      setDeleteModal(prev => ({ ...prev, isOpen: false }));
     } catch {
       toast.error('Erreur lors de la suppression', {
         style: {
@@ -187,7 +335,7 @@ export default function ConsumptionEditor() {
     const categoryColors = {
       alcohol: 'text-purple-600',
       cigarettes: 'text-orange-600',
-      junkfood: 'text-red-600',
+      junkfood: 'text-blue-600',
     };
 
     return (
@@ -205,23 +353,44 @@ export default function ConsumptionEditor() {
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <span className="text-gray-800 font-medium">×{item.quantity}</span>
+        <div className="flex items-center gap-2">
+          {/* Contrôles de quantité */}
+          <div className="flex items-center gap-1 bg-white/80 rounded-xl border border-gray-200 px-2 py-1">
+            <button
+              onClick={() => handleRemoveConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
+              disabled={removeConsumption.isPending || item.quantity <= 1}
+              className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              title={item.quantity <= 1 ? "Quantité minimale (1)" : "Diminuer la quantité"}
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            
+            <span className="text-gray-800 font-medium min-w-[2.5rem] text-center">×{item.quantity}</span>
+            
+            <button
+              onClick={() => handleAddQuantity(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
+              disabled={addConsumption.isPending}
+              className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Augmenter la quantité"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
           
           <button
             onClick={() => handleEditConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
             disabled={moveConsumption.isPending}
-            className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50"
             title="Modifier la date"
           >
             <Edit3 className="w-4 h-4" />
           </button>
           
           <button
-            onClick={() => handleRemoveConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
+            onClick={() => handleDeleteConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
             disabled={removeConsumption.isPending}
             className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-            title="Supprimer une unité"
+            title="Supprimer complètement"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -365,9 +534,9 @@ export default function ConsumptionEditor() {
         )}
       </div>
 
-      {/* Modal de modification de date */}
-      {editModal.isOpen && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      {/* Portail pour la modal de modification de date */}
+      {editModal.isOpen && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Modifier la date de consommation
@@ -394,7 +563,7 @@ export default function ConsumptionEditor() {
                 type="date"
                 value={editModal.newDate}
                 onChange={(e) => setEditModal(prev => ({ ...prev, newDate: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-all"
               />
             </div>
             
@@ -408,13 +577,68 @@ export default function ConsumptionEditor() {
               <button
                 onClick={handleMoveConsumption}
                 disabled={moveConsumption.isPending || !editModal.newDate || editModal.newDate === editModal.date}
-                className="flex-1 px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+                className="flex-1 px-4 py-3 bg-slate-500 text-white rounded-xl hover:bg-slate-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {moveConsumption.isPending ? 'Modification...' : 'Confirmer'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Portail pour la modal de confirmation de suppression */}
+      {deleteModal.isOpen && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
+            <div className="text-center mb-6">
+              {/* Icône d'alerte */}
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-red-600" />
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Supprimer la consommation
+              </h3>
+              
+              <p className="text-gray-600 text-sm mb-4">
+                Cette action est irréversible. Voulez-vous vraiment supprimer cette consommation ?
+              </p>
+            </div>
+            
+            {/* Informations sur l'élément à supprimer */}
+            <div className="bg-red-50/70 border border-red-200 rounded-2xl p-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <div className="text-gray-800 font-medium">{deleteModal.label}</div>
+                  <div className="text-sm text-gray-600">
+                    Quantité : ×{deleteModal.quantity} • {format(new Date(deleteModal.date), 'dd MMMM yyyy', { locale: fr })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteModal(prev => ({ ...prev, isOpen: false }))}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmDeleteConsumption}
+                disabled={removeConsumption.isPending}
+                className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {removeConsumption.isPending ? 'Suppression...' : 'Supprimer'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

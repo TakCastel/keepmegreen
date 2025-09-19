@@ -1,5 +1,6 @@
 'use client';
 
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useDayConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
@@ -27,13 +28,17 @@ export default function CalendarDayModal({ day, onClose }: CalendarDayModalProps
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower },
     yellow: { bg: 'bg-amber-400', text: 'En équilibre', icon: Leaf },
     orange: { bg: 'bg-orange-400', text: 'Avec bienveillance', icon: Sun },
-    red: { bg: 'bg-rose-400', text: 'Demain est nouveau', icon: Sunrise },
+    red: { bg: 'bg-rose-400', text: 'Journée difficile', icon: Sunrise },
   };
 
   const currentColorConfig = colorConfig[day.color];
 
-  return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
       <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto border border-white/20">
         {/* En-tête */}
         <div className="flex items-center justify-between p-8 border-b border-gray-200">
@@ -140,21 +145,21 @@ export default function CalendarDayModal({ day, onClose }: CalendarDayModalProps
 
                 {/* Nutrition */}
                 {dayConsumption.junkfood && dayConsumption.junkfood.length > 0 && (
-                  <div className="bg-red-50 rounded-2xl p-6 border border-red-100">
+                  <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-red-500 rounded-xl flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center">
                         <Utensils className="w-5 h-5 text-white" />
                       </div>
-                      <span className="font-semibold text-red-700">Nutrition</span>
+                      <span className="font-semibold text-blue-700">Nutrition</span>
                     </div>
                     <div className="space-y-3">
                       {dayConsumption.junkfood.map((item, index) => (
                         <div key={index} className="flex justify-between items-center">
                           <div className="flex items-center gap-3">
-                            <DynamicIcon name={JUNKFOOD_CONFIG[item.type].icon} className="w-5 h-5 text-red-600" />
-                            <span className="text-red-700 font-medium">{JUNKFOOD_CONFIG[item.type].label}</span>
+                            <DynamicIcon name={JUNKFOOD_CONFIG[item.type].icon} className="w-5 h-5 text-blue-600" />
+                            <span className="text-blue-700 font-medium">{JUNKFOOD_CONFIG[item.type].label}</span>
                           </div>
-                          <span className="text-red-800 font-medium bg-red-100 px-2 py-1 rounded-full text-sm">×{item.quantity}</span>
+                          <span className="text-blue-800 font-medium bg-blue-100 px-2 py-1 rounded-full text-sm">×{item.quantity}</span>
                         </div>
                       ))}
                     </div>
@@ -165,6 +170,7 @@ export default function CalendarDayModal({ day, onClose }: CalendarDayModalProps
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { format, startOfYear, endOfYear, eachDayOfInterval, startOfWeek, endOfWeek } from 'date-fns';
+import { format, startOfYear, endOfYear, eachWeekOfInterval, startOfWeek, eachDayOfInterval, endOfWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAllConsumptions } from '@/hooks/useConsumptions';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,46 +22,51 @@ export default function CalendarGrid() {
   const endDate = endOfYear(new Date(selectedYear, 0, 1));
   const calendarDays = generateCalendarData(consumptions, startDate, endDate);
   
-  // Organiser les jours par semaines
-  const weeks: CalendarDay[][] = [];
-  let currentWeek: CalendarDay[] = [];
-  
-  // Commencer par la première semaine (peut ne pas être complète)
-  const firstDay = calendarDays[0];
-  if (firstDay) {
-    const firstDayDate = new Date(firstDay.date);
-    const weekStart = startOfWeek(firstDayDate, { weekStartsOn: 1 }); // Lundi = 1
-    const weekEnd = endOfWeek(firstDayDate, { weekStartsOn: 1 });
+  // Générer les données pour chaque mois
+  const monthsData = [];
+  for (let month = 0; month < 12; month++) {
+    const monthStart = new Date(selectedYear, month, 1);
+    const monthEnd = new Date(selectedYear, month + 1, 0); // Dernier jour du mois
+    const monthName = format(monthStart, 'MMMM yyyy', { locale: fr });
     
-    // Remplir les jours avant le début de l'année
-    const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
-    weekDays.forEach(date => {
-      const dateString = format(date, 'yyyy-MM-dd');
-      const dayData = calendarDays.find(d => d.date === dateString);
-      
-      if (dayData) {
-        currentWeek.push(dayData);
-      } else if (date < startDate || date > endDate) {
-        // Jour en dehors de l'année sélectionnée
-        currentWeek.push({
-          date: dateString,
-          color: 'green',
-          totalConsumptions: 0,
-          hasData: false,
-        });
-      }
-    });
+    // Calculer le premier jour de la grille (peut être du mois précédent)
+    const firstDayOfGrid = startOfWeek(monthStart, { weekStartsOn: 1 }); // Lundi
+    const lastDayOfGrid = endOfWeek(monthEnd, { weekStartsOn: 1 }); // Dimanche
     
-    weeks.push([...currentWeek]);
-    currentWeek = [];
-  }
-  
-  // Organiser le reste des jours par semaines de 7 jours
-  for (let i = 7; i < calendarDays.length; i += 7) {
-    const week = calendarDays.slice(i, i + 7);
-    if (week.length > 0) {
+    // Générer tous les jours de la grille du mois
+    const allDaysInGrid = eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid });
+    
+    // Organiser en semaines
+    const weeks = [];
+    for (let i = 0; i < allDaysInGrid.length; i += 7) {
+      const week = allDaysInGrid.slice(i, i + 7).map(date => {
+        const dateString = format(date, 'yyyy-MM-dd');
+        const dayData = calendarDays.find(d => d.date === dateString);
+        const isCurrentMonth = date.getMonth() === month;
+        
+                        const today = new Date();
+                        const isFuture = date > today;
+                        
+                        return {
+                          date: dateString,
+                          day: date.getDate(),
+                          isCurrentMonth,
+                          isToday: dateString === format(today, 'yyyy-MM-dd'),
+                          isFuture,
+                          color: dayData?.color || 'green',
+                          totalConsumptions: dayData?.totalConsumptions || 0,
+                          hasData: dayData?.hasData || false
+                        };
+      });
       weeks.push(week);
     }
+    
+    monthsData.push({
+      month,
+      name: monthName,
+      shortName: format(monthStart, 'MMMM', { locale: fr }),
+      weeks
+    });
   }
 
   const greenDaysPercentage = getGreenDaysPercentage(calendarDays);
@@ -120,44 +125,118 @@ export default function CalendarGrid() {
         <span className="font-medium">Plus</span>
       </div>
 
-      {/* Étiquettes des mois */}
-      <div className="text-xs text-gray-600 grid grid-cols-12 gap-4 mb-4 font-medium">
-        {['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'].map(month => (
-          <span key={month}>{month}</span>
+      {/* Calendrier classique mois par mois */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {monthsData.map((month) => (
+          <div key={month.month} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-gray-200 shadow-lg">
+            
+            {/* En-tête du mois */}
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800 capitalize">
+                {month.shortName}
+              </h3>
+              <div className="text-sm text-gray-600">{selectedYear}</div>
+            </div>
+            
+            {/* En-têtes des jours de la semaine */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+                <div key={index} className="text-xs font-medium text-gray-500 text-center py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            {/* Grille des jours du mois */}
+            <div className="space-y-1">
+              {month.weeks.map((week, weekIndex) => (
+                <div key={weekIndex} className="grid grid-cols-7 gap-1">
+                  {week.map((day, dayIndex) => {
+                    const dayData = {
+                      date: day.date,
+                      color: day.color,
+                      totalConsumptions: day.totalConsumptions,
+                      hasData: day.hasData
+                    } as CalendarDay;
+                    
+                    return (
+                      <button
+                        key={dayIndex}
+                        onClick={() => day.isCurrentMonth && !day.isFuture ? setSelectedDay(dayData) : null}
+                        disabled={!day.isCurrentMonth || day.isFuture}
+                        className={`
+                          relative w-8 h-8 rounded-lg text-sm font-medium transition-all duration-200
+                          flex items-center justify-center
+                          ${!day.isCurrentMonth 
+                            ? 'text-gray-300 cursor-default'
+                            : day.isFuture
+                            ? 'bg-gray-200 text-gray-500 cursor-default'
+                            : `${colorClasses[day.color]} text-white hover:scale-110 hover:shadow-lg`
+                          }
+                          ${day.isToday && day.isCurrentMonth 
+                            ? 'ring-2 ring-gray-800' 
+                            : ''
+                          }
+                        `}
+                        title={
+                          day.isCurrentMonth 
+                            ? `${format(new Date(day.date), 'dd MMMM yyyy', { locale: fr })} - ${day.totalConsumptions} consommation${day.totalConsumptions > 1 ? 's' : ''}`
+                            : ''
+                        }
+                      >
+                        {day.day}
+                        
+                        {/* Indicateur discret pour aujourd'hui */}
+                        {day.isToday && day.isCurrentMonth && (
+                          <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gray-800 rounded-full"></div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            
+            {/* Statistiques du mois */}
+            <div className="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-600">
+              <div className="flex justify-between">
+                <span>Jours sereins</span>
+                <span className="font-medium text-emerald-600">
+                  {month.weeks.flat().filter(d => d.isCurrentMonth && d.color === 'green').length}
+                </span>
+              </div>
+              <div className="flex justify-between mt-1">
+                <span>Total</span>
+                <span className="font-medium text-purple-600">
+                  {month.weeks.flat().reduce((sum, d) => d.isCurrentMonth ? sum + d.totalConsumptions : sum, 0)}
+                </span>
+              </div>
+            </div>
+            
+          </div>
         ))}
       </div>
-
-      {/* Grille du calendrier */}
-      <div className="overflow-x-auto">
-        <div className="grid gap-1 min-w-[800px]" style={{ gridTemplateColumns: `repeat(53, minmax(0, 1fr))` }}>
-          {/* Étiquettes des jours de la semaine */}
-          <div className="text-xs text-gray-600 col-span-53 grid grid-cols-53 gap-1 mb-3 font-medium">
-            <span></span>
-            <span>Lun</span>
-            <span></span>
-            <span>Mer</span>
-            <span></span>
-            <span>Ven</span>
-            <span></span>
+      
+      {/* Légende centralisée */}
+      <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg">
+        <h3 className="text-lg font-semibold text-gray-800 text-center mb-4">Légende</h3>
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-emerald-500 rounded-lg shadow-sm"></div>
+            <span className="text-gray-700 font-medium">Sérénité</span>
           </div>
-
-          {/* Jours du calendrier */}
-          {calendarDays.map((day) => {
-            const isToday = day.date === format(new Date(), 'yyyy-MM-dd');
-            
-            return (
-              <button
-                key={day.date}
-                onClick={() => setSelectedDay(day)}
-                className={`
-                  w-3 h-3 rounded-sm transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-white/50
-                  ${colorClasses[day.color]}
-                  ${isToday ? 'ring-2 ring-white' : ''}
-                `}
-                title={`${format(new Date(day.date), 'dd MMMM yyyy', { locale: fr })} - ${day.totalConsumptions} consommation${day.totalConsumptions > 1 ? 's' : ''}`}
-              />
-            );
-          })}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-amber-400 rounded-lg shadow-sm"></div>
+            <span className="text-gray-700 font-medium">Éveil</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-orange-400 rounded-lg shadow-sm"></div>
+            <span className="text-gray-700 font-medium">Vigilance</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-rose-400 rounded-lg shadow-sm"></div>
+            <span className="text-gray-700 font-medium">Attention</span>
+          </div>
         </div>
       </div>
 

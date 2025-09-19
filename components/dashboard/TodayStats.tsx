@@ -37,7 +37,7 @@ export default function TodayStats() {
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower2 },
     yellow: { bg: 'bg-amber-400', text: 'En équilibre', icon: Leaf },
     orange: { bg: 'bg-orange-400', text: 'Avec bienveillance', icon: Sun },
-    red: { bg: 'bg-rose-400', text: 'Demain est nouveau', icon: Sunrise },
+    red: { bg: 'bg-rose-400', text: 'Journée difficile', icon: Sunrise },
   };
 
   const currentColorConfig = colorConfig[dayColor];
@@ -132,19 +132,19 @@ export default function TodayStats() {
 
             {/* Malbouffe */}
             {dayConsumption?.junkfood && dayConsumption.junkfood.length > 0 && (
-              <div className="bg-red-50 rounded-2xl p-4 border border-red-100">
+              <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
                 <div className="flex items-center gap-2 mb-3">
-                  <Utensils className="w-5 h-5 text-red-600" />
-                  <span className="font-medium text-red-700">Nutrition</span>
+                  <Utensils className="w-5 h-5 text-blue-600" />
+                  <span className="font-medium text-blue-700">Nutrition</span>
                 </div>
                 <div className="space-y-2">
                   {dayConsumption.junkfood.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
-                      <span className="text-red-600 flex items-center gap-2">
+                      <span className="text-blue-600 flex items-center gap-2">
                         <DynamicIcon name={JUNKFOOD_CONFIG[item.type].icon} className="w-4 h-4" />
                         {JUNKFOOD_CONFIG[item.type].label}
                       </span>
-                      <span className="text-red-800 font-medium">×{item.quantity}</span>
+                      <span className="text-blue-800 font-medium">×{item.quantity}</span>
                     </div>
                   ))}
                 </div>

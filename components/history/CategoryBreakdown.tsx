@@ -61,11 +61,11 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
       total: stats.junkfood.total,
       breakdown: stats.junkfood.breakdown,
       config: JUNKFOOD_CONFIG,
-      color: 'text-red-700',
-      bgColor: 'bg-red-50',
-      borderColor: 'border-red-100',
-      progressColor: 'bg-red-500',
-      iconGradient: 'from-red-400 to-red-500',
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-100',
+      progressColor: 'bg-blue-500',
+      iconGradient: 'from-blue-400 to-blue-500',
     },
   ];
 

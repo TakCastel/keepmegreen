@@ -39,12 +39,12 @@ export default function CalendarPage() {
           </div>
           <div className="text-center p-4 bg-orange-50 rounded-2xl border border-orange-100">
             <div className="w-6 h-6 bg-orange-400 rounded-full mx-auto mb-3 shadow-md"></div>
-            <div className="text-orange-700 font-medium">Attention</div>
+            <div className="text-orange-700 font-medium">Vigilance</div>
             <div className="text-orange-600 text-sm">3-5 prises de conscience</div>
           </div>
           <div className="text-center p-4 bg-rose-50 rounded-2xl border border-rose-100">
             <div className="w-6 h-6 bg-rose-400 rounded-full mx-auto mb-3 shadow-md"></div>
-            <div className="text-rose-700 font-medium">Transformation</div>
+            <div className="text-rose-700 font-medium">Attention</div>
             <div className="text-rose-600 text-sm">6+ prises de conscience</div>
           </div>
         </div>

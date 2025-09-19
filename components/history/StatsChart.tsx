@@ -70,12 +70,12 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
         borderWidth: 1,
       },
       {
-        label: 'Malbouffe',
+        label: 'Nutrition',
         data: consumptions.slice(0, 10).reverse().map(c => 
           c.junkfood.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: 'rgba(239, 68, 68, 0.7)',
-        borderColor: 'rgba(239, 68, 68, 1)',
+        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+        borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 1,
       },
     ],
@@ -83,19 +83,19 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
 
   // Configuration pour le graphique en camembert (répartition par catégorie)
   const doughnutData = {
-    labels: ['Alcool', 'Cigarettes', 'Malbouffe'],
+    labels: ['Alcool', 'Cigarettes', 'Nutrition'],
     datasets: [
       {
         data: [stats.alcohol.total, stats.cigarettes.total, stats.junkfood.total],
         backgroundColor: [
           'rgba(147, 51, 234, 0.7)',
           'rgba(249, 115, 22, 0.7)',
-          'rgba(239, 68, 68, 0.7)',
+          'rgba(59, 130, 246, 0.7)',
         ],
         borderColor: [
           'rgba(147, 51, 234, 1)',
           'rgba(249, 115, 22, 1)',
-          'rgba(239, 68, 68, 1)',
+          'rgba(59, 130, 246, 1)',
         ],
         borderWidth: 2,
       },

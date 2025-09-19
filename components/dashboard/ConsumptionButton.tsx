@@ -35,9 +35,9 @@ const CATEGORY_CONFIG = {
   },
   junkfood: {
     icon: Beef,
-    label: 'Nutrition consciente',
-    bgColor: 'bg-gradient-to-br from-red-400 to-red-500',
-    hoverColor: 'hover:from-red-500 hover:to-red-600',
+    label: 'Nutrition',
+    bgColor: 'bg-gradient-to-br from-blue-400 to-blue-500',
+    hoverColor: 'hover:from-blue-500 hover:to-blue-600',
     textColor: 'text-white',
     config: JUNKFOOD_CONFIG,
   },

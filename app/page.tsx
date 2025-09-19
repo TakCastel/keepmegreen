@@ -77,10 +77,10 @@ export default function Home() {
                 <span className="text-lg text-gray-700 font-medium">Cigarettes</span>
               </div>
               <div className="flex items-center gap-4 p-4 bg-white/50 rounded-2xl backdrop-blur-sm border border-emerald-100">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center">
-                  <Utensils className="w-6 h-6 text-red-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
+                  <Utensils className="w-6 h-6 text-blue-600" />
                 </div>
-                <span className="text-lg text-gray-700 font-medium">Nutrition consciente</span>
+                <span className="text-lg text-gray-700 font-medium">Nutrition</span>
               </div>
             </div>
             
