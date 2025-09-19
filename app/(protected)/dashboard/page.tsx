@@ -45,15 +45,15 @@ export default function Dashboard() {
     <div className="space-y-10">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
-          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl items-center justify-center shadow-xl">
-            <Sprout className="w-8 h-8 text-white" />
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="hidden md:flex w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl items-center justify-center shadow-lg">
+            <Sprout className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
+          <h1 className="text-xl md:text-2xl font-light text-gray-800">
             Votre espace <span className="font-semibold text-emerald-600">bien-être</span>
           </h1>
         </div>
-        <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
           Enregistrez vos consommations quotidiennes et suivez votre progression vers un mode de vie plus équilibré
         </p>
       </div>

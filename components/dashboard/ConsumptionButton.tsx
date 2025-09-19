@@ -216,20 +216,20 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
           ref={buttonRef}
           onClick={() => isOpen ? handleClose() : handleOpen()}
           disabled={disabled}
-          className={`w-full p-8 rounded-3xl bg-gradient-to-br ${colors.primary} ${colors.primaryHover} disabled:opacity-50 disabled:cursor-not-allowed ${colors.text} font-medium transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl`}
+          className={`w-full p-4 md:p-8 rounded-2xl md:rounded-3xl bg-gradient-to-br ${colors.primary} ${colors.primaryHover} disabled:opacity-50 disabled:cursor-not-allowed ${colors.text} font-medium transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg md:shadow-xl hover:shadow-xl md:hover:shadow-2xl`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm ${colors.iconBg}`}>
-                <categoryData.icon className={`w-8 h-8 ${colors.iconColor}`} />
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center backdrop-blur-sm ${colors.iconBg}`}>
+                <categoryData.icon className={`w-6 h-6 md:w-8 md:h-8 ${colors.iconColor}`} />
               </div>
               <div className="text-left">
-                <span className="text-xl font-semibold block">{categoryData.label}</span>
-                <span className="text-sm opacity-90">Prise de conscience</span>
+                <span className="text-lg md:text-xl font-semibold block">{categoryData.label}</span>
+                <span className="text-xs md:text-sm opacity-90">Prise de conscience</span>
               </div>
             </div>
             <ChevronDown 
-              className={`w-6 h-6 transition-transform duration-300 ${
+              className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
                 isOpen ? 'rotate-180' : 'rotate-0'
               }`} 
             />
@@ -262,27 +262,27 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
               >
                 <button
                   onClick={() => handleTypeSelect(type)}
-                  className="w-full p-4 text-left hover:bg-white/60 transition-all border-b border-gray-100 last:border-b-0 flex items-center justify-between group"
+                  className="w-full p-3 md:p-4 text-left hover:bg-white/60 transition-all border-b border-gray-100 last:border-b-0 flex items-center justify-between group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl flex items-center justify-center">
-                      <DynamicIcon name={config.icon} className="w-6 h-6 text-emerald-600" />
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-100 to-green-100 rounded-lg md:rounded-xl flex items-center justify-center">
+                      <DynamicIcon name={config.icon} className="w-5 h-5 md:w-6 md:h-6 text-emerald-600" />
                     </div>
                     <div>
-                      <div className="text-gray-800 font-medium">{config.label}</div>
+                      <div className="text-gray-800 font-medium text-sm md:text-base">{config.label}</div>
                       {config.volume && (
-                        <div className="text-gray-500 text-sm">{config.volume}</div>
+                        <div className="text-gray-500 text-xs md:text-sm">{config.volume}</div>
                       )}
                     </div>
                   </div>
                   <div 
-                    className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center group-hover:bg-emerald-600 transition-colors"
+                    className="w-7 h-7 md:w-8 md:h-8 bg-emerald-500 rounded-full flex items-center justify-center group-hover:bg-emerald-600 transition-colors"
                     style={{
                       animationDelay: visibleItems.includes(index) && !isClosing ? '200ms' : '0ms',
                       animation: visibleItems.includes(index) && !isClosing ? 'popIn 0.5s ease-out forwards' : 'none'
                     }}
                   >
-                    <Plus className="w-4 h-4 text-white" />
+                    <Plus className="w-3 h-3 md:w-4 md:h-4 text-white" />
                   </div>
                 </button>
               </div>

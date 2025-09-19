@@ -70,7 +70,7 @@ export default function StatsCards({ consumptions, type }: StatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-6">
       {cards.map((card, index) => (
         <div
           key={index}

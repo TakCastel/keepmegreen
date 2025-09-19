@@ -82,9 +82,9 @@ export const CIGARETTE_CONFIG: Record<CigaretteType, ConsumptionConfig> = {
 };
 
 export const JUNKFOOD_CONFIG: Record<JunkfoodType, ConsumptionConfig> = {
-  burger: { icon: 'Beef', label: 'Burger' },
-  pizza: { icon: 'Pizza', label: 'Pizza' },
-  fries: { icon: 'Utensils', label: 'Frites' },
-  soda: { icon: 'CupSoda', label: 'Soda' },
-  sweets: { icon: 'Candy', label: 'Sucreries' },
+  burger: { icon: 'Beef', label: 'Fast-food burger' },
+  pizza: { icon: 'Pizza', label: 'Pizza industrielle' },
+  fries: { icon: 'Utensils', label: 'Plats transformés' },
+  soda: { icon: 'CupSoda', label: 'Boissons énergisantes' },
+  sweets: { icon: 'Candy', label: 'Confiseries industrielles' },
 };

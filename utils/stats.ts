@@ -1,4 +1,5 @@
 import { DayConsumption, CategoryStats, DayStats, CalendarDay, DayColor } from '@/types';
+import { Flower2, Leaf, Sun, Sunrise, Heart, Moon } from 'lucide-react';
 
 // Calculer le nombre total de consommations pour un jour
 export const getTotalConsumptions = (dayConsumption: DayConsumption): number => {
@@ -11,14 +12,14 @@ export const getTotalConsumptions = (dayConsumption: DayConsumption): number => 
 
 // Système de pondération par gravité des consommations
 const CONSUMPTION_WEIGHTS = {
-  // Cigarettes - les plus graves
+  // Cigarettes - moins graves que l'alcool (max ~10 clopes = score 10)
   cigarettes: {
-    classic: 3,
-    rolled: 3,
-    cigar: 4,
-    electronic: 2.5
+    classic: 1,
+    rolled: 1,
+    cigar: 1.5,
+    electronic: 0.8
   },
-  // Alcool - gravité modérée à élevée
+  // Alcool - gravité modérée à élevée (plus grave que les clopes)
   alcohol: {
     beer: 2,
     wine: 2.5,
@@ -64,9 +65,59 @@ export const calculateDayWeight = (consumption: DayConsumption): number => {
 // Déterminer la couleur d'un jour basée sur le score pondéré
 export const getDayColorByWeight = (weightedScore: number): DayColor => {
   if (weightedScore === 0) return 'green';
-  if (weightedScore <= 3) return 'yellow';   // Ex: toute consommation > 0.1 jusqu'à 3 (e-cigarette, bière, burger)
-  if (weightedScore <= 7) return 'orange';   // Ex: 1 cigarette = 3, alcool + nourriture
-  return 'red';                              // Ex: 2+ cigarettes, alcool fort, combinaisons lourdes
+  if (weightedScore <= 5) return 'yellow';   // Ex: quelques cigarettes, bière, burger
+  if (weightedScore <= 10) return 'orange';  // Ex: plusieurs cigarettes, alcool + nourriture
+  return 'red';                              // Ex: beaucoup de cigarettes, alcool fort, combinaisons lourdes
+};
+
+// Déterminer l'icône, la couleur et le fond appropriés selon l'état d'équilibre de la journée
+export const getDayMoodIcon = (dayConsumption: DayConsumption | null): { 
+  icon: React.ComponentType<{ className?: string }>, 
+  color: string, 
+  bgGradient: string 
+} => {
+  if (!dayConsumption) return { 
+    icon: Flower2, 
+    color: 'text-emerald-600', 
+    bgGradient: 'from-emerald-100 to-green-100' 
+  };
+  
+  const weightedScore = calculateDayWeight(dayConsumption);
+  const totalConsumptions = getTotalConsumptions(dayConsumption);
+  
+  // Journée parfaite - aucune consommation
+  if (weightedScore === 0) {
+    return { 
+      icon: Flower2, 
+      color: 'text-emerald-600', 
+      bgGradient: 'from-emerald-100 to-green-100' 
+    }; // Fleur verte - sérénité totale
+  }
+  
+  // Journée légère - consommations mineures (score ≤ 5 = jaune)
+  if (weightedScore <= 5) {
+    return { 
+      icon: Leaf, 
+      color: 'text-emerald-500', 
+      bgGradient: 'from-emerald-100 to-emerald-200' 
+    }; // Feuille vert - équilibre naturel
+  }
+  
+  // Journée modérée - quelques consommations (score ≤ 10 = orange)
+  if (weightedScore <= 10) {
+    return { 
+      icon: Sun, 
+      color: 'text-amber-500', 
+      bgGradient: 'from-amber-100 to-yellow-100' 
+    }; // Soleil orange - avec bienveillance
+  }
+  
+  // Journée très difficile - beaucoup de consommations
+  return { 
+    icon: Heart, 
+    color: 'text-rose-500', 
+    bgGradient: 'from-rose-100 to-pink-100' 
+  }; // Cœur rose - compassion et bienveillance
 };
 
 // Ancienne fonction pour compatibilité

@@ -7,7 +7,7 @@ import StatsCards from '@/components/history/StatsCards';
 import StatsChart from '@/components/history/StatsChart';
 import CategoryBreakdown from '@/components/history/CategoryBreakdown';
 import { StatsCardSkeleton, ChartSkeleton } from '@/components/ui/Skeleton';
-import { BarChart3, User } from 'lucide-react';
+import { BarChart3, User, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function HistoryPage() {
   const { user } = useAuth();
@@ -53,33 +53,33 @@ export default function HistoryPage() {
   // Pas de skeleton ici, on affiche la structure normale
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
-          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl items-center justify-center shadow-xl">
-            <BarChart3 className="w-8 h-8 text-white" />
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="hidden md:flex w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl items-center justify-center shadow-lg">
+            <BarChart3 className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
+          <h1 className="text-xl md:text-2xl font-light text-gray-800">
             Réflexion et <span className="font-semibold text-emerald-600">évolution</span>
           </h1>
         </div>
-        <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-          Analysez vos statistiques hebdomadaires et mensuelles avec des graphiques détaillés et des métriques de progression
+        <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+          Statistiques hebdomadaires et mensuelles avec graphiques détaillés
         </p>
       </div>
 
       {/* Contrôles de navigation */}
-      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20">
-        <div className="space-y-6">
-          {/* Sélecteur de vue et bouton aujourd'hui */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex bg-emerald-50 rounded-2xl p-2 border border-emerald-100">
+      <div className="bg-white/70 backdrop-blur-lg rounded-xl p-4 shadow-lg border border-white/20">
+        <div className="space-y-3">
+          {/* Ligne 1: Semaine/Mois + Aujourd'hui */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex bg-emerald-50 rounded-xl p-1 border border-emerald-100">
               <button
                 onClick={() => setViewType('weekly')}
-                className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   viewType === 'weekly'
-                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md'
                     : 'text-emerald-700 hover:bg-emerald-100'
                 }`}
               >
@@ -87,9 +87,9 @@ export default function HistoryPage() {
               </button>
               <button
                 onClick={() => setViewType('monthly')}
-                className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   viewType === 'monthly'
-                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md'
                     : 'text-emerald-700 hover:bg-emerald-100'
                 }`}
               >
@@ -99,35 +99,36 @@ export default function HistoryPage() {
 
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-2xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-xl transition-all shadow-md hover:shadow-lg"
             >
               Aujourd&apos;hui
             </button>
           </div>
 
-          {/* Affichage de la période */}
-          <div className="text-center">
-            <div className="inline-block bg-emerald-50 rounded-2xl px-6 py-3 border border-emerald-100">
-              <div className="text-lg font-medium text-emerald-800">
-                {formatDateRange()}
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation temporelle */}
-          <div className="flex items-center justify-center gap-4">
+          {/* Ligne 2: Précédent + Date + Suivant */}
+          <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => navigateTime('prev')}
-              className="flex-1 sm:flex-none px-4 py-3 bg-white/70 hover:bg-white text-gray-700 rounded-2xl transition-all shadow-md hover:shadow-lg backdrop-blur-sm border border-gray-200"
+              className="flex items-center justify-center w-10 h-10 bg-white/70 hover:bg-white text-gray-700 rounded-xl transition-all shadow-sm hover:shadow-md backdrop-blur-sm border border-gray-200"
+              title="Période précédente"
             >
-              ← Précédent
+              <ChevronLeft className="w-5 h-5" />
             </button>
+            
+            <div className="flex-1 mx-2">
+              <div className="bg-emerald-50 rounded-xl px-3 py-2 border border-emerald-100 text-center">
+                <div className="text-sm font-medium text-emerald-800">
+                  {formatDateRange()}
+                </div>
+              </div>
+            </div>
             
             <button
               onClick={() => navigateTime('next')}
-              className="flex-1 sm:flex-none px-4 py-3 bg-white/70 hover:bg-white text-gray-700 rounded-2xl transition-all shadow-md hover:shadow-lg backdrop-blur-sm border border-gray-200"
+              className="flex items-center justify-center w-10 h-10 bg-white/70 hover:bg-white text-gray-700 rounded-xl transition-all shadow-sm hover:shadow-md backdrop-blur-sm border border-gray-200"
+              title="Période suivante"
             >
-              Suivant →
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -135,7 +136,7 @@ export default function HistoryPage() {
 
       {/* Cartes de statistiques */}
       {!user || isLoading ? (
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <StatsCardSkeleton key={i} />
           ))}
@@ -172,7 +173,7 @@ export default function HistoryPage() {
               <h2 className="text-3xl font-light text-gray-800 mb-2">
                 Répartition par <span className="font-semibold text-emerald-600">catégorie</span>
               </h2>
-              <p className="text-gray-600">Détail des consommations par type : alcool, cigarettes et nutrition</p>
+              <p className="text-gray-600">Détail des consommations par type : alcool, cigarettes et nourriture transformée</p>
             </>
           )}
         </div>

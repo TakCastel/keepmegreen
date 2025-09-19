@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight } from '@/utils/stats';
+import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight, getDayMoodIcon } from '@/utils/stats';
 import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils, Edit3 } from 'lucide-react';
 // import DayColorInfo from '@/components/ui/DayColorTooltip';
 import DynamicIcon from '@/components/ui/DynamicIcon';
@@ -42,11 +42,14 @@ export default function TodayStats() {
   const weightedScore = dayConsumption ? calculateDayWeight(dayConsumption) : 0;
   const dayColor = getDayColorByWeight(weightedScore);
   
+  // Obtenir l'icône, la couleur et le fond appropriés selon l'état d'équilibre réel
+  const { icon: MoodIcon, color: moodColor, bgGradient: moodBgGradient } = getDayMoodIcon(dayConsumption);
+  
   const colorConfig = {
-    green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower2 },
-    yellow: { bg: 'bg-amber-400', text: 'En équilibre', icon: Leaf },
-    orange: { bg: 'bg-orange-400', text: 'Avec bienveillance', icon: Sun },
-    red: { bg: 'bg-rose-400', text: 'Journée difficile', icon: Sunrise },
+    green: { bg: 'bg-emerald-500', text: 'Journée sereine !' },
+    yellow: { bg: 'bg-amber-400', text: 'En équilibre' },
+    orange: { bg: 'bg-orange-400', text: 'Avec bienveillance' },
+    red: { bg: 'bg-rose-400', text: 'Journée difficile' },
   };
 
   const currentColorConfig = colorConfig[dayColor];
@@ -71,13 +74,12 @@ export default function TodayStats() {
             <Edit3 className="w-4 h-4" />
             <span className="hidden sm:inline">Modifier</span>
           </button>
-          <div className={`w-6 h-6 rounded-full ${currentColorConfig.bg} shadow-md`}></div>
         </div>
       </div>
 
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-green-100 rounded-full flex items-center justify-center">
-          <currentColorConfig.icon className="w-8 h-8 text-emerald-600" />
+        <div className={`w-16 h-16 bg-gradient-to-br ${moodBgGradient} rounded-full flex items-center justify-center`}>
+          <MoodIcon className={`w-8 h-8 ${moodColor}`} />
         </div>
         <div>
           <p className="text-xl font-medium text-gray-800">{currentColorConfig.text}</p>

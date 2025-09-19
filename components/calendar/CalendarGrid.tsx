@@ -9,12 +9,13 @@ import { generateCalendarData, getGreenDaysPercentage } from '@/utils/stats';
 import { CalendarDay } from '@/types';
 import CalendarDayModal from './CalendarDayModal';
 import { CalendarSkeleton } from '@/components/ui/Skeleton';
-import { Flower, BarChart3, User } from 'lucide-react';
+import { Flower, BarChart3, User, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function CalendarGrid() {
   const { user } = useAuth();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth()); // Index du mois actuel (0-11)
   
   const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
 
@@ -79,6 +80,31 @@ export default function CalendarGrid() {
     red: 'bg-rose-400',
   };
 
+  // Fonctions de navigation pour mobile
+  const goToPreviousMonth = () => {
+    if (currentMonthIndex > 0) {
+      setCurrentMonthIndex(currentMonthIndex - 1);
+    } else {
+      setCurrentMonthIndex(11);
+      setSelectedYear(selectedYear - 1);
+    }
+  };
+
+  const goToNextMonth = () => {
+    if (currentMonthIndex < 11) {
+      setCurrentMonthIndex(currentMonthIndex + 1);
+    } else {
+      setCurrentMonthIndex(0);
+      setSelectedYear(selectedYear + 1);
+    }
+  };
+
+  const goToCurrentMonth = () => {
+    const now = new Date();
+    setCurrentMonthIndex(now.getMonth());
+    setSelectedYear(now.getFullYear());
+  };
+
   // Afficher le skeleton seulement si l'utilisateur est authentifié ET que les données sont en cours de chargement
   if (!user || isLoading) {
     return <CalendarSkeleton />;
@@ -100,9 +126,9 @@ export default function CalendarGrid() {
           </select>
         </div>
         
-        <div className="text-right bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
-          <div className="text-3xl font-light text-emerald-700">{greenDaysPercentage}%</div>
-          <div className="text-sm text-emerald-600 font-medium">de sérénité</div>
+        <div className="text-right bg-emerald-50 rounded-xl md:rounded-2xl p-3 md:p-4 border border-emerald-100">
+          <div className="text-2xl md:text-3xl font-light text-emerald-700">{greenDaysPercentage}%</div>
+          <div className="text-xs md:text-sm text-emerald-600 font-medium">de sérénité</div>
         </div>
       </div>
 
@@ -118,8 +144,124 @@ export default function CalendarGrid() {
         <span className="font-medium">Plus</span>
       </div>
 
-      {/* Calendrier classique mois par mois */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Version mobile avec pagination */}
+      <div className="md:hidden">
+        {/* Navigation mobile */}
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={goToPreviousMonth}
+            className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+            title="Mois précédent"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-800 capitalize">
+              {monthsData[currentMonthIndex]?.name}
+            </h3>
+            <button
+              onClick={goToCurrentMonth}
+              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+            >
+              Retour à aujourd'hui
+            </button>
+          </div>
+          
+          <button
+            onClick={goToNextMonth}
+            className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+            title="Mois suivant"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Calendrier mobile - mois unique */}
+        {monthsData[currentMonthIndex] && (
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg">
+            {/* En-têtes des jours de la semaine */}
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+                <div key={index} className="text-sm font-medium text-gray-500 text-center py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            {/* Grille des jours du mois */}
+            <div className="space-y-2">
+              {monthsData[currentMonthIndex].weeks.map((week, weekIndex) => (
+                <div key={weekIndex} className="grid grid-cols-7 gap-2">
+                  {week.map((day, dayIndex) => {
+                    const dayData = {
+                      date: day.date,
+                      color: day.color,
+                      totalConsumptions: day.totalConsumptions,
+                      hasData: day.hasData
+                    } as CalendarDay;
+                    
+                    return (
+                      <button
+                        key={dayIndex}
+                        onClick={() => day.isCurrentMonth && !day.isFuture ? setSelectedDay(dayData) : null}
+                        disabled={!day.isCurrentMonth || day.isFuture}
+                        className={`
+                          relative w-10 h-10 rounded-xl text-sm font-medium transition-all duration-200
+                          flex items-center justify-center
+                          ${!day.isCurrentMonth 
+                            ? 'text-gray-300 cursor-default'
+                            : day.isFuture
+                            ? 'bg-gray-200 text-gray-500 cursor-default'
+                            : `${colorClasses[day.color]} text-white hover:scale-110 hover:shadow-lg`
+                          }
+                          ${day.isToday && day.isCurrentMonth 
+                            ? 'ring-2 ring-gray-800' 
+                            : ''
+                          }
+                        `}
+                        title={
+                          day.isCurrentMonth 
+                            ? `${format(new Date(day.date), 'dd MMMM yyyy', { locale: fr })} - ${day.totalConsumptions} consommation${day.totalConsumptions > 1 ? 's' : ''}`
+                            : ''
+                        }
+                      >
+                        {day.day}
+                        
+                        {/* Indicateur discret pour aujourd'hui */}
+                        {day.isToday && day.isCurrentMonth && (
+                          <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gray-800 rounded-full"></div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            
+            {/* Statistiques du mois */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="text-center">
+                  <div className="text-2xl font-light text-emerald-600">
+                    {monthsData[currentMonthIndex].weeks.flat().filter(d => d.isCurrentMonth && d.color === 'green').length}
+                  </div>
+                  <div className="text-gray-600 font-medium">Jours sereins</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-light text-purple-600">
+                    {monthsData[currentMonthIndex].weeks.flat().reduce((sum, d) => d.isCurrentMonth ? sum + d.totalConsumptions : sum, 0)}
+                  </div>
+                  <div className="text-gray-600 font-medium">Prises de conscience</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Version desktop - calendrier classique mois par mois */}
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {monthsData.map((month) => (
           <div key={month.month} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-gray-200 shadow-lg">
             

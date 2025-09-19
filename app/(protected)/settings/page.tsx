@@ -43,37 +43,39 @@ export default function SettingsPage() {
     <div className="space-y-10">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
-          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-slate-400 to-slate-500 rounded-3xl items-center justify-center shadow-xl">
-            <SettingsIcon className="w-8 h-8 text-white" />
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="hidden md:flex w-12 h-12 bg-gradient-to-br from-slate-400 to-slate-500 rounded-2xl items-center justify-center shadow-lg">
+            <SettingsIcon className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
-            Paramètres
+          <h1 className="text-xl md:text-2xl font-light text-gray-800">
+            <span className="md:hidden">{tabs.find(tab => tab.id === activeTab)?.label || 'Paramètres'}</span>
+            <span className="hidden md:inline">Paramètres</span>
           </h1>
         </div>
-        <p className="text-gray-600 text-base md:text-lg">
+        <p className="text-gray-600 text-sm md:text-base">
           Gérez vos données et préférences de compte
         </p>
       </div>
 
       {/* Onglets */}
-      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20">
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="bg-white/70 backdrop-blur-lg rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-xl border border-white/20">
+        <div className="flex flex-row justify-center gap-2 md:gap-4 mb-6 md:mb-8">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${
+                className={`flex items-center justify-center gap-2 md:gap-4 px-3 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl transition-all ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-slate-500 to-slate-600 text-white shadow-lg'
                     : 'bg-white/70 text-gray-700 hover:bg-white hover:shadow-md border border-gray-200'
                 }`}
+                title={tab.label}
               >
-                <Icon className="w-6 h-6" />
-                <div className="text-left">
-                  <div className="font-medium">{tab.label}</div>
+                <Icon className="w-5 h-5 md:w-6 md:h-6" />
+                <div className="text-left hidden md:block">
+                  <div className="font-medium text-sm md:text-base">{tab.label}</div>
                   <div className="text-xs opacity-80">{tab.description}</div>
                 </div>
               </button>
@@ -82,7 +84,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Contenu des onglets */}
-        <div className="border-t border-gray-200 pt-8">
+        <div className="border-t border-gray-200 pt-6 md:pt-8">
           {activeTab === 'consumption' && <ConsumptionEditor presetDate={presetDate || undefined} />}
           {activeTab === 'account' && <AccountSettings />}
           {activeTab === 'legal' && (
