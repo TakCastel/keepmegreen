@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { format, startOfYear, endOfYear, eachWeekOfInterval, startOfWeek, eachDayOfInterval, endOfWeek } from 'date-fns';
+import { format, startOfYear, endOfYear, startOfWeek, eachDayOfInterval, endOfWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAllConsumptions } from '@/hooks/useConsumptions';
 import { useAuth } from '@/hooks/useAuth';

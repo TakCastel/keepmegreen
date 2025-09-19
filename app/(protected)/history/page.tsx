@@ -6,7 +6,7 @@ import { useWeekConsumptions, useMonthConsumptions } from '@/hooks/useConsumptio
 import StatsCards from '@/components/history/StatsCards';
 import StatsChart from '@/components/history/StatsChart';
 import CategoryBreakdown from '@/components/history/CategoryBreakdown';
-import { StatsCardSkeleton, ChartSkeleton, PageHeaderSkeleton } from '@/components/ui/Skeleton';
+import { StatsCardSkeleton, ChartSkeleton } from '@/components/ui/Skeleton';
 import { BarChart3, User } from 'lucide-react';
 
 export default function HistoryPage() {

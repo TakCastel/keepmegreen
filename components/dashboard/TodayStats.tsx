@@ -5,9 +5,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import { getTotalConsumptions, getDayColor, calculateDayWeight, getDayColorByWeight } from '@/utils/stats';
+import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight } from '@/utils/stats';
 import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils, Edit3 } from 'lucide-react';
-import DayColorInfo from '@/components/ui/DayColorTooltip';
+// import DayColorInfo from '@/components/ui/DayColorTooltip';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { 
   ALCOHOL_CONFIG, 
