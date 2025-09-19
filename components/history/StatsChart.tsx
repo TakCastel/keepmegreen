@@ -13,6 +13,7 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { DayConsumption } from '@/types';
 import { getAggregatedStats } from '@/utils/stats';
+import { CATEGORY_COLORS } from '@/constants/colors';
 
 ChartJS.register(
   CategoryScale,
@@ -56,8 +57,8 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
         data: consumptions.slice(0, 10).reverse().map(c => 
           c.alcohol.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: 'rgba(147, 51, 234, 0.7)',
-        borderColor: 'rgba(147, 51, 234, 1)',
+        backgroundColor: `${CATEGORY_COLORS.alcohol.chart}80`,
+        borderColor: CATEGORY_COLORS.alcohol.chart,
         borderWidth: 1,
       },
       {
@@ -65,8 +66,8 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
         data: consumptions.slice(0, 10).reverse().map(c => 
           c.cigarettes.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: 'rgba(249, 115, 22, 0.7)',
-        borderColor: 'rgba(249, 115, 22, 1)',
+        backgroundColor: `${CATEGORY_COLORS.cigarettes.chart}80`,
+        borderColor: CATEGORY_COLORS.cigarettes.chart,
         borderWidth: 1,
       },
       {
@@ -74,8 +75,8 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
         data: consumptions.slice(0, 10).reverse().map(c => 
           c.junkfood.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: 'rgba(59, 130, 246, 0.7)',
-        borderColor: 'rgba(59, 130, 246, 1)',
+        backgroundColor: `${CATEGORY_COLORS.junkfood.chart}80`,
+        borderColor: CATEGORY_COLORS.junkfood.chart,
         borderWidth: 1,
       },
     ],
@@ -88,14 +89,14 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
       {
         data: [stats.alcohol.total, stats.cigarettes.total, stats.junkfood.total],
         backgroundColor: [
-          'rgba(147, 51, 234, 0.7)',
-          'rgba(249, 115, 22, 0.7)',
-          'rgba(59, 130, 246, 0.7)',
+          `${CATEGORY_COLORS.alcohol.chart}80`,
+          `${CATEGORY_COLORS.cigarettes.chart}80`,
+          `${CATEGORY_COLORS.junkfood.chart}80`,
         ],
         borderColor: [
-          'rgba(147, 51, 234, 1)',
-          'rgba(249, 115, 22, 1)',
-          'rgba(59, 130, 246, 1)',
+          CATEGORY_COLORS.alcohol.chart,
+          CATEGORY_COLORS.cigarettes.chart,
+          CATEGORY_COLORS.junkfood.chart,
         ],
         borderWidth: 2,
       },

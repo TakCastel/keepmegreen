@@ -37,7 +37,7 @@ export default function Home() {
                 
                 <p className="text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed px-4 lg:px-0">
                   Une approche bienveillante pour réduire vos consommations d&apos;alcool, 
-                  cigarettes et malbouffe. Visualisez vos progrès avec un calendrier zen.
+                  cigarettes et nutrition. Visualisez vos progrès avec un calendrier zen.
                 </p>
               </div>
 
@@ -198,14 +198,14 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Carte Malbouffe - en bas au centre */}
+              {/* Carte Nutrition - en bas au centre */}
               <div className="absolute bottom-0 left-1/2 w-72 h-48 bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/20 transform -translate-x-1/2 translate-x-32 translate-y-8 flex items-center">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center flex-shrink-0">
                     <Utensils className="w-8 h-8 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-light text-gray-800 mb-2 tracking-wide font-serif">Malbouffe</h3>
+                    <h3 className="text-2xl font-light text-gray-800 mb-2 tracking-wide font-serif">Nutrition</h3>
                     <p className="text-base text-gray-600 leading-relaxed">
                       Surveillez vos écarts alimentaires pour améliorer votre nutrition.
                     </p>
@@ -240,15 +240,15 @@ export default function Home() {
                 </p>
               </div>
               
-              {/* Malbouffe */}
+              {/* Nutrition */}
               <div className="bg-white/70 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/20">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Utensils className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Malbouffe</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Nutrition</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
                   Surveillez vos écarts alimentaires pour améliorer votre nutrition. 
-                  Réduisez la malbouffe et reprenez le contrôle de votre alimentation.
+                  Améliorez votre nutrition et reprenez le contrôle de votre alimentation.
                 </p>
               </div>
             </div>
@@ -394,11 +394,11 @@ export default function Home() {
                       <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
                         <Utensils className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
                       </div>
-                      <span className="font-medium text-gray-800 text-sm md:text-base">Exemple : Malbouffe</span>
+                      <span className="font-medium text-gray-800 text-sm md:text-base">Exemple : Nutrition</span>
                     </div>
                     <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
                       Maintenant, Marie fait plus attention à ce qu'elle mange. 
-                      Elle évite naturellement la malbouffe pour avoir moins de rouge sur son calendrier.
+                      Elle évite naturellement les aliments peu nutritifs pour avoir moins de rouge sur son calendrier.
                     </p>
                   </div>
                 </div>
@@ -487,7 +487,7 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
-                "J'ai essayé cette semaine pour ma malbouffe. C'est dur de cliquer sur le bouton 
+                "J'ai essayé cette semaine pour ma nutrition. C'est dur de cliquer sur le bouton 
                 à chaque fois que je mange de la merde, mais ça m'aide vraiment à me contrôler."
               </p>
               <div className="flex items-center">
@@ -537,9 +537,32 @@ export default function Home() {
                 <span className="font-bold text-emerald-400">Keepme</span><span className="font-light">green</span>
               </span>
             </div>
-            <p className="text-sm md:text-base text-gray-400 mb-3 md:mb-4 px-4">
+            <p className="text-sm md:text-base text-gray-400 mb-6 md:mb-8 px-4">
               Surveillez et réduisez vos mauvaises habitudes au quotidien
             </p>
+            
+            {/* Liens légaux */}
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-6">
+              <Link
+                href="/mentions-legales"
+                className="text-gray-400 hover:text-emerald-400 transition-colors text-sm md:text-base"
+              >
+                Mentions légales
+              </Link>
+              <Link
+                href="/politique-confidentialite"
+                className="text-gray-400 hover:text-emerald-400 transition-colors text-sm md:text-base"
+              >
+                Politique de confidentialité
+              </Link>
+              <Link
+                href="/cgu"
+                className="text-gray-400 hover:text-emerald-400 transition-colors text-sm md:text-base"
+              >
+                CGU
+              </Link>
+            </div>
+            
             <p className="text-xs md:text-sm text-gray-500">
               © 2024 Keepmegreen. Tous droits réservés.
             </p>

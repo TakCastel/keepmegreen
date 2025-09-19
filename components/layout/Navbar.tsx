@@ -9,6 +9,9 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  
+  // Debug: afficher le pathname actuel
+  console.log('Current pathname:', pathname);
 
   const handleLogout = async () => {
     await logout();
@@ -41,7 +44,7 @@ export default function Navbar() {
           <div className="hidden xl:flex items-center space-x-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               
               return (
                 <Link
@@ -49,11 +52,11 @@ export default function Navbar() {
                   href={item.href}
                   className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg'
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg ring-2 ring-emerald-300'
                       : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-emerald-600/70'}`} style={isActive ? {} : {filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.3))'}} />
+                  <Icon className="w-4 h-4" />
                   {item.label}
                 </Link>
               );
@@ -87,7 +90,7 @@ export default function Navbar() {
           <div className="flex items-center justify-around bg-emerald-50 rounded-2xl p-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               
               return (
                 <Link
@@ -95,7 +98,7 @@ export default function Navbar() {
                   href={item.href}
                   className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md'
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md ring-2 ring-emerald-300'
                       : 'text-gray-600 hover:bg-white hover:text-emerald-700'
                   }`}
                 >

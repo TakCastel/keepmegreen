@@ -25,7 +25,7 @@ const InfoBanner = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-2xl p-6 mb-8 relative">
+    <div className="bg-transparent md:bg-gradient-to-r md:from-emerald-50 md:to-green-50 md:border md:border-emerald-200 rounded-2xl p-6 mb-8 relative">
       <button
         onClick={handleClose}
         className="absolute top-4 right-4 text-emerald-600 hover:text-emerald-800 transition-colors p-1 hover:bg-emerald-100 rounded-full"

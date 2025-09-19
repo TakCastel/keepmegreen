@@ -17,7 +17,7 @@ export default function CalendarPage() {
           </h1>
         </div>
         <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-          Contemplez votre parcours d&apos;équilibre avec une vue apaisante de vos journées
+          Visualisez votre année complète avec un calendrier coloré qui révèle vos patterns de consommation jour après jour
         </p>
       </div>
 

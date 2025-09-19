@@ -9,6 +9,7 @@ import {
 } from '@/types';
 import { Wine, Cigarette, Utensils, Flower, LucideIcon } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
+import { CATEGORY_COLORS } from '@/constants/colors';
 
 interface CategoryBreakdownProps {
   consumptions: DayConsumption[];
@@ -37,11 +38,11 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
       total: stats.alcohol.total,
       breakdown: stats.alcohol.breakdown,
       config: ALCOHOL_CONFIG,
-      color: 'text-purple-700',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-100',
-      progressColor: 'bg-purple-500',
-      iconGradient: 'from-purple-400 to-purple-500',
+      color: 'text-rose-600',
+      bgColor: 'bg-rose-50',
+      borderColor: 'border-rose-100',
+      progressColor: 'bg-rose-400',
+      iconGradient: 'from-rose-400 to-rose-500',
     },
     {
       title: 'Cigarettes',
@@ -49,11 +50,11 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
       total: stats.cigarettes.total,
       breakdown: stats.cigarettes.breakdown,
       config: CIGARETTE_CONFIG,
-      color: 'text-orange-700',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-100',
-      progressColor: 'bg-orange-500',
-      iconGradient: 'from-orange-400 to-orange-500',
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-50',
+      borderColor: 'border-slate-100',
+      progressColor: 'bg-slate-400',
+      iconGradient: 'from-slate-400 to-slate-500',
     },
     {
       title: 'Nutrition',
@@ -61,11 +62,11 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
       total: stats.junkfood.total,
       breakdown: stats.junkfood.breakdown,
       config: JUNKFOOD_CONFIG,
-      color: 'text-blue-700',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-100',
-      progressColor: 'bg-blue-500',
-      iconGradient: 'from-blue-400 to-blue-500',
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-100',
+      progressColor: 'bg-emerald-400',
+      iconGradient: 'from-emerald-400 to-emerald-500',
     },
   ];
 

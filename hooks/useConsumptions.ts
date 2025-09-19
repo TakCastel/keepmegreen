@@ -23,7 +23,10 @@ export const useDayConsumption = (userId: string | undefined, date: string) => {
     queryKey: ['consumption', userId, date],
     queryFn: () => userId ? getDayConsumption(userId, date) : null,
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, // 2 minutes pour les données du jour
+    staleTime: 30 * 1000, // 30 secondes de cache pour éviter les refetch trop fréquents
+    refetchOnWindowFocus: false, // Pas de refetch au focus (trop agressif)
+    refetchOnMount: true, // Refetch à chaque montage
+    refetchInterval: false, // Pas de refetch automatique
     initialData: null, // Données initiales pour éviter le loading state
   });
 };
@@ -60,7 +63,7 @@ export const useAllConsumptions = (userId: string | undefined) => {
     queryKey: ['consumptions', 'all', userId],
     queryFn: () => userId ? getAllUserConsumptions(userId) : [],
     enabled: !!userId,
-    staleTime: 5 * 60 * 1000, // 5 minutes pour toutes les données
+    staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
@@ -84,18 +87,132 @@ export const useAddConsumption = () => {
       quantity?: number;
     }) => addConsumption(userId, date, category, type, quantity),
     onSuccess: (_, variables) => {
-      // Invalider les requêtes liées à cette date et cet utilisateur
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumption', variables.userId, variables.date] 
-      });
+      // Mise à jour optimiste du cache - ajouter directement l'élément
+      const queryKey = ['consumption', variables.userId, variables.date];
+      const currentData = queryClient.getQueryData(queryKey) as DayConsumption | null;
+      
+      if (currentData) {
+        // Vérifier si l'élément existe déjà
+        const existingItemIndex = (currentData[variables.category] || []).findIndex(
+          item => item.type === variables.type
+        );
+        
+        let updatedCategoryData;
+        if (existingItemIndex !== -1) {
+          // Incrémenter la quantité de l'élément existant
+          updatedCategoryData = [...(currentData[variables.category] || [])];
+          updatedCategoryData[existingItemIndex] = {
+            ...updatedCategoryData[existingItemIndex],
+            quantity: updatedCategoryData[existingItemIndex].quantity + (variables.quantity || 1),
+            timestamp: new Date().toISOString()
+          };
+        } else {
+          // Ajouter un nouvel élément
+          const newItem = {
+            type: variables.type,
+            quantity: variables.quantity || 1,
+            timestamp: new Date().toISOString()
+          };
+          updatedCategoryData = [
+            ...(currentData[variables.category] || []),
+            newItem
+          ];
+        }
+        
+        // Mettre à jour les données en cache
+        const updatedData = {
+          ...currentData,
+          [variables.category]: updatedCategoryData
+        };
+        
+        // Mettre à jour le cache immédiatement
+        queryClient.setQueryData(queryKey, updatedData);
+      } else {
+        // Si pas de données en cache, invalider pour déclencher un refetch
+        queryClient.invalidateQueries({ queryKey });
+      }
+      
+      // Mise à jour optimiste de useAllConsumptions
+      const allConsumptionsKey = ['consumptions', 'all', variables.userId];
+      const allConsumptionsData = queryClient.getQueryData(allConsumptionsKey) as DayConsumption[] | undefined;
+      
+      if (allConsumptionsData) {
+        // Trouver l'index de la date dans les données
+        const dayIndex = allConsumptionsData.findIndex(day => day.date === variables.date);
+        
+        if (dayIndex !== -1) {
+          // Mettre à jour la journée existante
+          const updatedAllData = [...allConsumptionsData];
+          const dayData = updatedAllData[dayIndex];
+          
+          // Vérifier si l'élément existe déjà
+          const existingItemIndex = (dayData[variables.category] || []).findIndex(
+            item => item.type === variables.type
+          );
+          
+          let updatedCategoryData;
+          if (existingItemIndex !== -1) {
+            // Incrémenter la quantité de l'élément existant
+            updatedCategoryData = [...(dayData[variables.category] || [])];
+            updatedCategoryData[existingItemIndex] = {
+              ...updatedCategoryData[existingItemIndex],
+              quantity: updatedCategoryData[existingItemIndex].quantity + (variables.quantity || 1),
+              timestamp: new Date().toISOString()
+            };
+          } else {
+            // Ajouter un nouvel élément
+            const newItem = {
+              type: variables.type,
+              quantity: variables.quantity || 1,
+              timestamp: new Date().toISOString()
+            };
+            updatedCategoryData = [
+              ...(dayData[variables.category] || []),
+              newItem
+            ];
+          }
+          
+          updatedAllData[dayIndex] = {
+            ...dayData,
+            [variables.category]: updatedCategoryData
+          };
+          
+          queryClient.setQueryData(allConsumptionsKey, updatedAllData);
+        } else {
+          // Créer une nouvelle journée
+          const newDay: DayConsumption = {
+            date: variables.date,
+            alcohol: variables.category === 'alcohol' ? [{
+              type: variables.type as AlcoholType,
+              quantity: variables.quantity || 1,
+              timestamp: new Date().toISOString()
+            }] : [],
+            cigarettes: variables.category === 'cigarettes' ? [{
+              type: variables.type as CigaretteType,
+              quantity: variables.quantity || 1,
+              timestamp: new Date().toISOString()
+            }] : [],
+            junkfood: variables.category === 'junkfood' ? [{
+              type: variables.type as JunkfoodType,
+              quantity: variables.quantity || 1,
+              timestamp: new Date().toISOString()
+            }] : []
+          };
+          
+          const updatedAllData = [...allConsumptionsData, newDay].sort((a, b) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+          
+          queryClient.setQueryData(allConsumptionsKey, updatedAllData);
+        }
+      }
+      
+      // Invalider les autres requêtes (plus légères)
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'week', variables.userId] 
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
-      });
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumptions', 'all', variables.userId] 
       });
     },
   });
@@ -120,18 +237,110 @@ export const useRemoveConsumption = () => {
       quantity?: number;
     }) => removeConsumption(userId, date, category, type, quantity),
     onSuccess: (_, variables) => {
-      // Invalider les requêtes liées à cette date et cet utilisateur
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumption', variables.userId, variables.date] 
-      });
+      // Mise à jour optimiste du cache - supprimer directement l'élément
+      const queryKey = ['consumption', variables.userId, variables.date];
+      const currentData = queryClient.getQueryData(queryKey) as DayConsumption | null;
+      
+      if (currentData) {
+        // Trouver l'élément à modifier
+        const existingItemIndex = (currentData[variables.category] || []).findIndex(
+          item => item.type === variables.type
+        );
+        
+        let updatedCategoryData;
+        if (existingItemIndex !== -1) {
+          // Décrémenter la quantité de l'élément existant
+          updatedCategoryData = [...(currentData[variables.category] || [])];
+          const newQuantity = updatedCategoryData[existingItemIndex].quantity - (variables.quantity || 1);
+          
+          if (newQuantity <= 0) {
+            // Supprimer l'élément si la quantité devient 0 ou négative
+            updatedCategoryData = updatedCategoryData.filter((_, index) => index !== existingItemIndex);
+          } else {
+            // Mettre à jour la quantité
+            updatedCategoryData[existingItemIndex] = {
+              ...updatedCategoryData[existingItemIndex],
+              quantity: newQuantity,
+              timestamp: new Date().toISOString()
+            };
+          }
+        } else {
+          updatedCategoryData = currentData[variables.category] || [];
+        }
+        
+        // Mettre à jour les données en cache
+        const updatedData = {
+          ...currentData,
+          [variables.category]: updatedCategoryData
+        };
+        
+        // Mettre à jour le cache immédiatement
+        queryClient.setQueryData(queryKey, updatedData);
+      }
+      
+      // Mise à jour optimiste de useAllConsumptions
+      const allConsumptionsKey = ['consumptions', 'all', variables.userId];
+      const allConsumptionsData = queryClient.getQueryData(allConsumptionsKey) as DayConsumption[] | undefined;
+      
+      if (allConsumptionsData) {
+        // Trouver l'index de la date dans les données
+        const dayIndex = allConsumptionsData.findIndex(day => day.date === variables.date);
+        
+        if (dayIndex !== -1) {
+          // Mettre à jour la journée existante
+          const updatedAllData = [...allConsumptionsData];
+          const dayData = updatedAllData[dayIndex];
+          
+          // Trouver l'élément à modifier
+          const existingItemIndex = (dayData[variables.category] || []).findIndex(
+            item => item.type === variables.type
+          );
+          
+          let updatedCategoryData;
+          if (existingItemIndex !== -1) {
+            // Décrémenter la quantité de l'élément existant
+            updatedCategoryData = [...(dayData[variables.category] || [])];
+            const newQuantity = updatedCategoryData[existingItemIndex].quantity - (variables.quantity || 1);
+            
+            if (newQuantity <= 0) {
+              // Supprimer l'élément si la quantité devient 0 ou négative
+              updatedCategoryData = updatedCategoryData.filter((_, index) => index !== existingItemIndex);
+            } else {
+              // Mettre à jour la quantité
+              updatedCategoryData[existingItemIndex] = {
+                ...updatedCategoryData[existingItemIndex],
+                quantity: newQuantity,
+                timestamp: new Date().toISOString()
+              };
+            }
+          } else {
+            updatedCategoryData = dayData[variables.category] || [];
+          }
+          
+          updatedAllData[dayIndex] = {
+            ...dayData,
+            [variables.category]: updatedCategoryData
+          };
+          
+          // Supprimer la journée si elle est vide
+          const hasAnyConsumption = updatedAllData[dayIndex].alcohol.length > 0 || 
+                                   updatedAllData[dayIndex].cigarettes.length > 0 || 
+                                   updatedAllData[dayIndex].junkfood.length > 0;
+          
+          if (!hasAnyConsumption) {
+            updatedAllData.splice(dayIndex, 1);
+          }
+          
+          queryClient.setQueryData(allConsumptionsKey, updatedAllData);
+        }
+      }
+      
+      // Invalider les autres requêtes (plus légères)
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'week', variables.userId] 
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
-      });
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumptions', 'all', variables.userId] 
       });
     },
   });

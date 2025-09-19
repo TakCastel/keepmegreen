@@ -21,10 +21,12 @@ export default function Dashboard() {
   ) => {
     if (!user) return;
 
+    const today = format(new Date(), 'yyyy-MM-dd');
+
     try {
       await addConsumption.mutateAsync({
         userId: user.uid,
-        date: format(new Date(), 'yyyy-MM-dd'),
+        date: today,
         category,
         type,
         quantity: 1,
@@ -52,12 +54,12 @@ export default function Dashboard() {
           </h1>
         </div>
         <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-          Prenez conscience de vos habitudes avec bienveillance et cultivez votre équilibre quotidien
+          Enregistrez vos consommations quotidiennes et suivez votre progression vers un mode de vie plus équilibré
         </p>
       </div>
 
       {/* Boutons d'ajout de consommations */}
-      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 relative z-10">
+      <div className="relative z-10">
         <InfoBanner />
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -129,6 +131,33 @@ export default function Dashboard() {
               <LifeBuoy className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
                 Cherchez l&apos;équilibre, pas la perfection
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Disclaimers légaux et médicaux */}
+        <div className="mt-8 pt-6 border-t border-emerald-200">
+          <div className="space-y-3 text-sm text-gray-600">
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+              <p>
+                <strong>Disclaimer médical :</strong> Cette application ne remplace pas un suivi médical professionnel. 
+                Consultez un professionnel de santé pour toute question concernant votre bien-être.
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+              <p>
+                <strong>Usage personnel :</strong> Cette application sert uniquement à prendre conscience de vos habitudes. 
+                Aucun jugement n'est porté sur vos choix personnels.
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+              <p>
+                <strong>Confidentialité :</strong> Vos données sont privées et ne sont pas partagées avec des tiers. 
+                Vous restez maître de vos informations personnelles.
               </p>
             </div>
           </div>

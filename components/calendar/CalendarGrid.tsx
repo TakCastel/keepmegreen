@@ -264,6 +264,7 @@ export default function CalendarGrid() {
       {selectedDay && (
         <CalendarDayModal
           day={selectedDay}
+          dayConsumption={consumptions.find(c => c.date === selectedDay.date)}
           onClose={() => setSelectedDay(null)}
         />
       )}

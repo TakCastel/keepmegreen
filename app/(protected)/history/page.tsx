@@ -65,7 +65,7 @@ export default function HistoryPage() {
           </h1>
         </div>
         <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-          Contemplez votre parcours avec compassion et observez vos patterns de conscience
+          Analysez vos statistiques hebdomadaires et mensuelles avec des graphiques détaillés et des métriques de progression
         </p>
       </div>
 
@@ -151,9 +151,9 @@ export default function HistoryPage() {
         <div className="space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-light text-gray-800 mb-2">
-              Visualisation <span className="font-semibold text-emerald-600">harmonieuse</span>
+              Graphiques de <span className="font-semibold text-emerald-600">tendance</span>
             </h2>
-            <p className="text-gray-600">Observez vos patterns avec sérénité</p>
+            <p className="text-gray-600">Courbes d'évolution et histogrammes de vos consommations</p>
           </div>
           <StatsChart consumptions={currentData} type={viewType} />
         </div>
@@ -170,9 +170,9 @@ export default function HistoryPage() {
           ) : (
             <>
               <h2 className="text-3xl font-light text-gray-800 mb-2">
-                Exploration <span className="font-semibold text-emerald-600">détaillée</span>
+                Répartition par <span className="font-semibold text-emerald-600">catégorie</span>
               </h2>
-              <p className="text-gray-600">Comprenez vos habitudes avec compassion</p>
+              <p className="text-gray-600">Détail des consommations par type : alcool, cigarettes et nutrition</p>
             </>
           )}
         </div>

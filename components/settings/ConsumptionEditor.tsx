@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAllConsumptions, useRemoveConsumption, useMoveConsumption, useAddConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useRouter } from 'next/navigation';
 import { Trash2, Edit3, Calendar, Search, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { toast } from 'react-hot-toast';
@@ -19,6 +20,7 @@ import {
   JunkfoodType,
   ConsumptionConfig
 } from '@/types';
+import { CATEGORY_COLORS } from '@/constants/colors';
 
 interface ConsumptionEditorProps {
   presetDate?: string;
@@ -26,6 +28,7 @@ interface ConsumptionEditorProps {
 
 export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps) {
   const { user } = useAuth();
+  const router = useRouter();
   const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
   const removeConsumption = useRemoveConsumption();
   const moveConsumption = useMoveConsumption();
@@ -70,6 +73,15 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
     label: ''
   });
 
+  // État pour la modal d'ajout de consommation
+  const [addModal, setAddModal] = useState<{
+    isOpen: boolean;
+    date: string;
+  }>({
+    isOpen: false,
+    date: ''
+  });
+
   // Filtrer les consommations
   const filteredConsumptions = consumptions.filter(day => {
     const matchesDate = selectedDate ? day.date === selectedDate : true;
@@ -78,16 +90,33 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
       format(new Date(day.date), 'dd MMMM yyyy', { locale: fr }).toLowerCase().includes(searchTerm.toLowerCase())
       : true;
     
+    // Si une date spécifique est sélectionnée, afficher même les jours vides
+    if (selectedDate && day.date === selectedDate) {
+      return matchesSearch;
+    }
+    
+    // Sinon, afficher seulement les jours avec des consommations
     return matchesDate && matchesSearch && (
       day.alcohol.length > 0 || day.cigarettes.length > 0 || day.junkfood.length > 0
     );
   });
 
+  // Si une date spécifique est sélectionnée mais n'existe pas, créer un jour vide
+  const consumptionsToShow = [...filteredConsumptions];
+  if (selectedDate && !consumptions.find(day => day.date === selectedDate)) {
+    consumptionsToShow.push({
+      date: selectedDate,
+      alcohol: [],
+      cigarettes: [],
+      junkfood: []
+    });
+  }
+
   // Calculer la pagination
-  const totalPages = Math.ceil(filteredConsumptions.length / itemsPerPage);
+  const totalPages = Math.ceil(consumptionsToShow.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedConsumptions = filteredConsumptions.slice(startIndex, endIndex);
+  const paginatedConsumptions = consumptionsToShow.slice(startIndex, endIndex);
 
   // Réinitialiser à la page 1 quand les filtres changent
   useEffect(() => {
@@ -257,6 +286,63 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
     }
   };
 
+  const handleAddConsumption = async (
+    category: 'alcohol' | 'cigarettes' | 'junkfood',
+    type: AlcoholType | CigaretteType | JunkfoodType
+  ) => {
+    if (!user) return;
+
+    try {
+      // Vérifier si l'élément existe déjà pour cette date
+      const existingDay = consumptions.find(day => day.date === addModal.date);
+      const existingItem = existingDay?.[category]?.find(item => item.type === type);
+      
+      if (existingItem) {
+        // Si l'élément existe, incrémenter la quantité de 1
+        await addConsumption.mutateAsync({
+          userId: user.uid,
+          date: addModal.date,
+          category,
+          type,
+          quantity: 1, // Toujours ajouter 1, pas remplacer
+        });
+        
+        toast.success(`+1 ajouté ! (${existingItem.quantity + 1} au total)`, {
+          style: {
+            background: '#1f2937',
+            color: '#fff',
+            border: '1px solid #374151'
+          }
+        });
+      } else {
+        // Si l'élément n'existe pas, l'ajouter avec quantité 1
+        await addConsumption.mutateAsync({
+          userId: user.uid,
+          date: addModal.date,
+          category,
+          type,
+          quantity: 1,
+        });
+        
+        toast.success('Consommation ajoutée !', {
+          style: {
+            background: '#1f2937',
+            color: '#fff',
+            border: '1px solid #374151'
+          }
+        });
+      }
+    } catch {
+      toast.error('Erreur lors de l\'ajout de la consommation', {
+        style: {
+          background: '#1f2937',
+          color: '#fff',
+          border: '1px solid #374151'
+        }
+      });
+    }
+  };
+
   const handleEditConsumption = (
     date: string,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
@@ -350,67 +436,132 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
     };
 
     const categoryColors = {
-      alcohol: 'text-purple-600',
-      cigarettes: 'text-orange-600',
-      junkfood: 'text-blue-600',
+      alcohol: CATEGORY_COLORS.alcohol.textMedium,
+      cigarettes: CATEGORY_COLORS.cigarettes.textMedium,
+      junkfood: CATEGORY_COLORS.junkfood.textMedium,
     };
 
     return (
-      <div key={`${category}-${index}`} className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-            <DynamicIcon name={config.icon} className="w-5 h-5 text-gray-600" />
-          </div>
-          <div>
-            <div className="text-gray-800 font-medium">{config.label}</div>
-            <div className="text-sm text-gray-500">
-              <span className={categoryColors[category]}>{categoryLabels[category]}</span>
-              {config.volume && <span className="ml-1">({config.volume})</span>}
+      <div key={`${category}-${index}`} className="bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all">
+        {/* Version mobile - Layout vertical */}
+        <div className="block sm:hidden p-4 space-y-4">
+          {/* En-tête avec icône et infos */}
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center shadow-sm">
+              <DynamicIcon name={config.icon} className="w-6 h-6 text-gray-600" />
+            </div>
+            <div className="flex-1">
+              <div className="text-gray-800 font-semibold text-lg">{config.label}</div>
+              <div className="text-sm text-gray-500">
+                <span className={categoryColors[category]}>{categoryLabels[category]}</span>
+                {config.volume && <span className="ml-1">({config.volume})</span>}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-800">×{item.quantity}</div>
             </div>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {/* Contrôles de quantité */}
-          <div className="flex items-center gap-1 bg-white/80 rounded-xl border border-gray-200 px-2 py-1">
+          
+          {/* Contrôles de quantité - Mobile */}
+          <div className="flex items-center justify-center gap-1">
             <button
               onClick={() => handleRemoveConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
               disabled={removeConsumption.isPending || item.quantity <= 1}
-              className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              title={item.quantity <= 1 ? "Quantité minimale (1)" : "Diminuer la quantité"}
+              className="p-2 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-700 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed border border-gray-200"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3 h-3" />
             </button>
             
-            <span className="text-gray-800 font-medium min-w-[2.5rem] text-center">×{item.quantity}</span>
+            <span className="text-gray-800 font-medium min-w-[2.5rem] text-center px-2">×{item.quantity}</span>
             
             <button
               onClick={() => handleAddQuantity(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
               disabled={addConsumption.isPending}
-              className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
-              title="Augmenter la quantité"
+              className="p-2 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-700 rounded-lg transition-colors disabled:opacity-50 border border-gray-200"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3 h-3" />
             </button>
           </div>
           
-          <button
-            onClick={() => handleEditConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
-            disabled={moveConsumption.isPending}
-            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50"
-            title="Modifier la date"
-          >
-            <Edit3 className="w-4 h-4" />
-          </button>
+          {/* Actions - Mobile */}
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => handleEditConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
+              disabled={moveConsumption.isPending}
+              className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Modifier la date"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+            
+            <button
+              onClick={() => handleDeleteConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
+              disabled={removeConsumption.isPending}
+              className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Supprimer complètement"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Version desktop - Layout horizontal */}
+        <div className="hidden sm:flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+              <DynamicIcon name={config.icon} className="w-5 h-5 text-gray-600" />
+            </div>
+            <div>
+              <div className="text-gray-800 font-medium">{config.label}</div>
+              <div className="text-sm text-gray-500">
+                <span className={categoryColors[category]}>{categoryLabels[category]}</span>
+                {config.volume && <span className="ml-1">({config.volume})</span>}
+              </div>
+            </div>
+          </div>
           
-          <button
-            onClick={() => handleDeleteConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
-            disabled={removeConsumption.isPending}
-            className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-            title="Supprimer complètement"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Contrôles de quantité */}
+            <div className="flex items-center gap-1 bg-white/80 rounded-xl border border-gray-200 px-2 py-1">
+              <button
+                onClick={() => handleRemoveConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
+                disabled={removeConsumption.isPending || item.quantity <= 1}
+                className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                title={item.quantity <= 1 ? "Quantité minimale (1)" : "Diminuer la quantité"}
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              
+              <span className="text-gray-800 font-medium min-w-[2.5rem] text-center">×{item.quantity}</span>
+              
+              <button
+                onClick={() => handleAddQuantity(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
+                disabled={addConsumption.isPending}
+                className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+                title="Augmenter la quantité"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            
+            <button
+              onClick={() => handleEditConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
+              disabled={moveConsumption.isPending}
+              className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Modifier la date"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+            
+            <button
+              onClick={() => handleDeleteConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
+              disabled={removeConsumption.isPending}
+              className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Supprimer complètement"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -459,7 +610,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
               Date spécifique
               {presetDate && (
                 <span className="ml-2 px-2 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">
-                  Aujourd'hui présélectionné
+                  {format(new Date(presetDate), 'dd MMMM yyyy', { locale: fr })} présélectionnée
                 </span>
               )}
             </label>
@@ -510,7 +661,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
           </span>
         </div>
 
-        {filteredConsumptions.length === 0 ? (
+        {consumptionsToShow.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-slate-600" />
@@ -528,17 +679,52 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
         ) : (
           paginatedConsumptions.map((day) => (
             <div key={day.date} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <h4 className="text-lg font-medium text-gray-800">
-                  {format(new Date(day.date), 'EEEE dd MMMM yyyy', { locale: fr })}
-                </h4>
-                <span className="text-gray-500 text-sm">
-                  ({(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
-                     day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
-                     day.junkfood.reduce((sum, item) => sum + item.quantity, 0))} consommation{(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
-                     day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
-                     day.junkfood.reduce((sum, item) => sum + item.quantity, 0)) > 1 ? 's' : ''})
-                </span>
+              <div className="mb-4">
+                {/* Version mobile - Layout vertical */}
+                <div className="block sm:hidden">
+                  <h4 className="text-lg font-medium text-gray-800 mb-1">
+                    {format(new Date(day.date), 'EEEE dd MMMM yyyy', { locale: fr })}
+                  </h4>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500 text-sm">
+                      {(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.junkfood.reduce((sum, item) => sum + item.quantity, 0))} consommation{(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.junkfood.reduce((sum, item) => sum + item.quantity, 0)) > 1 ? 's' : ''}
+                    </span>
+                    <button
+                      onClick={() => setAddModal({ isOpen: true, date: day.date })}
+                      className="flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium text-sm shadow-md hover:shadow-lg"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span className="hidden sm:inline">Ajouter</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Version desktop - Layout horizontal */}
+                <div className="hidden sm:flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <h4 className="text-lg font-medium text-gray-800">
+                      {format(new Date(day.date), 'EEEE dd MMMM yyyy', { locale: fr })}
+                    </h4>
+                    <span className="text-gray-500 text-sm">
+                      ({(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.junkfood.reduce((sum, item) => sum + item.quantity, 0))} consommation{(day.alcohol.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.cigarettes.reduce((sum, item) => sum + item.quantity, 0) + 
+                         day.junkfood.reduce((sum, item) => sum + item.quantity, 0)) > 1 ? 's' : ''})
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setAddModal({ isOpen: true, date: day.date })}
+                    className="flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium text-sm shadow-md hover:shadow-lg"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">Ajouter</span>
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -559,6 +745,28 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
                   .map((item, index) => renderConsumptionItem(day, 'junkfood', item, index))
                   .filter(Boolean)
                 }
+
+                {/* Bouton d'ajout si le jour est vide */}
+                {day.alcohol.length === 0 && day.cigarettes.length === 0 && day.junkfood.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Plus className="w-8 h-8 text-slate-600" />
+                    </div>
+                    <h3 className="text-xl font-medium text-gray-800 mb-2">
+                      En fait, j'ai oublié quelque chose...
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      Cette journée était sereine, mais tu veux ajouter quelque chose que tu n'avais pas noté ?
+                    </p>
+                    <button
+                      onClick={() => setAddModal({ isOpen: true, date: day.date })}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium shadow-md hover:shadow-lg"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Oui, j'ai oublié quelque chose
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))
@@ -606,7 +814,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
 
       {/* Portail pour la modal de modification de date */}
       {editModal.isOpen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Modifier la date de consommation
@@ -659,7 +867,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
 
       {/* Portail pour la modal de confirmation de suppression */}
       {deleteModal.isOpen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <div className="text-center mb-6">
               {/* Icône d'alerte */}
@@ -704,6 +912,95 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {removeConsumption.isPending ? 'Suppression...' : 'Supprimer'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Portail pour la modal d'ajout de consommation */}
+      {addModal.isOpen && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
+          <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
+            <div className="text-center mb-6">
+              {/* Icône d'ajout */}
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Plus className="w-8 h-8 text-emerald-600" />
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Qu'est-ce que tu avais oublié ?
+              </h3>
+              
+              <p className="text-gray-600 text-sm mb-4">
+                {format(new Date(addModal.date), 'dd MMMM yyyy', { locale: fr })}
+              </p>
+            </div>
+            
+            {/* Boutons de catégories */}
+            <div className="space-y-3 mb-6">
+              {/* Alcool */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">Alcool</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(ALCOHOL_CONFIG).map(([type, config]) => (
+                    <button
+                      key={type}
+                      onClick={() => handleAddConsumption('alcohol', type as AlcoholType)}
+                      disabled={addConsumption.isPending}
+                      className="flex items-center gap-2 p-3 bg-pink-50 hover:bg-pink-100 border border-pink-200 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <DynamicIcon name={config.icon} className="w-4 h-4 text-pink-600" />
+                      <span className="text-sm font-medium text-pink-700">{config.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Cigarettes */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">Cigarettes</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(CIGARETTE_CONFIG).map(([type, config]) => (
+                    <button
+                      key={type}
+                      onClick={() => handleAddConsumption('cigarettes', type as CigaretteType)}
+                      disabled={addConsumption.isPending}
+                      className="flex items-center gap-2 p-3 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <DynamicIcon name={config.icon} className="w-4 h-4 text-violet-600" />
+                      <span className="text-sm font-medium text-violet-700">{config.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nutrition */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">Nutrition</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(JUNKFOOD_CONFIG).map(([type, config]) => (
+                    <button
+                      key={type}
+                      onClick={() => handleAddConsumption('junkfood', type as JunkfoodType)}
+                      disabled={addConsumption.isPending}
+                      className="flex items-center gap-2 p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <DynamicIcon name={config.icon} className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-700">{config.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setAddModal({ isOpen: false, date: '' })}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+              >
+                Fermer
               </button>
             </div>
           </div>

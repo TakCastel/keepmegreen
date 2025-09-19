@@ -14,6 +14,7 @@ import {
   CIGARETTE_CONFIG, 
   JUNKFOOD_CONFIG 
 } from '@/types';
+import { CATEGORY_COLORS } from '@/constants/colors';
 
 export default function TodayStats() {
   const { user } = useAuth();
@@ -27,7 +28,7 @@ export default function TodayStats() {
 
   if (isLoading) {
     return (
-      <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 animate-pulse">
+      <div className="bg-transparent md:bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:shadow-xl md:border md:border-white/20 animate-pulse">
         <div className="h-6 bg-gray-200 rounded-2xl mb-4"></div>
         <div className="space-y-3">
           <div className="h-4 bg-gray-200 rounded-2xl"></div>
@@ -51,7 +52,7 @@ export default function TodayStats() {
   const currentColorConfig = colorConfig[dayColor];
 
   return (
-    <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20">
+    <div className="bg-transparent md:bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:shadow-xl md:border md:border-white/20">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-light text-gray-800 mb-2">
@@ -108,19 +109,19 @@ export default function TodayStats() {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             {/* Alcool */}
             {dayConsumption?.alcohol && dayConsumption.alcohol.length > 0 && (
-              <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
+              <div className={`${CATEGORY_COLORS.alcohol.chartLight} rounded-2xl p-4 border border-pink-200`}>
                 <div className="flex items-center gap-2 mb-3">
-                  <Wine className="w-5 h-5 text-purple-600" />
-                  <span className="font-medium text-purple-700">Alcool</span>
+                  <Wine className={`w-5 h-5 ${CATEGORY_COLORS.alcohol.textMedium}`} />
+                  <span className={`font-medium ${CATEGORY_COLORS.alcohol.textMedium}`}>Alcool</span>
                 </div>
                 <div className="space-y-2">
                   {dayConsumption.alcohol.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
-                      <span className="text-purple-600 flex items-center gap-2">
+                      <span className={`${CATEGORY_COLORS.alcohol.textMedium} flex items-center gap-2`}>
                         <DynamicIcon name={ALCOHOL_CONFIG[item.type].icon} className="w-4 h-4" />
                         {ALCOHOL_CONFIG[item.type].label}
                       </span>
-                      <span className="text-purple-800 font-medium">×{item.quantity}</span>
+                      <span className={`${CATEGORY_COLORS.alcohol.textDark} font-medium`}>×{item.quantity}</span>
                     </div>
                   ))}
                 </div>
@@ -129,19 +130,19 @@ export default function TodayStats() {
 
             {/* Cigarettes */}
             {dayConsumption?.cigarettes && dayConsumption.cigarettes.length > 0 && (
-              <div className="bg-orange-50 rounded-2xl p-4 border border-orange-100">
+              <div className={`${CATEGORY_COLORS.cigarettes.chartLight} rounded-2xl p-4 border border-violet-200`}>
                 <div className="flex items-center gap-2 mb-3">
-                  <Cigarette className="w-5 h-5 text-orange-600" />
-                  <span className="font-medium text-orange-700">Cigarettes</span>
+                  <Cigarette className={`w-5 h-5 ${CATEGORY_COLORS.cigarettes.textMedium}`} />
+                  <span className={`font-medium ${CATEGORY_COLORS.cigarettes.textMedium}`}>Cigarettes</span>
                 </div>
                 <div className="space-y-2">
                   {dayConsumption.cigarettes.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
-                      <span className="text-orange-600 flex items-center gap-2">
+                      <span className={`${CATEGORY_COLORS.cigarettes.textMedium} flex items-center gap-2`}>
                         <DynamicIcon name={CIGARETTE_CONFIG[item.type].icon} className="w-4 h-4" />
                         {CIGARETTE_CONFIG[item.type].label}
                       </span>
-                      <span className="text-orange-800 font-medium">×{item.quantity}</span>
+                      <span className={`${CATEGORY_COLORS.cigarettes.textDark} font-medium`}>×{item.quantity}</span>
                     </div>
                   ))}
                 </div>
@@ -150,19 +151,19 @@ export default function TodayStats() {
 
             {/* Malbouffe */}
             {dayConsumption?.junkfood && dayConsumption.junkfood.length > 0 && (
-              <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+              <div className={`${CATEGORY_COLORS.junkfood.chartLight} rounded-2xl p-4 border border-blue-200`}>
                 <div className="flex items-center gap-2 mb-3">
-                  <Utensils className="w-5 h-5 text-blue-600" />
-                  <span className="font-medium text-blue-700">Nutrition</span>
+                  <Utensils className={`w-5 h-5 ${CATEGORY_COLORS.junkfood.textMedium}`} />
+                  <span className={`font-medium ${CATEGORY_COLORS.junkfood.textMedium}`}>Nutrition</span>
                 </div>
                 <div className="space-y-2">
                   {dayConsumption.junkfood.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
-                      <span className="text-blue-600 flex items-center gap-2">
+                      <span className={`${CATEGORY_COLORS.junkfood.textMedium} flex items-center gap-2`}>
                         <DynamicIcon name={JUNKFOOD_CONFIG[item.type].icon} className="w-4 h-4" />
                         {JUNKFOOD_CONFIG[item.type].label}
                       </span>
-                      <span className="text-blue-800 font-medium">×{item.quantity}</span>
+                      <span className={`${CATEGORY_COLORS.junkfood.textDark} font-medium`}>×{item.quantity}</span>
                     </div>
                   ))}
                 </div>
