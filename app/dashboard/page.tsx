@@ -32,7 +32,7 @@ export default function Dashboard() {
       toast.success('Consommation ajoutée !', {
         duration: 2000,
       });
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de l\'ajout de la consommation');
     }
   };
@@ -61,7 +61,7 @@ export default function Dashboard() {
             Enregistrer en <span className="font-semibold text-emerald-600">conscience</span>
           </h2>
           <p className="text-gray-600">
-            Chaque prise de conscience est un pas vers l'équilibre
+            Chaque prise de conscience est un pas vers l&apos;équilibre
           </p>
         </div>
         
@@ -133,7 +133,7 @@ export default function Dashboard() {
             <div className="flex items-start gap-3">
               <LifeBuoy className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Cherchez l'équilibre, pas la perfection
+                Cherchez l&apos;équilibre, pas la perfection
               </p>
             </div>
           </div>

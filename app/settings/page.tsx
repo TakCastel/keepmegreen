@@ -89,7 +89,7 @@ export default function SettingsPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-slate-500 mt-1">•</span>
-                <span>Cliquez sur l'icône poubelle pour supprimer une unité de consommation</span>
+                <span>Cliquez sur l&apos;icône poubelle pour supprimer une unité de consommation</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-slate-500 mt-1">•</span>
@@ -104,11 +104,11 @@ export default function SettingsPage() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <span className="text-slate-500 mt-1">•</span>
-                <span>Votre nom d'affichage apparaît dans l'interface</span>
+                <span>Votre nom d&apos;affichage apparaît dans l&apos;interface</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-slate-500 mt-1">•</span>
-                <span>L'email ne peut pas être modifié après la création du compte</span>
+                <span>L&apos;email ne peut pas être modifié après la création du compte</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-slate-500 mt-1">•</span>

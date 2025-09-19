@@ -5,7 +5,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import AuthForm from '@/components/auth/AuthForm';
 import { Sprout, Wine, Cigarette, Utensils, Sparkles } from 'lucide-react';
-import DynamicIcon from '@/components/ui/DynamicIcon';
 
 export default function Home() {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');

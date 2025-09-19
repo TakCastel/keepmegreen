@@ -57,8 +57,7 @@ export default function ConsumptionEditor() {
   const handleRemoveConsumption = async (
     date: string,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
-    type: string,
-    quantity: number
+    type: string
   ) => {
     if (!user) return;
 
@@ -78,7 +77,7 @@ export default function ConsumptionEditor() {
           border: '1px solid #374151'
         }
       });
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la suppression', {
         style: {
           background: '#1f2937',
@@ -130,7 +129,7 @@ export default function ConsumptionEditor() {
       });
 
       setEditModal(prev => ({ ...prev, isOpen: false }));
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la modification', {
         style: {
           background: '#1f2937',
@@ -144,7 +143,7 @@ export default function ConsumptionEditor() {
   const renderConsumptionItem = (
     day: DayConsumption,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
-    item: any,
+    item: { type: string; quantity: number },
     index: number
   ) => {
     const configs = {
@@ -194,7 +193,7 @@ export default function ConsumptionEditor() {
           </button>
           
           <button
-            onClick={() => handleRemoveConsumption(day.date, category, item.type, item.quantity)}
+            onClick={() => handleRemoveConsumption(day.date, category, item.type)}
             disabled={removeConsumption.isPending}
             className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
             title="Supprimer une unité"

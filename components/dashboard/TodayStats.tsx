@@ -47,7 +47,7 @@ export default function TodayStats() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-light text-gray-800 mb-2">
-            Aujourd'hui
+            Aujourd&apos;hui
           </h2>
           <p className="text-gray-600 text-sm">
             {format(new Date(), 'EEEE dd MMMM yyyy', { locale: fr })}
@@ -62,7 +62,7 @@ export default function TodayStats() {
         </div>
         <div>
           <p className="text-xl font-medium text-gray-800">{currentColorConfig.text}</p>
-          <p className="text-gray-600 text-sm">Votre état d'équilibre</p>
+          <p className="text-gray-600 text-sm">Votre état d&apos;équilibre</p>
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export default function TodayStats() {
             <Flower2 className="w-10 h-10 text-white" />
           </div>
           <p className="text-emerald-600 text-xl font-semibold mb-2">Journée sereine !</p>
-          <p className="text-gray-600">Votre équilibre est parfait aujourd'hui</p>
+          <p className="text-gray-600">Votre équilibre est parfait aujourd&apos;hui</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -83,7 +83,7 @@ export default function TodayStats() {
             <p className="text-gray-700 font-medium">
               {totalConsumptions === 1 ? 'Une prise de conscience' : `${totalConsumptions} prises de conscience`}
             </p>
-            <p className="text-gray-500 text-sm">aujourd'hui</p>
+            <p className="text-gray-500 text-sm">aujourd&apos;hui</p>
           </div>
 
           {/* Détail par catégorie */}

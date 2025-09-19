@@ -142,7 +142,7 @@ export default function CalendarGrid() {
           </div>
 
           {/* Jours du calendrier */}
-          {calendarDays.map((day, index) => {
+          {calendarDays.map((day) => {
             const isToday = day.date === format(new Date(), 'yyyy-MM-dd');
             
             return (

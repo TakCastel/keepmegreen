@@ -6,11 +6,7 @@ import DynamicIcon from '@/components/ui/DynamicIcon';
 import { 
   ALCOHOL_CONFIG, 
   CIGARETTE_CONFIG, 
-  JUNKFOOD_CONFIG,
-  AlcoholType,
-  CigaretteType,
-  JunkfoodType,
-  ConsumptionConfig
+  JUNKFOOD_CONFIG
 } from '@/types';
 
 interface ConsumptionButtonProps {

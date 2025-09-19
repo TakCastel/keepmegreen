@@ -90,6 +90,7 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
                 .sort(([, a], [, b]) => b - a) // Trier par quantité décroissante
                 .map(([type, quantity]) => {
                   const config = category.config[type as keyof typeof category.config];
+                  if (!config) return null; // Ignorer les types inconnus
                   const percentage = Math.round((quantity / category.total) * 100);
                   
                   return (
@@ -125,7 +126,8 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
                       </div>
                     </div>
                   );
-                })}
+                })
+                .filter(Boolean)}
             </div>
           )}
         </div>

@@ -43,10 +43,10 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
         : date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
     });
 
-  const timeData = consumptions
-    .slice(0, 10)
-    .reverse()
-    .map(c => stats.alcohol.total + stats.cigarettes.total + stats.junkfood.total);
+  // const timeData = consumptions
+  //   .slice(0, 10)
+  //   .reverse()
+  //   .map(c => stats.alcohol.total + stats.cigarettes.total + stats.junkfood.total);
 
   const barData = {
     labels: timeLabels,

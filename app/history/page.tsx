@@ -139,7 +139,7 @@ export default function HistoryPage() {
             onClick={() => setCurrentDate(new Date())}
             className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-2xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
-            Aujourd'hui
+            Aujourd&apos;hui
           </button>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default function CalendarPage() {
           </h1>
         </div>
         <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto">
-          Contemplez votre parcours d'équilibre avec une vue apaisante de vos journées
+          Contemplez votre parcours d&apos;équilibre avec une vue apaisante de vos journées
         </p>
       </div>
 
@@ -90,7 +90,7 @@ export default function CalendarPage() {
             <div className="flex items-start gap-3">
               <BarChart3 className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Les métriques vous offrent une vue d'ensemble apaisante
+                Les métriques vous offrent une vue d&apos;ensemble apaisante
               </p>
             </div>
           </div>

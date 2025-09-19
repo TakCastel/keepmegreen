@@ -23,7 +23,7 @@ export default function AccountSettings() {
       });
 
       toast.success('Profil mis à jour !');
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la mise à jour');
     } finally {
       setIsUpdating(false);
@@ -36,8 +36,8 @@ export default function AccountSettings() {
     try {
       await deleteUser(user);
       toast.success('Compte supprimé');
-    } catch (error: any) {
-      if (error.code === 'auth/requires-recent-login') {
+    } catch (error: unknown) {
+      if ((error as { code?: string }).code === 'auth/requires-recent-login') {
         toast.error('Vous devez vous reconnecter avant de supprimer votre compte');
         await logout();
       } else {
@@ -58,7 +58,7 @@ export default function AccountSettings() {
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nom d'affichage
+              Nom d&#39;affichage
             </label>
             <input
               type="text"
@@ -136,7 +136,7 @@ export default function AccountSettings() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-red-700 mb-2">
-                  Tapez "SUPPRIMER" pour confirmer :
+                  Tapez &quot;SUPPRIMER&quot; pour confirmer :
                 </label>
                 <input
                   type="text"
