@@ -1,23 +1,36 @@
 'use client';
 
-import { DayConsumption } from '@/types';
+import { DayConsumption, ConsumptionConfig } from '@/types';
 import { getAggregatedStats } from '@/utils/stats';
 import { 
   ALCOHOL_CONFIG, 
   CIGARETTE_CONFIG, 
   JUNKFOOD_CONFIG 
 } from '@/types';
-import { Wine, Cigarette, Utensils, Flower } from 'lucide-react';
+import { Wine, Cigarette, Utensils, Flower, LucideIcon } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 
 interface CategoryBreakdownProps {
   consumptions: DayConsumption[];
 }
 
+interface CategoryData {
+  title: string;
+  icon: LucideIcon;
+  total: number;
+  breakdown: Record<string, number>;
+  config: Record<string, ConsumptionConfig>;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  progressColor: string;
+  iconGradient: string;
+}
+
 export default function CategoryBreakdown({ consumptions }: CategoryBreakdownProps) {
   const stats = getAggregatedStats(consumptions);
 
-  const categories = [
+  const categories: CategoryData[] = [
     {
       title: 'Alcool',
       icon: Wine,
@@ -88,9 +101,15 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
             <div className="space-y-4">
               {Object.entries(category.breakdown)
                 .sort(([, a], [, b]) => b - a) // Trier par quantité décroissante
-                .filter(([type]) => type in category.config) // Filtrer les types valides
                 .map(([type, quantity]) => {
-                  const config = category.config[type as keyof typeof category.config];
+                  const config: ConsumptionConfig | undefined = category.config[type];
+                  
+                  // Vérification de sécurité - ne pas afficher si config n'existe pas
+                  if (!config) {
+                    console.warn(`Configuration manquante pour le type: ${type}`);
+                    return null;
+                  }
+                  
                   const percentage = Math.round((quantity / category.total) * 100);
                   
                   return (
@@ -126,7 +145,8 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
                       </div>
                     </div>
                   );
-                })}
+                })
+                .filter(Boolean)} {/* Éliminer les valeurs null */}
             </div>
           )}
         </div>

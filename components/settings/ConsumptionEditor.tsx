@@ -12,7 +12,11 @@ import {
   ALCOHOL_CONFIG, 
   CIGARETTE_CONFIG, 
   JUNKFOOD_CONFIG,
-  DayConsumption 
+  DayConsumption,
+  AlcoholType,
+  CigaretteType,
+  JunkfoodType,
+  ConsumptionConfig
 } from '@/types';
 
 export default function ConsumptionEditor() {
@@ -29,14 +33,14 @@ export default function ConsumptionEditor() {
     isOpen: boolean;
     date: string;
     category: 'alcohol' | 'cigarettes' | 'junkfood';
-    type: string;
+    type: AlcoholType | CigaretteType | JunkfoodType;
     quantity: number;
     newDate: string;
   }>({
     isOpen: false,
     date: '',
     category: 'alcohol',
-    type: '',
+    type: 'beer' as AlcoholType,
     quantity: 0,
     newDate: ''
   });
@@ -57,7 +61,7 @@ export default function ConsumptionEditor() {
   const handleRemoveConsumption = async (
     date: string,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
-    type: string
+    type: AlcoholType | CigaretteType | JunkfoodType
   ) => {
     if (!user) return;
 
@@ -91,7 +95,7 @@ export default function ConsumptionEditor() {
   const handleEditConsumption = (
     date: string,
     category: 'alcohol' | 'cigarettes' | 'junkfood',
-    type: string,
+    type: AlcoholType | CigaretteType | JunkfoodType,
     quantity: number
   ) => {
     setEditModal({
@@ -152,7 +156,28 @@ export default function ConsumptionEditor() {
       junkfood: JUNKFOOD_CONFIG,
     };
 
-    const config = configs[category][item.type as keyof typeof configs[typeof category]];
+    let config: ConsumptionConfig | undefined;
+    
+    // Récupération sécurisée de la configuration selon la catégorie
+    switch (category) {
+      case 'alcohol':
+        config = configs.alcohol[item.type as AlcoholType];
+        break;
+      case 'cigarettes':
+        config = configs.cigarettes[item.type as CigaretteType];
+        break;
+      case 'junkfood':
+        config = configs.junkfood[item.type as JunkfoodType];
+        break;
+      default:
+        config = undefined;
+    }
+    
+    // Vérification de sécurité
+    if (!config) {
+      console.warn(`Configuration manquante pour ${category}.${item.type}`);
+      return null;
+    }
     const categoryLabels = {
       alcohol: 'Alcool',
       cigarettes: 'Cigarettes',
@@ -184,7 +209,7 @@ export default function ConsumptionEditor() {
           <span className="text-gray-800 font-medium">×{item.quantity}</span>
           
           <button
-            onClick={() => handleEditConsumption(day.date, category, item.type, item.quantity)}
+            onClick={() => handleEditConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType, item.quantity)}
             disabled={moveConsumption.isPending}
             className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
             title="Modifier la date"
@@ -193,7 +218,7 @@ export default function ConsumptionEditor() {
           </button>
           
           <button
-            onClick={() => handleRemoveConsumption(day.date, category, item.type)}
+            onClick={() => handleRemoveConsumption(day.date, category, item.type as AlcoholType | CigaretteType | JunkfoodType)}
             disabled={removeConsumption.isPending}
             className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
             title="Supprimer une unité"
@@ -318,19 +343,22 @@ export default function ConsumptionEditor() {
 
               <div className="space-y-3">
                 {/* Alcool */}
-                {day.alcohol.map((item, index) => 
-                  renderConsumptionItem(day, 'alcohol', item, index)
-                )}
+                {day.alcohol
+                  .map((item, index) => renderConsumptionItem(day, 'alcohol', item, index))
+                  .filter(Boolean)
+                }
                 
                 {/* Cigarettes */}
-                {day.cigarettes.map((item, index) => 
-                  renderConsumptionItem(day, 'cigarettes', item, index)
-                )}
+                {day.cigarettes
+                  .map((item, index) => renderConsumptionItem(day, 'cigarettes', item, index))
+                  .filter(Boolean)
+                }
                 
                 {/* Malbouffe */}
-                {day.junkfood.map((item, index) => 
-                  renderConsumptionItem(day, 'junkfood', item, index)
-                )}
+                {day.junkfood
+                  .map((item, index) => renderConsumptionItem(day, 'junkfood', item, index))
+                  .filter(Boolean)
+                }
               </div>
             </div>
           ))
