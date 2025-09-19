@@ -16,7 +16,7 @@ const CONSUMPTION_WEIGHTS = {
     classic: 3,
     rolled: 3,
     cigar: 4,
-    electronic: 1.5
+    electronic: 2.5
   },
   // Alcool - gravité modérée à élevée
   alcohol: {
@@ -64,9 +64,8 @@ export const calculateDayWeight = (consumption: DayConsumption): number => {
 // Déterminer la couleur d'un jour basée sur le score pondéré
 export const getDayColorByWeight = (weightedScore: number): DayColor => {
   if (weightedScore === 0) return 'green';
-  if (weightedScore < 2) return 'green';     // Ex: 1 e-cigarette = 1.5, sucreries, pizza seule
-  if (weightedScore <= 4) return 'yellow';   // Ex: 1 bière = 2, 1 burger = 2, combinaisons légères
-  if (weightedScore <= 8) return 'orange';   // Ex: 1 cigarette = 3, alcool + nourriture
+  if (weightedScore <= 3) return 'yellow';   // Ex: toute consommation > 0.1 jusqu'à 3 (e-cigarette, bière, burger)
+  if (weightedScore <= 7) return 'orange';   // Ex: 1 cigarette = 3, alcool + nourriture
   return 'red';                              // Ex: 2+ cigarettes, alcool fort, combinaisons lourdes
 };
 
