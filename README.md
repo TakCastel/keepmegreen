@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Keepmegreen
 
-## Getting Started
+Application web Next.js 15 pour suivre et réduire vos excès quotidiens dans trois domaines : alcool, cigarettes et malbouffe.
 
-First, run the development server:
+## Fonctionnalités
 
-```bash
+- **Dashboard interactif** : Enregistrez vos consommations en quelques clics
+- **Calendrier visuel** : Visualisez votre progression avec un calendrier coloré style GitHub
+- **Statistiques détaillées** : Analysez vos habitudes avec des graphiques et des métriques
+- **Gestion des données** : Modifiez et supprimez vos consommations
+- **Authentification sécurisée** : Connexion via email/mot de passe ou Google
+- **Interface moderne** : Design sombre et responsive avec TailwindCSS
+
+## Technologies utilisées
+
+- **Next.js 15** avec App Router et React Server Components
+- **TypeScript** pour la sécurité des types
+- **TailwindCSS** pour le styling (thème sombre par défaut)
+- **Firebase Auth** pour l'authentification
+- **Firestore** pour le stockage des données
+- **React Query** pour la gestion d'état et cache
+- **Chart.js** pour les graphiques
+- **React Hot Toast** pour les notifications
+
+## Installation et configuration
+
+### 1. Cloner le projet
+
+\`\`\`bash
+git clone <url-du-repo>
+cd keepmegreen
+\`\`\`
+
+### 2. Installer les dépendances
+
+\`\`\`bash
+npm install
+\`\`\`
+
+### 3. Configuration Firebase
+
+1. Créez un projet Firebase sur [https://console.firebase.google.com](https://console.firebase.google.com)
+
+2. Activez l'authentification :
+   - Allez dans "Authentication" > "Sign-in method"
+   - Activez "Email/Password" et "Google"
+
+3. Créez une base de données Firestore :
+   - Allez dans "Firestore Database"
+   - Créez une base de données en mode production
+   - Configurez les règles de sécurité (voir section ci-dessous)
+
+4. Récupérez la configuration Firebase :
+   - Allez dans les paramètres du projet > "Paramètres du projet"
+   - Ajoutez une application web
+   - Copiez la configuration
+
+### 4. Variables d'environnement
+
+Créez un fichier \`.env.local\` à la racine du projet :
+
+\`\`\`env
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+\`\`\`
+
+### 5. Règles de sécurité Firestore
+
+Dans la console Firebase, allez dans "Firestore Database" > "Règles" et configurez :
+
+\`\`\`javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Les utilisateurs ne peuvent accéder qu'à leurs propres données
+    match /users/{userId}/consumptions/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+\`\`\`
+
+### 6. Lancer l'application
+
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Utilisation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Authentification
+- Créez un compte ou connectez-vous avec email/mot de passe ou Google
+- Vous serez automatiquement redirigé vers le dashboard
 
-## Learn More
+### 2. Enregistrer des consommations
+- Sur le dashboard, cliquez sur une catégorie (Alcool, Cigarettes, Malbouffe)
+- Sélectionnez le type spécifique dans le sous-menu
+- La consommation est automatiquement enregistrée pour la date du jour
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Visualiser votre progression
+- **Calendrier** : Consultez la grille colorée style GitHub
+  - Vert : 0 consommation (objectif !)
+  - Jaune : 1-2 consommations
+  - Orange : 3-5 consommations
+  - Rouge : 6+ consommations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Analyser vos habitudes
+- **Historique** : Consultez les statistiques hebdomadaires/mensuelles
+- Graphiques en barres et camemberts
+- Métriques détaillées par catégorie
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Gérer vos données
+- **Paramètres** : Modifiez ou supprimez des consommations
+- Filtrez par date ou recherche textuelle
+- Gérez votre compte utilisateur
 
-## Deploy on Vercel
+## Structure des données
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Chaque consommation est stockée par jour avec cette structure :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+\`\`\`typescript
+{
+  date: "2025-09-19",
+  alcohol: [
+    { type: "beer", quantity: 2 },
+    { type: "wine", quantity: 1 }
+  ],
+  cigarettes: [
+    { type: "classic", quantity: 5 }
+  ],
+  junkfood: [
+    { type: "burger", quantity: 1 },
+    { type: "soda", quantity: 2 }
+  ],
+  createdAt: "2025-09-19T12:00:00Z"
+}
+\`\`\`
+
+## Customisation
+
+L'application utilise un design professionnel avec TailwindCSS. Les couleurs principales :
+- Vert : Succès, jours sans consommation
+- Jaune : Consommation modérée  
+- Orange : Attention
+- Rouge : Excès
+- Fond sombre pour un confort visuel
+
+## Scripts disponibles
+
+\`\`\`bash
+npm run dev          # Développement avec Turbopack
+npm run build        # Build de production avec Turbopack
+npm start            # Lancement en production
+npm run lint         # Vérification ESLint
+\`\`\`
+
+## Licence
+
+Ce projet est développé pour un usage personnel de suivi des habitudes de consommation.
+
+## Support
+
+Pour toute question ou problème :
+1. Vérifiez que Firebase est correctement configuré
+2. Assurez-vous que les variables d'environnement sont correctes
+3. Consultez la console du navigateur pour les erreurs JavaScript
+4. Vérifiez les règles de sécurité Firestore
+
+---
+
+**Objectif : Gardez le maximum de jours verts possible !**
