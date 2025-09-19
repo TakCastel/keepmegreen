@@ -1,26 +1,33 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
+import { Comfortaa, Quicksand, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from 'react-hot-toast';
 
-const inter = Inter({
-  variable: "--font-inter",
+const comfortaa = Comfortaa({
+  variable: "--font-comfortaa",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: 'swap',
+  preload: true,
+  fallback: ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+});
+
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: 'swap',
+  preload: true,
+  fallback: ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: 'swap',
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: 'swap',
+  preload: true,
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
 });
 
 export const metadata: Metadata = {
@@ -35,8 +42,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&display=swap" 
+          rel="stylesheet" 
+        />
+      </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} ${poppins.variable} antialiased font-sans`}
+        className={`${comfortaa.variable} ${quicksand.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         <QueryProvider>
           {children}

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useAllConsumptions, useRemoveConsumption, useMoveConsumption, useAddConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Trash2, Edit3, Calendar, Search, Plus, Minus } from 'lucide-react';
+import { Trash2, Edit3, Calendar, Search, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { toast } from 'react-hot-toast';
 import { 
@@ -20,7 +20,11 @@ import {
   ConsumptionConfig
 } from '@/types';
 
-export default function ConsumptionEditor() {
+interface ConsumptionEditorProps {
+  presetDate?: string;
+}
+
+export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps) {
   const { user } = useAuth();
   const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
   const removeConsumption = useRemoveConsumption();
@@ -28,7 +32,9 @@ export default function ConsumptionEditor() {
   const addConsumption = useAddConsumption();
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState(presetDate || '');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   // État pour la modal de modification de date
   const [editModal, setEditModal] = useState<{
@@ -76,6 +82,17 @@ export default function ConsumptionEditor() {
       day.alcohol.length > 0 || day.cigarettes.length > 0 || day.junkfood.length > 0
     );
   });
+
+  // Calculer la pagination
+  const totalPages = Math.ceil(filteredConsumptions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedConsumptions = filteredConsumptions.slice(startIndex, endIndex);
+
+  // Réinitialiser à la page 1 quand les filtres changent
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedDate]);
 
   const handleRemoveConsumption = async (
     date: string,
@@ -440,6 +457,11 @@ export default function ConsumptionEditor() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Date spécifique
+              {presetDate && (
+                <span className="ml-2 px-2 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">
+                  Aujourd'hui présélectionné
+                </span>
+              )}
             </label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -447,7 +469,11 @@ export default function ConsumptionEditor() {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-all"
+                className={`w-full pl-10 pr-4 py-3 bg-white border rounded-xl focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-all ${
+                  presetDate 
+                    ? 'border-slate-400 bg-slate-50' 
+                    : 'border-gray-300'
+                }`}
               />
             </div>
           </div>
@@ -476,6 +502,11 @@ export default function ConsumptionEditor() {
           </h3>
           <span className="text-gray-400 text-sm">
             {filteredConsumptions.length} jour{filteredConsumptions.length > 1 ? 's' : ''} trouvé{filteredConsumptions.length > 1 ? 's' : ''}
+            {totalPages > 1 && (
+              <span className="ml-2">
+                • Page {currentPage} sur {totalPages}
+              </span>
+            )}
           </span>
         </div>
 
@@ -495,7 +526,7 @@ export default function ConsumptionEditor() {
             </p>
           </div>
         ) : (
-          filteredConsumptions.map((day) => (
+          paginatedConsumptions.map((day) => (
             <div key={day.date} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
               <div className="flex items-center gap-3 mb-4">
                 <h4 className="text-lg font-medium text-gray-800">
@@ -531,6 +562,45 @@ export default function ConsumptionEditor() {
               </div>
             </div>
           ))
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2 px-4 py-2 bg-white/70 hover:bg-white border border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Précédent</span>
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-xl transition-colors font-medium ${
+                    page === currentPage
+                      ? 'bg-slate-600 text-white'
+                      : 'bg-white/70 hover:bg-white border border-gray-200 text-gray-700'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-2 px-4 py-2 bg-white/70 hover:bg-white border border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <span className="hidden sm:inline">Suivant</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </div>
 

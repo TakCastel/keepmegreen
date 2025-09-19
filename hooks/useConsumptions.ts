@@ -23,6 +23,8 @@ export const useDayConsumption = (userId: string | undefined, date: string) => {
     queryKey: ['consumption', userId, date],
     queryFn: () => userId ? getDayConsumption(userId, date) : null,
     enabled: !!userId,
+    staleTime: 2 * 60 * 1000, // 2 minutes pour les données du jour
+    initialData: null, // Données initiales pour éviter le loading state
   });
 };
 
@@ -35,6 +37,7 @@ export const useWeekConsumptions = (userId: string | undefined, date: Date) => {
     queryKey: ['consumptions', 'week', userId, startDate, endDate],
     queryFn: () => userId ? getConsumptionsInRange(userId, startDate, endDate) : [],
     enabled: !!userId,
+    initialData: [], // Données initiales pour éviter le loading state
   });
 };
 
@@ -47,6 +50,7 @@ export const useMonthConsumptions = (userId: string | undefined, date: Date) => 
     queryKey: ['consumptions', 'month', userId, startDate, endDate],
     queryFn: () => userId ? getConsumptionsInRange(userId, startDate, endDate) : [],
     enabled: !!userId,
+    initialData: [], // Données initiales pour éviter le loading state
   });
 };
 
@@ -56,6 +60,8 @@ export const useAllConsumptions = (userId: string | undefined) => {
     queryKey: ['consumptions', 'all', userId],
     queryFn: () => userId ? getAllUserConsumptions(userId) : [],
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000, // 5 minutes pour toutes les données
+    initialData: [], // Données initiales pour éviter le loading state
   });
 };
 

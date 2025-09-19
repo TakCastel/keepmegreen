@@ -4,8 +4,10 @@ import { useDayConsumption } from '@/hooks/useConsumptions';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { getTotalConsumptions, getDayColor } from '@/utils/stats';
-import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { getTotalConsumptions, getDayColor, calculateDayWeight, getDayColorByWeight } from '@/utils/stats';
+import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils, Edit3 } from 'lucide-react';
+import DayColorInfo from '@/components/ui/DayColorTooltip';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { 
   ALCOHOL_CONFIG, 
@@ -15,8 +17,13 @@ import {
 
 export default function TodayStats() {
   const { user } = useAuth();
+  const router = useRouter();
   const today = format(new Date(), 'yyyy-MM-dd');
   const { data: dayConsumption, isLoading } = useDayConsumption(user?.uid, today);
+
+  const handleEditToday = () => {
+    router.push(`/settings?date=${today}`);
+  };
 
   if (isLoading) {
     return (
@@ -31,7 +38,8 @@ export default function TodayStats() {
   }
 
   const totalConsumptions = dayConsumption ? getTotalConsumptions(dayConsumption) : 0;
-  const dayColor = getDayColor(totalConsumptions);
+  const weightedScore = dayConsumption ? calculateDayWeight(dayConsumption) : 0;
+  const dayColor = getDayColorByWeight(weightedScore);
   
   const colorConfig = {
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower2 },
@@ -53,7 +61,17 @@ export default function TodayStats() {
             {format(new Date(), 'EEEE dd MMMM yyyy', { locale: fr })}
           </p>
         </div>
-        <div className={`w-6 h-6 rounded-full ${currentColorConfig.bg} shadow-md`}></div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleEditToday}
+            className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-200 text-slate-700 hover:text-slate-800 text-sm font-medium"
+            title="Modifier les données d'aujourd'hui"
+          >
+            <Edit3 className="w-4 h-4" />
+            <span className="hidden sm:inline">Modifier</span>
+          </button>
+          <div className={`w-6 h-6 rounded-full ${currentColorConfig.bg} shadow-md`}></div>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 mb-8">

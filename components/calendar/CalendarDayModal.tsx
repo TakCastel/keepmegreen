@@ -5,7 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useDayConsumption } from '@/hooks/useConsumptions';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, Edit3 } from 'lucide-react';
 import { CalendarDay } from '@/types';
 import { 
   ALCOHOL_CONFIG, 
@@ -22,7 +23,13 @@ interface CalendarDayModalProps {
 
 export default function CalendarDayModal({ day, onClose }: CalendarDayModalProps) {
   const { user } = useAuth();
+  const router = useRouter();
   const { data: dayConsumption, isLoading } = useDayConsumption(user?.uid, day.date);
+
+  const handleEditDay = () => {
+    router.push(`/settings?date=${day.date}`);
+    onClose();
+  };
 
   const colorConfig = {
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower },
@@ -51,12 +58,22 @@ export default function CalendarDayModal({ day, onClose }: CalendarDayModalProps
               <span className="text-gray-600 text-sm font-medium">{currentColorConfig.text}</span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleEditDay}
+              className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-200 text-slate-700 hover:text-slate-800 text-sm font-medium"
+              title="Modifier les données de ce jour"
+            >
+              <Edit3 className="w-4 h-4" />
+              <span className="hidden sm:inline">Modifier</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Contenu */}

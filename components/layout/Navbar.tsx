@@ -15,6 +15,7 @@ export default function Navbar() {
     router.push('/');
   };
 
+
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/calendar', label: 'Calendrier', icon: Calendar },

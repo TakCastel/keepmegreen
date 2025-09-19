@@ -8,15 +8,15 @@ export default function CalendarPage() {
     <div className="space-y-10">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl flex items-center justify-center shadow-xl">
+        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
+          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl items-center justify-center shadow-xl">
             <Calendar className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-light text-gray-800">
+          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
             Calendrier de <span className="font-semibold text-emerald-600">sérénité</span>
           </h1>
         </div>
-        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto">
+        <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
           Contemplez votre parcours d&apos;équilibre avec une vue apaisante de vos journées
         </p>
       </div>

@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { generateCalendarData, getGreenDaysPercentage } from '@/utils/stats';
 import { CalendarDay } from '@/types';
 import CalendarDayModal from './CalendarDayModal';
+import { CalendarSkeleton } from '@/components/ui/Skeleton';
 import { Flower, BarChart3, User } from 'lucide-react';
 
 export default function CalendarGrid() {
@@ -78,17 +79,9 @@ export default function CalendarGrid() {
     red: 'bg-rose-400',
   };
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse space-y-6">
-        <div className="h-8 bg-gray-200 rounded-2xl w-48"></div>
-        <div className="grid grid-cols-53 gap-1">
-          {Array.from({ length: 371 }).map((_, i) => (
-            <div key={i} className="w-3 h-3 bg-gray-200 rounded-sm"></div>
-          ))}
-        </div>
-      </div>
-    );
+  // Afficher le skeleton seulement si l'utilisateur est authentifié ET que les données sont en cours de chargement
+  if (!user || isLoading) {
+    return <CalendarSkeleton />;
   }
 
   return (

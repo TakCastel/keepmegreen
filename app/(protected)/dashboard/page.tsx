@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import ConsumptionButton from '@/components/dashboard/ConsumptionButton';
 import TodayStats from '@/components/dashboard/TodayStats';
+import InfoBanner from '@/components/ui/InfoBanner';
+import { ConsumptionButtonSkeleton, PageHeaderSkeleton } from '@/components/ui/Skeleton';
 import { AlcoholType, CigaretteType, JunkfoodType } from '@/types';
 import { Sprout, Heart, Leaf, Flower, LifeBuoy } from 'lucide-react';
 
@@ -41,29 +43,22 @@ export default function Dashboard() {
     <div className="space-y-10">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl flex items-center justify-center shadow-xl">
+        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
+          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl items-center justify-center shadow-xl">
             <Sprout className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-light text-gray-800">
+          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
             Votre espace <span className="font-semibold text-emerald-600">bien-être</span>
           </h1>
         </div>
-        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto">
+        <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
           Prenez conscience de vos habitudes avec bienveillance et cultivez votre équilibre quotidien
         </p>
       </div>
 
       {/* Boutons d'ajout de consommations */}
       <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/20 relative z-10">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-light text-gray-800 mb-2">
-            Enregistrer en <span className="font-semibold text-emerald-600">conscience</span>
-          </h2>
-          <p className="text-gray-600">
-            Chaque prise de conscience est un pas vers l&apos;équilibre
-          </p>
-        </div>
+        <InfoBanner />
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <ConsumptionButton

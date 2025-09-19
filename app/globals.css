@@ -14,17 +14,23 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-quicksand);
+  --font-display: var(--font-comfortaa);
   --font-mono: var(--font-jetbrains-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html, body {
   background: linear-gradient(135deg, #fafffe 0%, #f1f8f5 100%);
   color: var(--foreground);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: var(--font-quicksand), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   min-height: 100vh;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   font-variant-numeric: oldstyle-nums;
+  font-display: swap;
 }
 
 /* Éviter le flash de fond noir pendant les transitions */
@@ -70,8 +76,10 @@ p, li, span {
 
 /* Espacement amélioré pour les textes */
 h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.025em;
+  font-family: var(--font-comfortaa), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.01em;
   line-height: 1.2;
+  font-weight: 500;
 }
 
 p {

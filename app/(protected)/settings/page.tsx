@@ -1,12 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ConsumptionEditor from '@/components/settings/ConsumptionEditor';
 import AccountSettings from '@/components/settings/AccountSettings';
 import { Edit3, User, Settings as SettingsIcon, Lightbulb } from 'lucide-react';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'consumption' | 'account'>('consumption');
+  const searchParams = useSearchParams();
+  const presetDate = searchParams.get('date');
+
+  // Si une date est fournie en paramètre, s'assurer que l'onglet consommation est actif
+  useEffect(() => {
+    if (presetDate) {
+      setActiveTab('consumption');
+    }
+  }, [presetDate]);
 
   const tabs = [
     {
@@ -27,15 +37,15 @@ export default function SettingsPage() {
     <div className="space-y-10">
       {/* En-tête */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-slate-400 to-slate-500 rounded-3xl flex items-center justify-center shadow-xl">
+        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
+          <div className="hidden md:flex w-16 h-16 bg-gradient-to-br from-slate-400 to-slate-500 rounded-3xl items-center justify-center shadow-xl">
             <SettingsIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-light text-gray-800">
+          <h1 className="text-2xl md:text-4xl font-light text-gray-800">
             Paramètres
           </h1>
         </div>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 text-base md:text-lg">
           Gérez vos données et préférences de compte
         </p>
       </div>
@@ -67,7 +77,7 @@ export default function SettingsPage() {
 
         {/* Contenu des onglets */}
         <div className="border-t border-gray-200 pt-8">
-          {activeTab === 'consumption' && <ConsumptionEditor />}
+          {activeTab === 'consumption' && <ConsumptionEditor presetDate={presetDate || undefined} />}
           {activeTab === 'account' && <AccountSettings />}
         </div>
       </div>

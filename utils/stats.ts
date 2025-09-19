@@ -9,7 +9,68 @@ export const getTotalConsumptions = (dayConsumption: DayConsumption): number => 
   return alcoholTotal + cigarettesTotal + junkfoodTotal;
 };
 
-// Déterminer la couleur d'un jour basée sur le nombre total de consommations
+// Système de pondération par gravité des consommations
+const CONSUMPTION_WEIGHTS = {
+  // Cigarettes - les plus graves
+  cigarettes: {
+    classic: 3,
+    rolled: 3,
+    cigar: 4,
+    electronic: 1.5
+  },
+  // Alcool - gravité modérée à élevée
+  alcohol: {
+    beer: 2,
+    wine: 2.5,
+    shot: 3,
+    cocktail: 2.5,
+    spirits: 3.5
+  },
+  // Nutrition - gravité faible à modérée
+  junkfood: {
+    burger: 2,
+    pizza: 1.5,
+    fries: 1,
+    soda: 0.8,
+    sweets: 0.5
+  }
+};
+
+// Calculer le score pondéré d'un jour
+export const calculateDayWeight = (consumption: DayConsumption): number => {
+  let totalWeight = 0;
+  
+  // Alcool
+  consumption.alcohol?.forEach(item => {
+    const weight = CONSUMPTION_WEIGHTS.alcohol[item.type as keyof typeof CONSUMPTION_WEIGHTS.alcohol] || 2;
+    totalWeight += weight * item.quantity;
+  });
+  
+  // Cigarettes
+  consumption.cigarettes?.forEach(item => {
+    const weight = CONSUMPTION_WEIGHTS.cigarettes[item.type as keyof typeof CONSUMPTION_WEIGHTS.cigarettes] || 3;
+    totalWeight += weight * item.quantity;
+  });
+  
+  // Junkfood
+  consumption.junkfood?.forEach(item => {
+    const weight = CONSUMPTION_WEIGHTS.junkfood[item.type as keyof typeof CONSUMPTION_WEIGHTS.junkfood] || 1;
+    totalWeight += weight * item.quantity;
+  });
+  
+  return totalWeight;
+};
+
+// Déterminer la couleur d'un jour basée sur le score pondéré
+export const getDayColorByWeight = (weightedScore: number): DayColor => {
+  if (weightedScore === 0) return 'green';
+  if (weightedScore < 2) return 'green';     // Ex: 1 e-cigarette = 1.5, sucreries, pizza seule
+  if (weightedScore <= 4) return 'yellow';   // Ex: 1 bière = 2, 1 burger = 2, combinaisons légères
+  if (weightedScore <= 8) return 'orange';   // Ex: 1 cigarette = 3, alcool + nourriture
+  return 'red';                              // Ex: 2+ cigarettes, alcool fort, combinaisons lourdes
+};
+
+// Ancienne fonction pour compatibilité
 export const getDayColor = (totalConsumptions: number): DayColor => {
   if (totalConsumptions === 0) return 'green';
   if (totalConsumptions <= 2) return 'yellow';
@@ -101,9 +162,10 @@ export const generateCalendarData = (
     
     if (dayConsumption) {
       const totalConsumptions = getTotalConsumptions(dayConsumption);
+      const weightedScore = calculateDayWeight(dayConsumption);
       calendarDays.push({
         date: dateString,
-        color: getDayColor(totalConsumptions),
+        color: getDayColorByWeight(weightedScore),
         totalConsumptions,
         hasData: true,
       });

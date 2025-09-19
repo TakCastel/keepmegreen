@@ -184,11 +184,20 @@ export const moveConsumption = async (
   }
 };
 
-// Obtenir toutes les consommations d'un utilisateur
+// Obtenir toutes les consommations d'un utilisateur (limitées à l'année courante pour les performances)
 export const getAllUserConsumptions = async (userId: string): Promise<DayConsumption[]> => {
   try {
+    const currentYear = new Date().getFullYear();
+    const startOfYear = `${currentYear}-01-01`;
+    const endOfYear = `${currentYear}-12-31`;
+    
     const consumptionsRef = collection(db, 'users', userId, 'consumptions');
-    const q = query(consumptionsRef, orderBy('date', 'desc'));
+    const q = query(
+      consumptionsRef, 
+      where('date', '>=', startOfYear),
+      where('date', '<=', endOfYear),
+      orderBy('date', 'desc')
+    );
     
     const querySnapshot = await getDocs(q);
     const consumptions: DayConsumption[] = [];

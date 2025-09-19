@@ -1,13 +1,15 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Navbar from '@/components/layout/Navbar';
+import DataPrefetcher from '@/components/providers/DataPrefetcher';
 
-export default function HistoryLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <ProtectedRoute>
+      <DataPrefetcher />
       <div className="min-h-screen">
         <Navbar />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
