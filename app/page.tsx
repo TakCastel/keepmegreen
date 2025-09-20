@@ -65,9 +65,12 @@ export default function Home() {
                   Commencer gratuitement
                   <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </Link>
-                <button className="inline-flex items-center justify-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 bg-white/80 text-gray-700 rounded-xl shadow-lg font-medium border border-gray-200 text-sm md:text-base">
+                <Link
+                  href="/demo"
+                  className="inline-flex items-center justify-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 bg-white/80 hover:bg-white text-gray-700 rounded-xl shadow-lg font-medium border border-gray-200 text-sm md:text-base transition-all hover:shadow-xl transform hover:-translate-y-0.5"
+                >
                   Voir la démo
-                </button>
+                </Link>
               </div>
 
               {/* Stats rapides */}
