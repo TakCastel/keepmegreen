@@ -31,3 +31,13 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GREENME_415FA }}
           channelId: live
           projectId: greenme-415fa
+      
+      # Déployer les Firebase Functions
+      - name: Deploy Firebase Functions
+        run: |
+          cd functions
+          npm ci
+          npm run build
+          firebase deploy --only functions --project greenme-415fa
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

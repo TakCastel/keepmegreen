@@ -31,3 +31,13 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GREENME_415FA }}
           projectId: greenme-415fa
+      
+      # Déployer les Firebase Functions (preview)
+      - name: Deploy Firebase Functions Preview
+        run: |
+          cd functions
+          npm ci
+          npm run build
+          firebase deploy --only functions --project greenme-415fa
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
