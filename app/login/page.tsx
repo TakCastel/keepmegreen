@@ -65,18 +65,18 @@ export default function LoginPage() {
                 <Sprout className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-5xl text-gray-800 font-poppins tracking-tight">
-                <span className="font-bold text-emerald-600 bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">Keepme</span><span className="font-light">green</span>
+                <span className="font-bold text-emerald-600 bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">Drinkeat</span><span className="font-light">Green</span>
               </h1>
             </div>
             
             <h2 className="text-3xl font-light text-gray-700 mb-8 leading-relaxed">
               Rejoignez votre espace de 
-              <span className="font-medium text-emerald-600"> surveillance</span>
+              <span className="font-medium text-emerald-600"> suivi</span>
             </h2>
             
             <p className="text-lg text-gray-600 mb-10 leading-relaxed">
               Connectez-vous pour accéder à votre tableau de bord personnel et commencer 
-              à surveiller vos mauvaises habitudes avec bienveillance.
+              à suivre vos consommations de manière régulière.
             </p>
             
             <div className="space-y-6 mb-10">
@@ -86,7 +86,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <span className="text-lg text-gray-700 font-medium">Tableau de bord</span>
-                  <p className="text-sm text-gray-600">Surveillez vos écarts en temps réel</p>
+                  <p className="text-sm text-gray-600">Suivez vos consommations en temps réel</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 bg-white/50 rounded-2xl backdrop-blur-sm border border-emerald-100">
@@ -94,8 +94,8 @@ export default function LoginPage() {
                   <Calendar className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
-                  <span className="text-lg text-gray-700 font-medium">Calendrier de surveillance</span>
-                  <p className="text-sm text-gray-600">Visualisez vos écarts quotidiens</p>
+                  <span className="text-lg text-gray-700 font-medium">Calendrier d'observation</span>
+                  <p className="text-sm text-gray-600">Visualisez vos consommations quotidiennes</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 bg-white/50 rounded-2xl backdrop-blur-sm border border-emerald-100">
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <span className="text-lg text-gray-700 font-medium">Statistiques</span>
-                  <p className="text-sm text-gray-600">Analysez vos tendances et progrès</p>
+                  <p className="text-sm text-gray-600">Analysez vos tendances et patterns</p>
                 </div>
               </div>
             </div>
@@ -112,10 +112,10 @@ export default function LoginPage() {
             <div className="p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl border border-emerald-100">
               <p className="text-emerald-700 font-medium flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
-                Commencez votre surveillance bienveillante
+                Commencez votre suivi régulier
               </p>
               <p className="text-emerald-600 text-sm mt-1">
-                Chaque jour est une nouvelle opportunité de <span className="font-semibold">réduire vos écarts</span>
+                Chaque jour est une nouvelle opportunité de <span className="font-semibold">comprendre vos patterns</span>
               </p>
             </div>
           </div>

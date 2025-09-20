@@ -41,7 +41,7 @@ const InfoBanner = () => {
         
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-emerald-800 mb-3">
-            Comment utiliser Keepmegreen ?
+            Comment utiliser DrinkeatGreen ?
           </h3>
           <div className="text-emerald-700 leading-relaxed mb-4 space-y-2">
             <p className="text-sm">

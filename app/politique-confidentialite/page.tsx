@@ -45,7 +45,7 @@ export default function PolitiqueConfidentialitePage() {
               <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
                 <div className="space-y-3 text-emerald-700">
                   <p>
-                    <strong>Keepmegreen</strong> s'engage à protéger votre vie privée et vos données personnelles. 
+                    <strong>DrinkeatGreen</strong> s'engage à protéger votre vie privée et vos données personnelles. 
                     Cette politique explique comment nous collectons, utilisons et protégeons vos informations.
                   </p>
                   <p>

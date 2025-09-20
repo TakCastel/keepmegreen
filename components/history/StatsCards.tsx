@@ -31,7 +31,7 @@ export default function StatsCards({ consumptions, type }: StatsCardsProps) {
 
   const cards = [
     {
-      title: 'Prises de conscience',
+      title: 'Consommations totales',
       value: stats.totalConsumptions,
       icon: User,
       color: 'text-purple-700',
@@ -49,7 +49,7 @@ export default function StatsCards({ consumptions, type }: StatsCardsProps) {
       gradient: 'from-blue-400 to-blue-500',
     },
     {
-      title: 'Sérénité',
+      title: 'Jours calmes',
       value: `${greenDaysPercentage}%`,
       icon: Flower,
       color: 'text-emerald-700',
@@ -58,7 +58,7 @@ export default function StatsCards({ consumptions, type }: StatsCardsProps) {
       gradient: 'from-emerald-400 to-green-500',
     },
     {
-      title: 'Équilibre quotidien',
+      title: 'Moyenne quotidienne',
       value: averagePerDay,
       icon: Scale,
       color: 'text-amber-700',
@@ -92,10 +92,10 @@ export default function StatsCards({ consumptions, type }: StatsCardsProps) {
                 </button>
                 {showTooltip && (
                   <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-50">
-                    <div className="font-medium mb-1">Équilibre quotidien</div>
+                    <div className="font-medium mb-1">Moyenne quotidienne</div>
                     <div className="text-gray-300">
                       Nombre moyen de consommations par jour. 
-                      Plus ce chiffre est bas, plus vos journées sont sereines et équilibrées.
+                      Ce chiffre vous aide à comprendre vos patterns de consommation.
                     </div>
                     <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                   </div>

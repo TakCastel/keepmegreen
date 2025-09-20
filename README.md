@@ -1,4 +1,4 @@
-# Keepmegreen
+# DrinkeatGreen
 
 Application web Next.js 15 pour suivre et réduire vos excès quotidiens dans trois domaines : alcool, cigarettes et malbouffe.
 

@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Keepmegreen - Suivez vos excès quotidiens",
+  title: "DrinkeatGreen - Suivez vos excès quotidiens",
   description: "Application pour tracker et réduire vos consommations d'alcool, cigarettes et malbouffe",
 };
 

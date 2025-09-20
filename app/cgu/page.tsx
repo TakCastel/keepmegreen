@@ -18,7 +18,7 @@ export default function CGUPage() {
             </h1>
           </div>
           <p className="text-gray-600 text-base md:text-lg">
-            Règles et conditions d'utilisation de l'application Keepmegreen
+            Règles et conditions d'utilisation de l'application DrinkeatGreen
           </p>
         </div>
 
@@ -43,7 +43,7 @@ export default function CGUPage() {
                 <div className="space-y-3 text-emerald-700">
                   <p>
                     Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de l'application 
-                    <strong> Keepmegreen</strong>, un outil de suivi personnel des habitudes de consommation.
+                    <strong> DrinkeatGreen</strong>, un outil de suivi personnel des habitudes de consommation.
                   </p>
                   <p>
                     L'utilisation de l'application implique l'acceptation pleine et entière des présentes conditions.
@@ -57,10 +57,10 @@ export default function CGUPage() {
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Article 2 - Définitions</h2>
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                 <div className="space-y-3 text-gray-700">
-                  <p><strong>Application :</strong> Keepmegreen, service web de suivi personnel</p>
+                  <p><strong>Application :</strong> DrinkeatGreen, service web de suivi personnel</p>
                   <p><strong>Utilisateur :</strong> Toute personne utilisant l'application</p>
                   <p><strong>Données :</strong> Informations de consommation saisies par l'utilisateur</p>
-                  <p><strong>Éditeur :</strong> Keepmegreen, responsable de l'application</p>
+                  <p><strong>Éditeur :</strong> DrinkeatGreen, responsable de l'application</p>
                 </div>
               </div>
             </section>

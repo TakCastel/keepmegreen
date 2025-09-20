@@ -221,7 +221,7 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <div className="space-y-3 text-gray-700 text-sm">
                     <p>
-                      <strong>Éditeur :</strong> Keepmegreen - Application de suivi personnel
+                      <strong>Éditeur :</strong> DrinkeatGreen - Application de suivi personnel
                     </p>
                     <p>
                       <strong>Finalité :</strong> Outil de prise de conscience personnelle des habitudes de consommation

@@ -246,13 +246,13 @@ export default function CalendarGrid() {
                   <div className="text-2xl font-light text-emerald-600">
                     {monthsData[currentMonthIndex].weeks.flat().filter(d => d.isCurrentMonth && d.color === 'green').length}
                   </div>
-                  <div className="text-gray-600 font-medium">Jours sereins</div>
+                  <div className="text-gray-600 font-medium">Jours calmes</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-light text-purple-600">
                     {monthsData[currentMonthIndex].weeks.flat().reduce((sum, d) => d.isCurrentMonth ? sum + d.totalConsumptions : sum, 0)}
                   </div>
-                  <div className="text-gray-600 font-medium">Prises de conscience</div>
+                  <div className="text-gray-600 font-medium">Consommations totales</div>
                 </div>
               </div>
             </div>
@@ -335,7 +335,7 @@ export default function CalendarGrid() {
             {/* Statistiques du mois */}
             <div className="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-600">
               <div className="flex justify-between">
-                <span>Jours sereins</span>
+                <span>Jours calmes</span>
                 <span className="font-medium text-emerald-600">
                   {month.weeks.flat().filter(d => d.isCurrentMonth && d.color === 'green').length}
                 </span>
@@ -358,19 +358,19 @@ export default function CalendarGrid() {
         <div className="flex flex-wrap justify-center gap-6 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-emerald-500 rounded-lg shadow-sm"></div>
-            <span className="text-gray-700 font-medium">Sérénité</span>
+            <span className="text-gray-700 font-medium">Peu</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-amber-400 rounded-lg shadow-sm"></div>
-            <span className="text-gray-700 font-medium">Éveil</span>
+            <span className="text-gray-700 font-medium">Modéré</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-orange-400 rounded-lg shadow-sm"></div>
-            <span className="text-gray-700 font-medium">Vigilance</span>
+            <span className="text-gray-700 font-medium">Beaucoup</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-rose-400 rounded-lg shadow-sm"></div>
-            <span className="text-gray-700 font-medium">Attention</span>
+            <span className="text-gray-700 font-medium">Très</span>
           </div>
         </div>
       </div>
@@ -382,14 +382,14 @@ export default function CalendarGrid() {
             <Flower className="w-6 h-6 text-white" />
           </div>
           <div className="text-3xl font-light text-emerald-700 mb-1">{calendarDays.filter(d => d.color === 'green').length}</div>
-          <div className="text-emerald-600 font-medium">Jours sereins</div>
+          <div className="text-emerald-600 font-medium">Jours calmes</div>
         </div>
         <div className="bg-blue-50 rounded-2xl p-6 text-center border border-blue-100">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           <div className="text-3xl font-light text-blue-700 mb-1">{calendarDays.filter(d => d.hasData).length}</div>
-          <div className="text-blue-600 font-medium">Jours conscients</div>
+          <div className="text-blue-600 font-medium">Jours enregistrés</div>
         </div>
         <div className="bg-purple-50 rounded-2xl p-6 text-center border border-purple-100">
           <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -398,7 +398,7 @@ export default function CalendarGrid() {
           <div className="text-3xl font-light text-purple-700 mb-1">
             {calendarDays.reduce((sum, day) => sum + day.totalConsumptions, 0)}
           </div>
-          <div className="text-purple-600 font-medium">Prises de conscience</div>
+          <div className="text-purple-600 font-medium">Consommations totales</div>
         </div>
       </div>
 

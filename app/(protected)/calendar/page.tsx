@@ -13,7 +13,7 @@ export default function CalendarPage() {
             <Calendar className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl md:text-2xl font-light text-gray-800">
-            Calendrier de <span className="font-semibold text-emerald-600">sérénité</span>
+            Calendrier d&apos;<span className="font-semibold text-emerald-600">observation</span>
           </h1>
         </div>
         <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
@@ -33,7 +33,7 @@ export default function CalendarPage() {
             <User className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <h3 className="text-lg md:text-xl font-light text-gray-800">
-            Navigation <span className="font-semibold text-emerald-600">contemplative</span>
+            Navigation <span className="font-semibold text-emerald-600">interactive</span>
           </h3>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
@@ -41,13 +41,13 @@ export default function CalendarPage() {
             <div className="flex items-start gap-3">
               <Flower className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Cliquez sur un jour pour explorer vos <span className="text-emerald-600 font-medium">prises de conscience</span>
+                Cliquez sur un jour pour explorer vos <span className="text-emerald-600 font-medium">consommations</span>
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Leaf className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Cherchez la <span className="text-emerald-600 font-medium">sérénité</span> dans chaque journée
+                Observez vos <span className="text-emerald-600 font-medium">patterns</span> dans chaque journée
               </p>
             </div>
           </div>
@@ -55,13 +55,13 @@ export default function CalendarPage() {
             <div className="flex items-start gap-3">
               <Calendar className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Naviguez dans le temps pour observer votre <span className="text-emerald-600 font-medium">évolution</span>
+                Naviguez dans le temps pour observer vos <span className="text-emerald-600 font-medium">tendances</span>
               </p>
             </div>
             <div className="flex items-start gap-3">
               <BarChart3 className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Les métriques vous offrent une vue d&apos;ensemble apaisante
+                Les métriques vous offrent une vue d&apos;ensemble claire
               </p>
             </div>
           </div>

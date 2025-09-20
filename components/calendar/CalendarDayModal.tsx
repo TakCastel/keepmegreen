@@ -36,7 +36,7 @@ export default function CalendarDayModal({ day, dayConsumption, onClose }: Calen
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !', icon: Flower },
     yellow: { bg: 'bg-amber-400', text: 'En équilibre', icon: Leaf },
     orange: { bg: 'bg-orange-400', text: 'Avec bienveillance', icon: Sun },
-    red: { bg: 'bg-rose-400', text: 'Journée difficile', icon: Sunrise },
+    red: { bg: 'bg-rose-400', text: 'Journée intense', icon: Sunrise },
   };
 
   const currentColorConfig = colorConfig[day.color];

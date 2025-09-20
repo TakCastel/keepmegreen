@@ -86,7 +86,7 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
                 {category.title}
               </h3>
               <p className="text-gray-600 text-sm font-medium">
-                {category.total} {category.total === 1 ? 'prise de conscience' : 'prises de conscience'}
+                {category.total} {category.total === 1 ? 'consommation' : 'consommations'}
               </p>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Flower className="w-8 h-8 text-emerald-600" />
               </div>
-              <p className="text-emerald-600 font-medium">Sérénité parfaite</p>
+              <p className="text-emerald-600 font-medium">Aucune consommation</p>
             </div>
           ) : (
             <div className="space-y-4">

@@ -50,11 +50,11 @@ export default function Dashboard() {
             <Sprout className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl md:text-2xl font-light text-gray-800">
-            Votre espace <span className="font-semibold text-emerald-600">bien-être</span>
+            Votre espace de <span className="font-semibold text-emerald-600">suivi</span>
           </h1>
         </div>
         <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
-          Enregistrez vos consommations quotidiennes et suivez votre progression vers un mode de vie plus équilibré
+          Enregistrez vos consommations quotidiennes et comprenez vos habitudes de consommation
         </p>
       </div>
 
@@ -102,7 +102,7 @@ export default function Dashboard() {
             <Heart className="w-6 h-6 text-white" />
           </div>
           <h3 className="text-xl font-light text-gray-800">
-            Méditation <span className="font-semibold text-emerald-600">quotidienne</span>
+            Conseils <span className="font-semibold text-emerald-600">pratiques</span>
           </h3>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -110,13 +110,13 @@ export default function Dashboard() {
             <div className="flex items-start gap-3">
               <Sprout className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Cultivez la <span className="text-emerald-600 font-medium">bienveillance</span> envers vous-même
+                Soyez <span className="text-emerald-600 font-medium">bienveillant</span> envers vous-même
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Leaf className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Observez vos habitudes sans jugement
+                Observez vos habitudes avec curiosité
               </p>
             </div>
           </div>
@@ -124,13 +124,13 @@ export default function Dashboard() {
             <div className="flex items-start gap-3">
               <Flower className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Célébrez chaque petit <span className="text-emerald-600 font-medium">progrès</span>
+                Notez chaque <span className="text-emerald-600 font-medium">observation</span>
               </p>
             </div>
             <div className="flex items-start gap-3">
               <LifeBuoy className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Cherchez l&apos;équilibre, pas la perfection
+                Comprenez vos patterns, sans jugement
               </p>
             </div>
           </div>

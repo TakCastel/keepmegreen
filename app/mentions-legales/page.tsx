@@ -18,7 +18,7 @@ export default function MentionsLegalesPage() {
             </h1>
           </div>
           <p className="text-gray-600 text-base md:text-lg">
-            Informations légales et réglementaires concernant Keepmegreen
+            Informations légales et réglementaires concernant DrinkeatGreen
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export default function MentionsLegalesPage() {
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Éditeur du site</h2>
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                 <div className="space-y-3 text-gray-700">
-                  <p><strong>Nom :</strong> Keepmegreen</p>
+                  <p><strong>Nom :</strong> DrinkeatGreen</p>
                   <p><strong>Type :</strong> Application web de suivi personnel</p>
                   <p><strong>Finalité :</strong> Outil de prise de conscience des habitudes de consommation</p>
                   <p><strong>Contact :</strong> Disponible via les paramètres de l'application</p>

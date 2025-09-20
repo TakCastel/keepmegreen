@@ -49,7 +49,7 @@ export default function TodayStats() {
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !' },
     yellow: { bg: 'bg-amber-400', text: 'En équilibre' },
     orange: { bg: 'bg-orange-400', text: 'Avec bienveillance' },
-    red: { bg: 'bg-rose-400', text: 'Journée difficile' },
+    red: { bg: 'bg-rose-400', text: 'Journée intense' },
   };
 
   const currentColorConfig = colorConfig[dayColor];

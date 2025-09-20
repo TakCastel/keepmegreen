@@ -5,6 +5,22 @@ import BackToTop from '@/components/ui/BackToTop';
 import { Sprout, Wine, Cigarette, Utensils, Leaf, Calendar, BarChart3, Star, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
+// Composant pour les cartes avec effet 3D statique
+function FloatingCard3D({ children, className, ...props }: { children: React.ReactNode; className?: string; [key: string]: any }) {
+  return (
+    <div
+      className={`${className}`}
+      style={{ 
+        transform: 'perspective(1000px) rotateX(5deg) rotateY(-5deg)',
+        transformStyle: 'preserve-3d'
+      }}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function Home() {
 
     return (
@@ -31,13 +47,13 @@ export default function Home() {
                 </div>
                 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Surveillez vos
-                  <span className="block text-emerald-600">mauvaises habitudes</span>
+                  Suivez vos
+                  <span className="block text-emerald-600">consommations</span>
                 </h1>
                 
                 <p className="text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed px-4 lg:px-0">
-                  Une approche bienveillante pour réduire vos consommations d&apos;alcool, 
-                  cigarettes et nutrition. Visualisez vos progrès avec un calendrier zen.
+                  Une approche simple pour observer vos consommations d&apos;alcool, 
+                  cigarettes et nutrition. Visualisez vos patterns avec un calendrier clair.
                 </p>
               </div>
 
@@ -58,15 +74,15 @@ export default function Home() {
               <div className="flex items-center justify-center lg:justify-start gap-4 md:gap-6 lg:gap-8 pt-6 md:pt-8 border-t border-gray-200/50 px-4 lg:px-0">
                 <div className="text-center">
                   <div className="text-xl md:text-2xl font-bold text-emerald-600">3</div>
-                  <div className="text-xs md:text-sm text-gray-600">Domaines surveillés</div>
+                  <div className="text-xs md:text-sm text-gray-600">Domaines observés</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl md:text-2xl font-bold text-emerald-600">100%</div>
                   <div className="text-xs md:text-sm text-gray-600">Confidentialité</div>
                 </div>
         <div className="text-center">
-                  <div className="text-xl md:text-2xl font-bold text-emerald-600">Zen</div>
-                  <div className="text-xs md:text-sm text-gray-600">Approche bienveillante</div>
+                  <div className="text-xl md:text-2xl font-bold text-emerald-600">Simple</div>
+                  <div className="text-xs md:text-sm text-gray-600">Approche neutre</div>
                 </div>
               </div>
             </div>
@@ -77,7 +93,7 @@ export default function Home() {
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 shadow-2xl border border-white/50">
                 <div className="space-y-4 md:space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-800">Calendrier de surveillance</h3>
+                    <h3 className="text-base md:text-lg font-semibold text-gray-800">Calendrier d&apos;observation</h3>
                     <div className="w-6 h-6 md:w-8 md:h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
                       <Calendar className="w-3 h-3 md:w-4 md:h-4 text-emerald-600" />
         </div>
@@ -105,15 +121,15 @@ export default function Home() {
                   <div className="flex items-center justify-between text-xs md:text-sm">
                     <div className="flex items-center gap-1 md:gap-2">
                       <div className="w-2 h-2 md:w-3 md:h-3 bg-emerald-100 rounded"></div>
-                      <span className="text-gray-600">Bonnes journées</span>
+                      <span className="text-gray-600">Jours calmes</span>
                     </div>
                     <div className="flex items-center gap-1 md:gap-2">
                       <div className="w-2 h-2 md:w-3 md:h-3 bg-orange-100 rounded"></div>
-                      <span className="text-gray-600">Attention</span>
+                      <span className="text-gray-600">Modéré</span>
                     </div>
                     <div className="flex items-center gap-1 md:gap-2">
                       <div className="w-2 h-2 md:w-3 md:h-3 bg-red-100 rounded"></div>
-                      <span className="text-gray-600">Difficile</span>
+                      <span className="text-gray-600">Intense</span>
                     </div>
                   </div>
                 </div>
@@ -147,10 +163,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-gray-800 mb-3 md:mb-4">
-            Trois domaines à <span className="font-semibold text-emerald-600">surveiller</span>
+            Trois domaines à <span className="font-semibold text-emerald-600">observer</span>
           </h2>
           <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4 mb-8 md:mb-12">
-            Surveillez vos mauvaises habitudes avec bienveillance dans les domaines qui impactent le plus votre santé
+            Observez vos consommations de manière régulière dans les domaines qui vous intéressent
           </p>
           
           {/* Illustration avec cartes flottantes */}
@@ -160,7 +176,7 @@ export default function Home() {
               <div className="relative">
                 <img 
                   src="/illustration-1.png" 
-                  alt="Personne utilisant l'application Keepmegreen" 
+                  alt="Personne utilisant l'application DrinkeatGreen" 
                   className="w-full max-w-md h-auto drop-shadow-xl rounded-2xl"
                 />
               </div>
@@ -169,49 +185,28 @@ export default function Home() {
             {/* Cartes flottantes autour de l'image - desktop */}
             <div className="hidden md:block">
               {/* Carte Alcool - au milieu à gauche */}
-              <div className="absolute top-1/2 left-0 w-72 h-48 bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/20 transform -translate-x-4 -translate-y-1/2 flex items-center">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Wine className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-normal text-gray-800 mb-2 tracking-wide font-serif">Alcool</h3>
-                    <p className="text-base text-gray-600 leading-relaxed">
-                      Surveillez vos consommations d&apos;alcool pour réduire votre dépendance.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <FloatingCard3D className="absolute top-1/2 left-0 w-80 h-48 bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 transform -translate-x-6 -translate-y-1/2">
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">Alcool</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Suivez vos verres et boissons pour comprendre vos habitudes de consommation.
+                </p>
+              </FloatingCard3D>
 
               {/* Carte Cigarettes - en haut à droite */}
-              <div className="absolute top-8 right-0 w-72 h-48 bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/20 transform translate-x-4 translate-y-4 flex items-center">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Cigarette className="w-8 h-8 text-orange-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-normal text-gray-800 mb-2 tracking-wide font-serif">Cigarettes</h3>
-                    <p className="text-base text-gray-600 leading-relaxed">
-                      Surveillez votre consommation de cigarettes pour arrêter de fumer.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <FloatingCard3D className="absolute top-8 right-0 w-80 h-48 bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 transform translate-x-6 translate-y-4">
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">Cigarettes</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Comptez vos cigarettes quotidiennes pour visualiser vos rythmes de consommation.
+                </p>
+              </FloatingCard3D>
 
               {/* Carte Nutrition - en bas au centre */}
-              <div className="absolute bottom-0 left-1/2 w-72 h-48 bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/20 transform -translate-x-1/2 translate-x-32 translate-y-8 flex items-center">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Utensils className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-light text-gray-800 mb-2 tracking-wide font-serif">Nutrition</h3>
-                    <p className="text-base text-gray-600 leading-relaxed">
-                      Surveillez vos écarts alimentaires pour améliorer votre nutrition.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <FloatingCard3D className="absolute bottom-0 left-1/2 w-80 h-48 bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 transform -translate-x-1/2 translate-x-40 translate-y-8">
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">Nutrition</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Notez vos repas et collations pour suivre vos habitudes alimentaires.
+                </p>
+              </FloatingCard3D>
             </div>
 
             {/* Cartes empilées - mobile uniquement */}
@@ -223,8 +218,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Alcool</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Surveillez vos consommations d&apos;alcool pour réduire votre dépendance. 
-                  Observez vos patterns et reprenez le contrôle de votre consommation.
+                  Suivez vos verres et boissons pour comprendre vos habitudes de consommation. 
+                  Chaque verre enregistré vous aide à mieux vous connaître.
                 </p>
               </div>
 
@@ -235,8 +230,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Cigarettes</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Surveillez votre consommation de cigarettes pour arrêter de fumer. 
-                  Chaque cigarette enregistrée vous rapproche de votre liberté.
+                  Comptez vos cigarettes quotidiennes pour visualiser vos rythmes de consommation. 
+                  Chaque cigarette notée vous donne une vision claire de vos habitudes.
                 </p>
               </div>
               
@@ -247,8 +242,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">Nutrition</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Surveillez vos écarts alimentaires pour améliorer votre nutrition. 
-                  Améliorez votre nutrition et reprenez le contrôle de votre alimentation.
+                  Notez vos repas et collations pour suivre vos habitudes alimentaires. 
+                  Chaque repas enregistré vous aide à comprendre vos choix nutritionnels.
                 </p>
               </div>
             </div>
@@ -272,7 +267,7 @@ export default function Home() {
               Comment <span className="font-semibold text-emerald-600">ça fonctionne</span>
             </h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
-              Trois étapes simples pour surveiller et réduire vos mauvaises habitudes
+              Trois étapes simples pour observer et comprendre vos consommations
             </p>
           </div>
 
@@ -295,11 +290,11 @@ export default function Home() {
                     <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4">Enregistrez</h3>
                     <p className="text-base md:text-lg text-gray-600 leading-relaxed px-4 md:px-0">
                       Cliquez sur le bouton correspondant chaque fois que vous consommez quelque chose. 
-                      C'est la base du suivi : être honnête avec soi-même.
+                      C'est la base de l'observation : être présent à ses choix.
                     </p>
                     <div className="mt-4 md:mt-6 inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-emerald-100 rounded-full">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                      <span className="text-emerald-700 font-medium text-xs md:text-sm">Honnêteté</span>
+                      <span className="text-emerald-700 font-medium text-xs md:text-sm">Présence</span>
                     </div>
                   </div>
                 </div>
@@ -351,10 +346,10 @@ export default function Home() {
                     <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg">
                       <span className="text-xl md:text-2xl font-bold text-white">2</span>
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4">Surveillez</h3>
+                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4">Observez</h3>
                     <p className="text-base md:text-lg text-gray-600 leading-relaxed px-4 md:px-0">
-                      Votre calendrier se colore selon vos consommations. Vert pour les bonnes journées, 
-                      rouge pour les jours difficiles. C'est votre tableau de bord.
+                      Votre calendrier se colore selon vos consommations. Vert pour les jours calmes, 
+                      rouge pour les jours intenses. C'est votre tableau de bord.
                     </p>
                     <div className="mt-4 md:mt-6 inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-emerald-100 rounded-full">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
@@ -372,10 +367,10 @@ export default function Home() {
                     <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg">
                       <span className="text-xl md:text-2xl font-bold text-white">3</span>
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4">Réduisez</h3>
+                    <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4">Comprenez</h3>
                     <p className="text-base md:text-lg text-gray-600 leading-relaxed px-4 md:px-0">
-                      Avec le temps, vous réduisez naturellement vos consommations. 
-                      Le suivi vous aide à prendre conscience et à faire de meilleurs choix.
+                      Avec le temps, vous observez naturellement vos patterns. 
+                      Le suivi vous aide à prendre conscience de vos choix.
                     </p>
                     <div className="mt-4 md:mt-6 inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-emerald-100 rounded-full">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
@@ -444,7 +439,7 @@ export default function Home() {
               </div>
               <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
                 "J'ai demandé à un ami développeur de faire cette app pour m'aider avec mon alcool. 
-                Cette semaine j'ai enfin pu voir combien je buvais vraiment. Ça fait peur mais c'est nécessaire."
+                Cette semaine j'ai enfin pu voir combien je buvais vraiment. C'est révélateur mais c'est nécessaire."
               </p>
               <div className="flex items-center">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mr-3 md:mr-4">
@@ -465,7 +460,7 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
-                "J'ai testé l'app cette semaine pour mes cigarettes. Le calendrier rouge/vert c'est brutal 
+                "J'ai testé l'app cette semaine pour mes cigarettes. Le calendrier rouge/vert c'est révélateur 
                 mais ça marche ! J'ai fumé 3 fois moins que d'habitude."
               </p>
               <div className="flex items-center">
@@ -488,7 +483,7 @@ export default function Home() {
               </div>
               <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
                 "J'ai essayé cette semaine pour ma nutrition. C'est dur de cliquer sur le bouton 
-                à chaque fois que je mange de la merde, mais ça m'aide vraiment à me contrôler."
+                à chaque fois que je mange quelque chose de peu nutritif, mais ça m'aide vraiment à être consciente."
               </p>
               <div className="flex items-center">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-3 md:mr-4">
@@ -509,10 +504,10 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 shadow-2xl">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-white mb-4 md:mb-6">
-              Prêt à surveiller vos <span className="font-semibold">mauvaises habitudes</span> ?
+              Prêt à observer vos <span className="font-semibold">consommations</span> ?
             </h2>
             <p className="text-base md:text-lg lg:text-xl text-emerald-100 mb-6 md:mb-8 max-w-2xl mx-auto px-4">
-              Rejoignez des milliers de personnes qui réduisent leurs écarts avec bienveillance
+              Rejoignez les nombreuses personnes qui observent leurs patterns de manière assidue
             </p>
             <Link
               href="/login"
@@ -538,7 +533,7 @@ export default function Home() {
               </span>
             </div>
             <p className="text-sm md:text-base text-gray-400 mb-6 md:mb-8 px-4">
-              Surveillez et réduisez vos mauvaises habitudes au quotidien
+              Observez et comprenez vos consommations au quotidien
             </p>
             
             {/* Liens légaux */}
@@ -564,7 +559,7 @@ export default function Home() {
             </div>
             
             <p className="text-xs md:text-sm text-gray-500">
-              © 2024 Keepmegreen. Tous droits réservés.
+              © 2024 DrinkeatGreen. Tous droits réservés.
             </p>
         </div>
       </div>

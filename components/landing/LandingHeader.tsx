@@ -27,7 +27,7 @@ export default function LandingHeader() {
               <Sprout className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl text-gray-800 font-poppins tracking-tight">
-              <span className="font-bold text-emerald-600">Keepme</span><span className="font-light">green</span>
+              <span className="font-bold text-emerald-600">Drinkeat</span><span className="font-light">Green</span>
             </span>
           </Link>
 
