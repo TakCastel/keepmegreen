@@ -38,6 +38,6 @@ jobs:
           cd functions
           npm ci
           npm run build
-          firebase deploy --only functions --project greenme-415fa
+          npx firebase-tools@latest deploy --only functions --project greenme-415fa
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
