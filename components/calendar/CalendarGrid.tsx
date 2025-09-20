@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { format, startOfYear, endOfYear, startOfWeek, eachDayOfInterval, endOfWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import Link from 'next/link';
@@ -20,10 +20,24 @@ export default function CalendarGrid() {
   const { subscription, canAccessYear, hasAccess, canAccessPeriod } = useSubscription();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0); // Index dans monthsData (0 pour freemium, 0-11 pour premium)
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0); // Sera ajusté selon le type d'abonnement
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   
   const { data: consumptions = [], isLoading } = useAccessibleConsumptions(user?.uid);
+
+  // Ajuster l'index du mois selon le type d'abonnement
+  React.useEffect(() => {
+    if (subscription && !isLoading) {
+      const hasAdvancedStats = subscription?.plan === 'premium' || subscription?.plan === 'premium-plus';
+      if (hasAdvancedStats) {
+        // Pour les utilisateurs premium, commencer sur le mois actuel (0-11)
+        setCurrentMonthIndex(new Date().getMonth());
+      } else {
+        // Pour les utilisateurs gratuits, commencer sur l'index 0 (seul mois disponible)
+        setCurrentMonthIndex(0);
+      }
+    }
+  }, [subscription, isLoading]);
 
   // Si le profil utilisateur est encore en cours de chargement, afficher un skeleton
   if (loading || !userProfile) {
@@ -44,13 +58,13 @@ export default function CalendarGrid() {
   const currentYear = new Date().getFullYear();
   
   // Gratuit = seulement le mois en cours, Premium = année complète
-  const hasAdvancedStats = hasAccess('advancedStats');
-  const maxMonths = hasAdvancedStats === true ? 12 : 1;
-  const startMonth = hasAdvancedStats === true ? 0 : currentMonth;
+  const hasAdvancedStats = subscription?.plan === 'premium' || subscription?.plan === 'premium-plus';
+  const maxMonths = hasAdvancedStats ? 12 : 1;
+  const startMonth = hasAdvancedStats ? 0 : currentMonth;
   
   
   // Pour les utilisateurs gratuits, forcer l'année courante
-  const displayYear = hasAdvancedStats === true ? selectedYear : currentYear;
+  const displayYear = hasAdvancedStats ? selectedYear : currentYear;
   
   for (let month = startMonth; month < startMonth + maxMonths; month++) {
     const monthStart = new Date(displayYear, month, 1);
@@ -146,7 +160,7 @@ export default function CalendarGrid() {
         </div>
 
         {/* Skeleton adapté selon le plan */}
-        {hasAdvancedStats === true ? <PremiumCalendarSkeleton /> : <FreeCalendarSkeleton />}
+        {hasAdvancedStats ? <PremiumCalendarSkeleton /> : <FreeCalendarSkeleton />}
       </div>
     );
   }
@@ -157,7 +171,7 @@ export default function CalendarGrid() {
       {/* Contrôles */}
       <div className="flex items-center justify-between">
         <div className="bg-white/70 text-gray-800 rounded-2xl px-4 py-3 border border-gray-200 shadow-md backdrop-blur-sm">
-          {hasAdvancedStats === true ? (
+          {hasAdvancedStats ? (
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -470,8 +484,157 @@ export default function CalendarGrid() {
       )}
 
 
+      {/* Version mobile - calendrier premium avec pagination */}
+      {hasAdvancedStats && (
+        <div className="md:hidden">
+          {/* Navigation mobile pour les utilisateurs premium */}
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={goToPreviousMonth}
+              className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+              title="Mois précédent"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-gray-800 capitalize">
+                {monthsData[currentMonthIndex]?.name || 'Chargement...'}
+              </h3>
+              <button
+                onClick={goToCurrentMonth}
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+              >
+                Retour à aujourd'hui
+              </button>
+            </div>
+            
+            <button
+              onClick={goToNextMonth}
+              className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+              title="Mois suivant"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Calendrier mobile - mois unique pour premium */}
+          {monthsData.length > 0 && monthsData[currentMonthIndex] ? (
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg">
+              {/* En-têtes des jours de la semaine */}
+              <div className="grid grid-cols-7 gap-2 mb-4">
+                {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+                  <div key={index} className="text-sm font-medium text-gray-500 text-center py-2">
+                    {day}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Grille des jours du mois */}
+              <div className="space-y-2">
+                {monthsData[currentMonthIndex].weeks.map((week, weekIndex) => (
+                  <div key={weekIndex} className="grid grid-cols-7 gap-2">
+                    {week.map((day, dayIndex) => {
+                      const dayData = {
+                        date: day.date,
+                        color: day.color,
+                        totalConsumptions: day.totalConsumptions,
+                        hasData: day.hasData
+                      } as CalendarDay;
+                      
+                      // Vérifier si l'utilisateur peut accéder à cette date (version mobile premium)
+                      const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+                      const dayDate = new Date(year, month - 1, dayOfMonth);
+                      const canAccess = canAccessPeriod(dayDate);
+                      
+                      return (
+                        <button
+                          key={dayIndex}
+                          onClick={() => {
+                            if (day.isCurrentMonth && !day.isFuture) {
+                              // Toujours afficher la modale, même pour les jours bloqués
+                              setSelectedDay(dayData);
+                            }
+                          }}
+                          disabled={!day.isCurrentMonth || day.isFuture}
+                          className={`
+                            relative w-10 h-10 rounded-xl text-sm font-medium transition-all duration-200
+                            flex items-center justify-center
+                            ${!day.isCurrentMonth 
+                              ? 'text-gray-300 cursor-default'
+                              : day.isFuture
+                              ? 'bg-gray-200 text-gray-500 cursor-default'
+                              : !canAccess
+                              ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-500 opacity-60 cursor-pointer'
+                              : `${colorClasses[day.color]} text-white hover:scale-110 hover:shadow-lg`
+                            }
+                            ${day.isToday && day.isCurrentMonth 
+                              ? 'ring-2 ring-gray-800' 
+                              : ''
+                            }
+                          `}
+                          title={
+                            day.isCurrentMonth 
+                              ? !canAccess
+                                ? `${format(new Date(day.date), 'dd MMMM yyyy', { locale: fr })} - Cliquez pour découvrir Premium et accéder à l'historique complet`
+                                : `${format(new Date(day.date), 'dd MMMM yyyy', { locale: fr })} - ${day.totalConsumptions} consommation${day.totalConsumptions > 1 ? 's' : ''}`
+                              : ''
+                          }
+                        >
+                          {day.day}
+                          
+                          {/* Indicateur discret pour aujourd'hui */}
+                          {day.isToday && day.isCurrentMonth && (
+                            <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gray-800 rounded-full"></div>
+                          )}
+                          
+                          {/* Indicateur pour les dates non accessibles */}
+                          {!canAccess && day.isCurrentMonth && !day.isFuture && (
+                            <div className="absolute -top-0.5 -left-0.5 w-2 h-2 bg-amber-500 rounded-full"></div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Statistiques du mois */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="text-2xl font-light text-emerald-600">
+                      {monthsData[currentMonthIndex].weeks.flat().filter(d => d.isCurrentMonth && d.color === 'green').length}
+                    </div>
+                    <div className="text-gray-600 font-medium">Jours calmes</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-light text-purple-600">
+                      {monthsData[currentMonthIndex].weeks.flat().reduce((sum, d) => d.isCurrentMonth ? sum + d.totalConsumptions : sum, 0)}
+                    </div>
+                    <div className="text-gray-600 font-medium">Consommations totales</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg text-center">
+              <div className="text-gray-500 mb-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-lg font-medium">Chargement du calendrier...</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Préparation de votre calendrier complet
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Version desktop - calendrier classique mois par mois */}
-      {hasAdvancedStats === true && (
+      {hasAdvancedStats && (
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {monthsData.map((month) => (
             <div key={month.month} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-gray-200 shadow-lg">

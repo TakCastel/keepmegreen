@@ -101,6 +101,8 @@ export const useAccessibleConsumptions = (userId: string | undefined) => {
     queryFn: () => userId ? getAccessibleConsumptions(userId, hasAdvancedStats) : [],
     enabled: !!userId && !loading && !!userProfile,
     staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
+    refetchOnWindowFocus: true, // Refetch quand la fenêtre reprend le focus
+    refetchOnMount: true, // Refetch quand le composant se monte
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
@@ -251,6 +253,14 @@ export const useAddConsumption = () => {
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
       });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
+      });
+      
+      // Forcer le refetch immédiat pour le calendrier
+      queryClient.refetchQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
+      });
     },
   });
 };
@@ -379,6 +389,14 @@ export const useRemoveConsumption = () => {
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
       });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
+      });
+      
+      // Forcer le refetch immédiat pour le calendrier
+      queryClient.refetchQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
+      });
     },
   });
 };
@@ -419,6 +437,14 @@ export const useMoveConsumption = () => {
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'all', variables.userId] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
+      });
+      
+      // Forcer le refetch immédiat pour le calendrier
+      queryClient.refetchQueries({ 
+        queryKey: ['consumptions', 'accessible', variables.userId] 
       });
     },
   });
