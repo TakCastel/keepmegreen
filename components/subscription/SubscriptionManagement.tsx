@@ -56,7 +56,7 @@ export default function SubscriptionManagement() {
     setIsCancelling(true);
     
     try {
-      const response = await fetch('/api/cancel-subscription', {
+      const response = await fetch('https://us-central1-greenme-415fa.cloudfunctions.net/cancelSubscription', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

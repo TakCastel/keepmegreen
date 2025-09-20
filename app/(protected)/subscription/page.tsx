@@ -135,16 +135,26 @@ export default function SubscriptionPage() {
     },
   ];
 
-  const handleUpgrade = (plan: 'premium' | 'premium-plus') => {
+  const handleUpgrade = async (plan: 'premium' | 'premium-plus') => {
     // Vérifier que l'utilisateur est connecté et a un email
     if (!user?.email) {
       alert('Vous devez être connecté pour effectuer un paiement');
       return;
     }
     
-    // Redirection vers Stripe Checkout avec l'email
-    const email = encodeURIComponent(user.email);
-    window.location.href = `/api/create-checkout-session?plan=${plan}&email=${email}`;
+    try {
+      // Appel de la Firebase Function
+      const response = await fetch(`https://us-central1-greenme-415fa.cloudfunctions.net/createCheckoutSession?plan=${plan}&email=${encodeURIComponent(user.email)}`);
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Erreur lors de la création de la session Stripe');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
   };
 
   const handleDowngrade = async () => {
@@ -156,7 +166,8 @@ export default function SubscriptionPage() {
     setIsDowngrading(true);
 
     try {
-      const response = await fetch('/api/downgrade-subscription', {
+      // TODO: Créer une Firebase Function pour le downgrade
+      const response = await fetch('https://us-central1-greenme-415fa.cloudfunctions.net/downgradeSubscription', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

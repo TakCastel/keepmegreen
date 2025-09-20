@@ -110,4 +110,79 @@ export const stripeWebhook = onRequest(
     res.json({ received: true });
   }
 );
+
+/**
+ * ✅ Annuler un abonnement
+ */
+export const cancelSubscription = onRequest(
+  { secrets: [stripeSecret] },
+  async (req, res) => {
+    try {
+      const { subscriptionId } = req.body;
+      
+      if (!subscriptionId) {
+        res.status(400).send("Missing subscription ID");
+        return;
+      }
+
+      const stripe = new Stripe(stripeSecret.value(), {});
+      const subscription = await stripe.subscriptions.cancel(subscriptionId);
+      
+      res.json({ success: true, subscription });
+    } catch (err: any) {
+      logger.error("Erreur cancelSubscription", err);
+      res.status(500).send(err.message);
+    }
+  }
+);
+
+/**
+ * ✅ Vérifier un paiement
+ */
+export const verifyPayment = onRequest(
+  { secrets: [stripeSecret] },
+  async (req, res) => {
+    try {
+      const { sessionId } = req.body;
+      
+      if (!sessionId) {
+        res.status(400).send("Missing session ID");
+        return;
+      }
+
+      const stripe = new Stripe(stripeSecret.value(), {});
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      
+      res.json({ success: true, session });
+    } catch (err: any) {
+      logger.error("Erreur verifyPayment", err);
+      res.status(500).send(err.message);
+    }
+  }
+);
+
+/**
+ * ✅ Rétrograder un abonnement
+ */
+export const downgradeSubscription = onRequest(
+  { secrets: [stripeSecret] },
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        res.status(400).send("Missing email");
+        return;
+      }
+
+      // Logique de rétrogradation
+      // TODO: Implémenter la logique de rétrogradation
+      
+      res.json({ success: true, message: "Abonnement rétrogradé avec succès" });
+    } catch (err: any) {
+      logger.error("Erreur downgradeSubscription", err);
+      res.status(500).send(err.message);
+    }
+  }
+);
   

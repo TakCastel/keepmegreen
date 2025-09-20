@@ -34,17 +34,8 @@ export default function SubscriptionManager({
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          plan,
-          email: user.email,
-        }),
-      });
-
+      // Appel de la Firebase Function
+      const response = await fetch(`https://us-central1-greenme-415fa.cloudfunctions.net/createCheckoutSession?plan=${plan}&email=${encodeURIComponent(user.email)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -52,7 +43,11 @@ export default function SubscriptionManager({
       }
 
       // Rediriger vers Stripe Checkout
-      window.location.href = `/api/create-checkout-session?plan=${plan}`;
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL de redirection manquante');
+      }
       
     } catch (error: any) {
       console.error('Erreur lors de l\'upgrade:', error);

@@ -20,7 +20,7 @@ export default function PaymentVerifier() {
       if (success === 'true' && sessionId && user) {
         try {
           // Vérifier le paiement avec Stripe
-          const response = await fetch('/api/verify-payment', {
+          const response = await fetch('https://us-central1-greenme-415fa.cloudfunctions.net/verifyPayment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId })

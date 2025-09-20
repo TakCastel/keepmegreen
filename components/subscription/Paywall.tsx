@@ -110,9 +110,20 @@ export default function Paywall({
   const featureInfo = getFeatureInfo(feature);
   const Icon = featureInfo.icon;
 
-  const handleUpgrade = () => {
-    // Redirection vers Stripe Checkout
-    window.location.href = `/api/create-checkout-session?plan=${selectedPlan}`;
+  const handleUpgrade = async () => {
+    try {
+      // Appel de la Firebase Function
+      const response = await fetch(`https://us-central1-greenme-415fa.cloudfunctions.net/createCheckoutSession?plan=${selectedPlan}`);
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Erreur lors de la création de la session Stripe');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
   };
 
   return (
