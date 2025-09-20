@@ -1,3 +1,6 @@
+// Re-export des types d'abonnement
+export * from './subscription';
+
 // Types pour les consommations
 export type AlcoholType = 'beer' | 'wine' | 'shot' | 'cocktail' | 'spirits';
 export type CigaretteType = 'classic' | 'rolled' | 'cigar' | 'electronic';

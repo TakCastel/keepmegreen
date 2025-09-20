@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays } from 'date-fns';
 import { 
   getDayConsumption, 
   addConsumption, 
@@ -16,6 +16,8 @@ import {
   CigaretteType, 
   JunkfoodType 
 } from '@/types';
+import { useSubscription } from './useSubscription';
+import { useAuth } from './useAuth';
 
 // Hook pour obtenir les consommations d'un jour
 export const useDayConsumption = (userId: string | undefined, date: string) => {
@@ -33,36 +35,54 @@ export const useDayConsumption = (userId: string | undefined, date: string) => {
 
 // Hook pour obtenir les consommations d'une semaine
 export const useWeekConsumptions = (userId: string | undefined, date: Date) => {
+  const { getLimits, canAccessPeriod } = useSubscription();
+  const limits = getLimits();
+  
+  // Limiter la période selon l'abonnement
+  const maxDate = limits.maxHistoryDays > 0 ? subDays(new Date(), limits.maxHistoryDays) : new Date(0);
   const startDate = format(startOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const endDate = format(endOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd');
   
+  // Vérifier si l'utilisateur peut accéder à cette période
+  const canAccess = canAccessPeriod(date);
+  
   return useQuery({
     queryKey: ['consumptions', 'week', userId, startDate, endDate],
-    queryFn: () => userId ? getConsumptionsInRange(userId, startDate, endDate) : [],
-    enabled: !!userId,
+    queryFn: () => userId && canAccess ? getConsumptionsInRange(userId, startDate, endDate) : [],
+    enabled: !!userId && canAccess,
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
 
 // Hook pour obtenir les consommations d'un mois
 export const useMonthConsumptions = (userId: string | undefined, date: Date) => {
+  const { canAccessPeriod } = useSubscription();
+  
   const startDate = format(startOfMonth(date), 'yyyy-MM-dd');
   const endDate = format(endOfMonth(date), 'yyyy-MM-dd');
   
+  // Vérifier si l'utilisateur peut accéder à cette période
+  const canAccess = canAccessPeriod(date);
+  
   return useQuery({
     queryKey: ['consumptions', 'month', userId, startDate, endDate],
-    queryFn: () => userId ? getConsumptionsInRange(userId, startDate, endDate) : [],
-    enabled: !!userId,
+    queryFn: () => userId && canAccess ? getConsumptionsInRange(userId, startDate, endDate) : [],
+    enabled: !!userId && canAccess,
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
 
 // Hook pour obtenir toutes les consommations
 export const useAllConsumptions = (userId: string | undefined) => {
+  const { hasAccess } = useSubscription();
+  const { userProfile, loading } = useAuth();
+  
+  const hasAdvancedStats = hasAccess('advancedStats');
+  
   return useQuery({
     queryKey: ['consumptions', 'all', userId],
     queryFn: () => userId ? getAllUserConsumptions(userId) : [],
-    enabled: !!userId,
+    enabled: !!userId && !loading && !!userProfile && hasAdvancedStats === true,
     staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
     initialData: [], // Données initiales pour éviter le loading state
   });

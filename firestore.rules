@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règles pour les utilisateurs
+    match /users/{userId} {
+      // L'utilisateur peut lire et écrire son propre profil
+      // Permettre la création initiale du profil
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Permettre la création du profil lors de la première connexion
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Règles pour les consommations de l'utilisateur
+      match /consumptions/{consumptionId} {
+        // L'utilisateur peut lire et écrire ses propres consommations
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Règles pour l'historique (limité selon le plan)
+      match /history/{historyId} {
+        // Lecture conditionnelle selon le plan
+        allow read: if request.auth != null 
+                    && request.auth.uid == userId
+                    && (
+                      // Plan gratuit: accès limité aux 7 derniers jours
+                      (get(/databases/$(database)/documents/users/$(userId)).data.plan == "free" 
+                       && resource.data.date >= timestamp.date(2024, 1, 1)) // Ajuster selon vos besoins
+                      ||
+                      // Plans premium: accès complet
+                      (get(/databases/$(database)/documents/users/$(userId)).data.plan in ["premium", "premium-plus"])
+                    );
+        
+        // Écriture autorisée pour tous les utilisateurs authentifiés
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Règles pour les statistiques avancées
+      match /advanced-stats/{statsId} {
+        // Seuls les utilisateurs premium peuvent lire les statistiques avancées
+        allow read: if request.auth != null 
+                    && request.auth.uid == userId
+                    && get(/databases/$(database)/documents/users/$(userId)).data.plan in ["premium", "premium-plus"];
+        
+        // Écriture autorisée pour tous les utilisateurs authentifiés
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Règles pour les exports
+      match /exports/{exportId} {
+        // Seuls les utilisateurs premium peuvent lire les exports
+        allow read: if request.auth != null 
+                    && request.auth.uid == userId
+                    && get(/databases/$(database)/documents/users/$(userId)).data.plan in ["premium", "premium-plus"];
+        
+        // Écriture autorisée pour tous les utilisateurs authentifiés
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Règles pour les défis et badges (Premium+ uniquement)
+      match /challenges/{challengeId} {
+        // Seuls les utilisateurs Premium+ peuvent accéder aux défis
+        allow read, write: if request.auth != null 
+                           && request.auth.uid == userId
+                           && get(/databases/$(database)/documents/users/$(userId)).data.plan == "premium-plus";
+      }
+      
+      match /badges/{badgeId} {
+        // Seuls les utilisateurs Premium+ peuvent accéder aux badges
+        allow read, write: if request.auth != null 
+                           && request.auth.uid == userId
+                           && get(/databases/$(database)/documents/users/$(userId)).data.plan == "premium-plus";
+      }
+    }
+    
+    // Règles pour les ressources exclusives (Premium+ uniquement)
+    match /exclusive-resources/{resourceId} {
+      // Seuls les utilisateurs Premium+ peuvent lire les ressources exclusives
+      allow read: if request.auth != null 
+                  && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.plan == "premium-plus";
+      
+      // Pas d'écriture pour les utilisateurs
+      allow write: if false;
+    }
+    
+    // Règles pour les thèmes personnalisés
+    match /custom-themes/{themeId} {
+      // Les utilisateurs premium peuvent créer et lire leurs thèmes
+      allow read, write: if request.auth != null 
+                        && request.auth.uid == themeId
+                        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.plan in ["premium", "premium-plus"];
+    }
+    
+    // Règles pour les catégories personnalisées
+    match /custom-categories/{categoryId} {
+      // Les utilisateurs premium peuvent créer et lire leurs catégories
+      allow read, write: if request.auth != null 
+                        && request.auth.uid == categoryId
+                        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.plan in ["premium", "premium-plus"];
+    }
+    
+    // Règles pour les webhooks Stripe (accès restreint)
+    match /stripe-webhooks/{webhookId} {
+      // Seuls les Cloud Functions peuvent écrire ici
+      allow read, write: if false;
+    }
+    
+    // Règles par défaut: refuser tout accès non autorisé
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

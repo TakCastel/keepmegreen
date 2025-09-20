@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ConsumptionEditor from '@/components/settings/ConsumptionEditor';
 import AccountSettings from '@/components/settings/AccountSettings';
+import PremiumFeatures from '@/components/settings/PremiumFeatures';
 import { Edit3, User, Settings as SettingsIcon, Lightbulb, Shield, ExternalLink } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -276,6 +277,9 @@ export default function SettingsPage() {
           )}
         </div>
       </div>
+
+      {/* Fonctionnalités Premium */}
+      <PremiumFeatures />
 
       {/* Aide */}
       <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-3xl p-8 border border-slate-200">

@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Configuration pour Firebase Hosting
-  output: 'export',
+  // Configuration pour Firebase Hosting (désactivé pour permettre les API routes)
+  // output: 'export', // Commenté pour permettre les routes API
   trailingSlash: true,
   images: {
     unoptimized: true

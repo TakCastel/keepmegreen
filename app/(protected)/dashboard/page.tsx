@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import ConsumptionButton from '@/components/dashboard/ConsumptionButton';
 import TodayStats from '@/components/dashboard/TodayStats';
+import SubscriptionStatus from '@/components/dashboard/SubscriptionStatus';
 import InfoBanner from '@/components/ui/InfoBanner';
 // import { ConsumptionButtonSkeleton } from '@/components/ui/Skeleton';
 import { AlcoholType, CigaretteType, JunkfoodType } from '@/types';
@@ -94,6 +95,9 @@ export default function Dashboard() {
 
       {/* Statistiques du jour */}
       <TodayStats />
+
+      {/* Statut d'abonnement */}
+      <SubscriptionStatus />
 
       {/* Conseils zen */}
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-8 border border-emerald-100">

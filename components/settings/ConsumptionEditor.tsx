@@ -814,7 +814,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
 
       {/* Portail pour la modal de modification de date */}
       {editModal.isOpen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Modifier la date de consommation
@@ -867,7 +867,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
 
       {/* Portail pour la modal de confirmation de suppression */}
       {deleteModal.isOpen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <div className="text-center mb-6">
               {/* Icône d'alerte */}
@@ -921,7 +921,7 @@ export default function ConsumptionEditor({ presetDate }: ConsumptionEditorProps
 
       {/* Portail pour la modal d'ajout de consommation */}
       {addModal.isOpen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[99999]">
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <div className="text-center mb-6">
               {/* Icône d'ajout */}
