@@ -32,12 +32,12 @@ jobs:
           channelId: live
           projectId: greenme-415fa
       
-      # Déployer les Firebase Functions
-      - name: Deploy Firebase Functions
-        run: |
-          cd functions
-          npm ci
-          npm run build
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GREENME_415FA }}' > /tmp/firebase-service-account.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-service-account.json
-          npx firebase-tools@latest deploy --only functions --project greenme-415fa
+      # Déployer les Firebase Functions (désactivé temporairement)
+      # - name: Deploy Firebase Functions
+      #   run: |
+      #     cd functions
+      #     npm ci
+      #     npm run build
+      #     echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GREENME_415FA }}' > /tmp/firebase-service-account.json
+      #     export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-service-account.json
+      #     npx firebase-tools@latest deploy --only functions --project greenme-415fa --token ${{ secrets.FIREBASE_TOKEN }}
