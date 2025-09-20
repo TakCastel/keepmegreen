@@ -26,10 +26,23 @@ setGlobalOptions({
 export const createCheckoutSession = onRequest(
   { secrets: [stripeSecret] },
   async (req, res) => {
+    // Configuration CORS - TOUJOURS définir les headers CORS en premier
+    res.set('Access-Control-Allow-Origin', 'https://greenme-415fa.web.app');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Gérer les requêtes OPTIONS (preflight) - TOUJOURS en premier
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+
     try {
-      const { uid } = req.query; // passe l'uid du user connecté en paramètre
-      if (!uid) {
-        res.status(400).send("Missing user UID");
+      const { email } = req.query;
+      
+      if (!email) {
+        res.status(400).json({ error: "Missing email parameter" });
         return;
       }
 
@@ -46,13 +59,13 @@ export const createCheckoutSession = onRequest(
         ],
         success_url: "https://greenme-415fa.web.app/success",
         cancel_url: "https://greenme-415fa.web.app/cancel",
-        client_reference_id: uid as string, // 🔗 lien avec l'utilisateur Firebase
+        customer_email: email as string, // Email du client
       });
 
       res.json({ id: session.id, url: session.url });
     } catch (err: any) {
       logger.error("Erreur createCheckoutSession", err);
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -117,11 +130,23 @@ export const stripeWebhook = onRequest(
 export const cancelSubscription = onRequest(
   { secrets: [stripeSecret] },
   async (req, res) => {
+    // Configuration CORS - TOUJOURS définir les headers CORS en premier
+    res.set('Access-Control-Allow-Origin', 'https://greenme-415fa.web.app');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Gérer les requêtes OPTIONS (preflight) - TOUJOURS en premier
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+
     try {
       const { subscriptionId } = req.body;
       
       if (!subscriptionId) {
-        res.status(400).send("Missing subscription ID");
+        res.status(400).json({ error: "Missing subscription ID" });
         return;
       }
 
@@ -131,7 +156,7 @@ export const cancelSubscription = onRequest(
       res.json({ success: true, subscription });
     } catch (err: any) {
       logger.error("Erreur cancelSubscription", err);
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -142,11 +167,23 @@ export const cancelSubscription = onRequest(
 export const verifyPayment = onRequest(
   { secrets: [stripeSecret] },
   async (req, res) => {
+    // Configuration CORS - TOUJOURS définir les headers CORS en premier
+    res.set('Access-Control-Allow-Origin', 'https://greenme-415fa.web.app');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Gérer les requêtes OPTIONS (preflight) - TOUJOURS en premier
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+
     try {
       const { sessionId } = req.body;
       
       if (!sessionId) {
-        res.status(400).send("Missing session ID");
+        res.status(400).json({ error: "Missing session ID" });
         return;
       }
 
@@ -156,7 +193,7 @@ export const verifyPayment = onRequest(
       res.json({ success: true, session });
     } catch (err: any) {
       logger.error("Erreur verifyPayment", err);
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -167,11 +204,23 @@ export const verifyPayment = onRequest(
 export const downgradeSubscription = onRequest(
   { secrets: [stripeSecret] },
   async (req, res) => {
+    // Configuration CORS - TOUJOURS définir les headers CORS en premier
+    res.set('Access-Control-Allow-Origin', 'https://greenme-415fa.web.app');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Gérer les requêtes OPTIONS (preflight) - TOUJOURS en premier
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
+
     try {
       const { email } = req.body;
       
       if (!email) {
-        res.status(400).send("Missing email");
+        res.status(400).json({ error: "Missing email" });
         return;
       }
 
@@ -181,7 +230,7 @@ export const downgradeSubscription = onRequest(
       res.json({ success: true, message: "Abonnement rétrogradé avec succès" });
     } catch (err: any) {
       logger.error("Erreur downgradeSubscription", err);
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );

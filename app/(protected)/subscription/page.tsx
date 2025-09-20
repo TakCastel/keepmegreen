@@ -7,6 +7,7 @@ import { Crown, Check, Zap, ChevronDown, AlertTriangle, Loader2, BarChart3 } fro
 import PaymentStatus from '@/components/subscription/PaymentStatus';
 import SubscriptionManagement from '@/components/subscription/SubscriptionManagement';
 import { ConfirmModal } from '@/components/ui/Modal';
+import toast from 'react-hot-toast';
 
 export default function SubscriptionPage() {
   const { subscription, loading } = useSubscription();
@@ -142,16 +143,22 @@ export default function SubscriptionPage() {
     
     try {
       // Appel de la Firebase Function
-      const response = await fetch(`https://us-central1-greenme-415fa.cloudfunctions.net/createCheckoutSession?plan=${plan}&email=${encodeURIComponent(user.email)}`);
+      const response = await fetch(`https://createcheckoutsession-utblwfn7oa-uc.a.run.app?plan=${plan}&email=${encodeURIComponent(user.email)}`);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+      }
+      
       const data = await response.json();
       
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error('Erreur lors de la création de la session Stripe');
+        throw new Error('Aucune URL de paiement reçue');
       }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors de la création de la session Stripe:', error);
+      toast.error('Erreur lors de la création de la session de paiement. Veuillez réessayer.');
     }
   };
 
