@@ -11,7 +11,7 @@ import { StatsCardSkeleton, ChartSkeleton } from '@/components/ui/Skeleton';
 import UpgradePrompt from '@/components/subscription/UpgradePrompt';
 import { BarChart3, User, ChevronLeft, ChevronRight, Crown, Lock } from 'lucide-react';
 
-export default function HistoryPage() {
+export default function StatisticsPage() {
   const { user, userProfile, loading } = useAuth();
   const { subscription, hasAccess, loading: subscriptionLoading } = useSubscription();
 

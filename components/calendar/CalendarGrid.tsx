@@ -20,7 +20,7 @@ export default function CalendarGrid() {
   const { subscription, canAccessYear, hasAccess, canAccessPeriod } = useSubscription();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth()); // Index du mois actuel (0-11)
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0); // Index dans monthsData (0 pour freemium, 0-11 pour premium)
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   
   const { data: consumptions = [], isLoading } = useAccessibleConsumptions(user?.uid);
@@ -47,6 +47,7 @@ export default function CalendarGrid() {
   const hasAdvancedStats = hasAccess('advancedStats');
   const maxMonths = hasAdvancedStats === true ? 12 : 1;
   const startMonth = hasAdvancedStats === true ? 0 : currentMonth;
+  
   
   // Pour les utilisateurs gratuits, forcer l'année courante
   const displayYear = hasAdvancedStats === true ? selectedYear : currentYear;
@@ -105,7 +106,7 @@ export default function CalendarGrid() {
     red: 'bg-rose-400',
   };
 
-  // Fonctions de navigation pour mobile
+  // Fonctions de navigation pour mobile (uniquement pour les utilisateurs premium)
   const goToPreviousMonth = () => {
     if (currentMonthIndex > 0) {
       setCurrentMonthIndex(currentMonthIndex - 1);
@@ -192,7 +193,7 @@ export default function CalendarGrid() {
       </div>
 
       {/* Calendrier gratuit - version desktop */}
-      {hasAdvancedStats === false && (
+      {hasAdvancedStats !== true && (
         <div className="hidden md:flex justify-center">
           <div className="inline-block">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg">
@@ -311,41 +312,50 @@ export default function CalendarGrid() {
 
 
       {/* Version mobile avec pagination - seulement pour les utilisateurs gratuits */}
-      {hasAdvancedStats === false && (
+      {hasAdvancedStats !== true && (
         <div className="md:hidden">
-        {/* Navigation mobile */}
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={goToPreviousMonth}
-            className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
-            title="Mois précédent"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          
-          <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-800 capitalize">
-              {monthsData[currentMonthIndex]?.name}
-            </h3>
+        {/* Navigation mobile - seulement pour les utilisateurs premium */}
+        {hasAdvancedStats ? (
+          <div className="flex items-center justify-between mb-6">
             <button
-              onClick={goToCurrentMonth}
-              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+              onClick={goToPreviousMonth}
+              className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+              title="Mois précédent"
             >
-              Retour à aujourd'hui
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-gray-800 capitalize">
+                {monthsData[currentMonthIndex]?.name || 'Chargement...'}
+              </h3>
+              <button
+                onClick={goToCurrentMonth}
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+              >
+                Retour à aujourd'hui
+              </button>
+            </div>
+            
+            <button
+              onClick={goToNextMonth}
+              className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
+              title="Mois suivant"
+            >
+              <ChevronRight className="w-6 h-6" />
             </button>
           </div>
-          
-          <button
-            onClick={goToNextMonth}
-            className="flex items-center justify-center w-12 h-12 bg-white/70 text-gray-700 rounded-2xl border border-gray-200 hover:bg-white/90 transition-all duration-200 shadow-md backdrop-blur-sm"
-            title="Mois suivant"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
+        ) : (
+          /* En-tête simple pour les utilisateurs freemium */
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-semibold text-gray-800 capitalize">
+              {monthsData[currentMonthIndex]?.name || 'Chargement...'}
+            </h3>
+          </div>
+        )}
 
         {/* Calendrier mobile - mois unique */}
-        {monthsData[currentMonthIndex] && (
+        {monthsData.length > 0 && monthsData[currentMonthIndex] ? (
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg">
             {/* En-têtes des jours de la semaine */}
             <div className="grid grid-cols-7 gap-2 mb-4">
@@ -441,6 +451,18 @@ export default function CalendarGrid() {
                   <div className="text-gray-600 font-medium">Consommations totales</div>
                 </div>
               </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg text-center">
+            <div className="text-gray-500 mb-4">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="text-lg font-medium">Chargement du calendrier...</p>
+              <p className="text-sm text-gray-400 mt-2">
+                {hasAdvancedStats ? 'Préparation de votre calendrier complet' : 'Préparation de votre calendrier du mois'}
+              </p>
             </div>
           </div>
         )}

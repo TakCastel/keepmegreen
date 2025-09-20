@@ -44,47 +44,52 @@ export default function SubscriptionStatus() {
   const Icon = statusInfo.icon;
 
   return (
-    <div className={`bg-gradient-to-r ${statusInfo.bgColor} rounded-2xl p-6 border ${statusInfo.borderColor}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={`w-12 h-12 bg-gradient-to-br ${statusInfo.color} rounded-xl flex items-center justify-center shadow-lg`}>
-            <Icon className="w-6 h-6 text-white" />
+    <div className={`bg-gradient-to-r ${statusInfo.bgColor} rounded-2xl p-4 sm:p-6 border ${statusInfo.borderColor}`}>
+      {/* Layout principal - responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+        {/* Section gauche - icône et texte */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${statusInfo.color} rounded-xl flex items-center justify-center shadow-lg flex-shrink-0`}>
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
-          <div>
-            <h3 className={`text-lg font-semibold ${statusInfo.textColor} mb-1`}>
+          <div className="min-w-0 flex-1">
+            <h3 className={`text-base sm:text-lg font-semibold ${statusInfo.textColor} mb-1`}>
               {statusInfo.title}
             </h3>
-            <p className={`text-sm ${statusInfo.textColor} opacity-80`}>
+            <p className={`text-xs sm:text-sm ${statusInfo.textColor} opacity-80 leading-relaxed`}>
               {statusInfo.description}
             </p>
           </div>
         </div>
         
+        {/* Bouton - responsive */}
         <Link
           href="/subscription"
-          className={`px-6 py-3 rounded-xl font-medium transition-all ${
+          className={`px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-medium transition-all text-center whitespace-nowrap ${
             subscription.plan === 'premium'
               ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200'
               : `bg-gradient-to-r ${statusInfo.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`
           }`}
         >
-          {subscription.plan === 'free' ? 'Passer à Premium' : 'Passer à Premium+'}
+          <span className="text-sm sm:text-base">
+            {subscription.plan === 'free' ? 'Passer à Premium' : 'Passer à Premium+'}
+          </span>
         </Link>
       </div>
       
-      {/* Fonctionnalités disponibles */}
+      {/* Fonctionnalités disponibles - responsive */}
       <div className="mt-4 pt-4 border-t border-white/20">
-        <div className="flex items-center gap-6 text-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
             <span className={statusInfo.textColor}>Dashboard complet</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${hasAccess('advancedStats') ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${hasAccess('advancedStats') ? 'bg-green-500' : 'bg-gray-300'}`}></div>
             <span className={statusInfo.textColor}>Statistiques avancées</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${hasAccess('advancedStats') ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${hasAccess('advancedStats') ? 'bg-green-500' : 'bg-gray-300'}`}></div>
             <span className={statusInfo.textColor}>Calendrier complet</span>
           </div>
         </div>

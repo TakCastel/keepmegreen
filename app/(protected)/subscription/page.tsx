@@ -7,6 +7,7 @@ import { Crown, Check, Zap, ChevronDown, AlertTriangle, Loader2, BarChart3 } fro
 import PaymentStatus from '@/components/subscription/PaymentStatus';
 import SubscriptionManagement from '@/components/subscription/SubscriptionManagement';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { FUNCTIONS_CONFIG } from '@/lib/functions-config';
 import toast from 'react-hot-toast';
 
 export default function SubscriptionPage() {
@@ -143,7 +144,7 @@ export default function SubscriptionPage() {
     
     try {
       // Appel de la Firebase Function
-      const response = await fetch(`https://createcheckoutsession-utblwfn7oa-uc.a.run.app?plan=${plan}&email=${encodeURIComponent(user.email)}`);
+      const response = await fetch(`${FUNCTIONS_CONFIG.createCheckoutSession}?plan=${plan}&email=${encodeURIComponent(user.email)}`);
       
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
@@ -239,36 +240,36 @@ export default function SubscriptionPage() {
       {currentPlan === 'free' ? (
         <>
           {/* En-tête pour utilisateurs gratuits */}
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <Crown className="w-6 h-6 text-white" />
+          <div className="text-center space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Choisissez votre plan
               </h1>
             </div>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
               Débloquez toutes les fonctionnalités pour un suivi complet de vos consommations
             </p>
           </div>
 
           {/* Plans d'abonnement pour utilisateurs gratuits */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative bg-white rounded-3xl p-8 shadow-lg transition-all duration-300 flex flex-col ${
+                className={`relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg transition-all duration-300 flex flex-col ${
                   plan.popular
-                    ? 'ring-2 ring-emerald-500 scale-105'
+                    ? 'ring-2 ring-emerald-500 sm:scale-105'
                     : plan.disabled
                     ? 'border border-gray-200 opacity-75'
                     : 'border border-gray-200 hover:shadow-xl'
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
+                  <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
                       Recommandé
                     </div>
                   </div>
@@ -277,37 +278,37 @@ export default function SubscriptionPage() {
 
                 {/* Badge "Prochainement" pour Premium+ */}
                 {plan.id === 'premium-plus' && plan.disabled && (
-                  <div className="absolute -top-2 -right-2 transform rotate-12">
-                    <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg">
+                  <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 transform rotate-12">
+                    <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-xs font-bold shadow-lg">
                       Prochainement
                     </div>
                   </div>
                 )}
 
-                <div className="text-center space-y-4 flex-1 flex flex-col">
+                <div className="text-center space-y-3 sm:space-y-4 flex-1 flex flex-col">
                   <div>
-                    <h3 className={`text-2xl font-bold ${plan.disabled ? 'text-gray-400' : 'text-gray-900'}`}>{plan.name}</h3>
-                    <p className={`${plan.disabled ? 'text-gray-400' : 'text-gray-600'}`}>{plan.description}</p>
+                    <h3 className={`text-xl sm:text-2xl font-bold ${plan.disabled ? 'text-gray-400' : 'text-gray-900'}`}>{plan.name}</h3>
+                    <p className={`text-sm sm:text-base ${plan.disabled ? 'text-gray-400' : 'text-gray-600'}`}>{plan.description}</p>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className={`text-4xl font-bold ${plan.disabled ? 'text-gray-400' : 'text-gray-900'}`}>{plan.price}</div>
-                    <div className={`${plan.disabled ? 'text-gray-400' : 'text-gray-500'}`}>{plan.period}</div>
+                  <div className="space-y-1 sm:space-y-2">
+                    <div className={`text-3xl sm:text-4xl font-bold ${plan.disabled ? 'text-gray-400' : 'text-gray-900'}`}>{plan.price}</div>
+                    <div className={`text-sm sm:text-base ${plan.disabled ? 'text-gray-400' : 'text-gray-500'}`}>{plan.period}</div>
                   </div>
 
-                  <div className="space-y-3 pt-4 flex-1">
+                  <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 flex-1">
                     {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.disabled ? 'bg-gray-300' : 'bg-emerald-500'}`}>
-                          <Check className={`w-3 h-3 ${plan.disabled ? 'text-gray-500' : 'text-white'}`} />
+                      <div key={index} className="flex items-center gap-2 sm:gap-3">
+                        <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.disabled ? 'bg-gray-300' : 'bg-emerald-500'}`}>
+                          <Check className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${plan.disabled ? 'text-gray-500' : 'text-white'}`} />
                         </div>
-                        <span className={`${plan.disabled ? 'text-gray-400' : 'text-gray-700'}`}>{feature}</span>
+                        <span className={`text-sm sm:text-base ${plan.disabled ? 'text-gray-400' : 'text-gray-700'}`}>{feature}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-6 mt-auto">
+                <div className="pt-4 sm:pt-6 mt-auto">
                   <button
                     onClick={() => {
                       if (plan.id === 'premium') handleUpgrade('premium');
@@ -315,7 +316,7 @@ export default function SubscriptionPage() {
                       if (plan.id === 'free' && currentPlan !== 'free') setShowDowngradeConfirm(true);
                     }}
                     disabled={plan.disabled}
-                    className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
+                    className={`w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium transition-all text-sm sm:text-base ${
                       plan.disabled
                         ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200'
                         : plan.buttonStyle + ' shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
@@ -331,16 +332,16 @@ export default function SubscriptionPage() {
       ) : (
         <>
           {/* En-tête pour utilisateurs premium */}
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <Crown className="w-6 h-6 text-white" />
+          <div className="text-center space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Gestion de votre abonnement
               </h1>
             </div>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
               Gérez votre abonnement Premium et accédez à toutes les fonctionnalités avancées
             </p>
           </div>
@@ -349,67 +350,67 @@ export default function SubscriptionPage() {
           <SubscriptionManagement />
 
           {/* Bouton Premium+ pour les utilisateurs Premium */}
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-3xl p-8 border border-purple-200">
-            <div className="text-center space-y-6">
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Crown className="w-6 h-6 text-white" />
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-purple-200">
+            <div className="text-center space-y-4 sm:space-y-6">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                  <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                   Premium+ en préparation
                 </h2>
               </div>
               
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
                 Nous travaillons sur ces fonctionnalités avancées. La sortie dépendra de notre temps de développement disponible.
               </p>
 
               {/* Fonctionnalités Premium+ */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white/70 rounded-2xl p-6 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <Zap className="w-5 h-5 text-purple-600" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
+                <div className="bg-white/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-100">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Défis & Badges</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Défis & Badges</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                     Défis personnalisés, système de badges et récompenses pour maintenir votre motivation
                   </p>
                 </div>
 
-                <div className="bg-white/70 rounded-2xl p-6 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <Crown className="w-5 h-5 text-purple-600" />
+                <div className="bg-white/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-100">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Widgets Mobile</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Widgets Mobile</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                     Widgets iOS/Android pour un suivi rapide directement depuis votre écran d'accueil
                   </p>
                 </div>
 
-                <div className="bg-white/70 rounded-2xl p-6 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <Check className="w-5 h-5 text-purple-600" />
+                <div className="bg-white/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-100">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Mode Hors-ligne</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Mode Hors-ligne</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                     Synchronisation automatique et accès complet même sans connexion internet
                   </p>
                 </div>
 
-                <div className="bg-white/70 rounded-2xl p-6 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <BarChart3 className="w-5 h-5 text-purple-600" />
+                <div className="bg-white/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-100">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                      <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Ressources Exclusives</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Ressources Exclusives</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                     Guides, conseils d'experts et contenus premium pour optimiser votre parcours
                   </p>
                 </div>
@@ -417,20 +418,20 @@ export default function SubscriptionPage() {
 
               <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">19,99€</div>
-                  <div className="text-gray-500">à vie</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-purple-600">19,99€</div>
+                  <div className="text-sm sm:text-base text-gray-500">à vie</div>
                 </div>
               </div>
 
               <button
                 disabled
-                className="inline-flex items-center gap-3 bg-gray-100 text-gray-500 px-8 py-4 rounded-2xl text-lg font-semibold cursor-not-allowed border border-gray-200"
+                className="inline-flex items-center gap-2 sm:gap-3 bg-gray-100 text-gray-500 px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold cursor-not-allowed border border-gray-200"
               >
-                <Crown className="w-6 h-6" />
+                <Crown className="w-5 h-5 sm:w-6 sm:h-6" />
                 En développement
               </button>
 
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Nous vous tiendrons informés de l'avancement
               </p>
             </div>
@@ -440,44 +441,44 @@ export default function SubscriptionPage() {
 
       {/* Avantages Premium - seulement pour les utilisateurs gratuits */}
       {currentPlan === 'free' && (
-        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-12">
-          <div className="text-center space-y-8">
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl sm:rounded-3xl p-8 sm:p-12">
+          <div className="text-center space-y-6 sm:space-y-8">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
                 Pourquoi passer à Premium ?
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-base sm:text-lg px-4">
                 Accédez à des analyses approfondies et un suivi complet
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <Zap className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                  <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Analyse complète</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Analyse complète</h3>
+                <p className="text-sm sm:text-base text-gray-600">
                   Graphiques détaillés et statistiques mensuelles
                 </p>
               </div>
 
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <Crown className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                  <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Historique étendu</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Historique étendu</h3>
+                <p className="text-sm sm:text-base text-gray-600">
                   Accédez à 1 an d'historique complet
                 </p>
               </div>
 
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <Check className="w-8 h-8 text-white" />
+              <div className="text-center space-y-3 sm:col-span-2 lg:col-span-1">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                  <Check className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Fonctionnalités avancées</h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Fonctionnalités avancées</h3>
+                <p className="text-sm sm:text-base text-gray-600">
                   Fonctionnalités avancées et personnalisation
                 </p>
               </div>
@@ -487,28 +488,28 @@ export default function SubscriptionPage() {
       )}
 
       {/* FAQ */}
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
             {currentPlan === 'free' ? 'Questions fréquentes' : 'Support et aide'}
           </h2>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4 px-4">
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 ease-out hover:shadow-lg"
+              className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 ease-out hover:shadow-lg"
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-all duration-200 ease-out"
+                className="w-full px-4 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-all duration-200 ease-out"
               >
-                <h3 className="text-lg font-semibold text-gray-900 pr-4 transition-colors duration-200">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 pr-3 sm:pr-4 transition-colors duration-200">
                   {faq.question}
                 </h3>
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-500 transition-all duration-300 ease-out flex-shrink-0 ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-500 transition-all duration-300 ease-out flex-shrink-0 ${
                     openFAQ === index ? 'rotate-180 text-emerald-600' : 'hover:text-gray-700'
                   }`}
                 />
@@ -521,9 +522,9 @@ export default function SubscriptionPage() {
                     : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="px-6 pb-5">
-                  <div className="border-t border-gray-100 pt-4">
-                    <p className="text-gray-600 leading-relaxed transform transition-all duration-300 ease-out">
+                <div className="px-4 sm:px-6 pb-4 sm:pb-5">
+                  <div className="border-t border-gray-100 pt-3 sm:pt-4">
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed transform transition-all duration-300 ease-out">
                       {faq.answer}
                     </p>
                   </div>

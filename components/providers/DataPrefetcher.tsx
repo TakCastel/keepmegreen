@@ -33,14 +33,14 @@ export default function DataPrefetcher() {
           staleTime: 2 * 60 * 1000,
         });
 
-        // Précharger les données de la semaine courante (history)
+        // Précharger les données de la semaine courante (statistics)
         await queryClient.prefetchQuery({
           queryKey: ['consumptions', 'week', user.uid, startOfCurrentWeek, endOfCurrentWeek],
           queryFn: () => getConsumptionsInRange(user.uid, startOfCurrentWeek, endOfCurrentWeek),
           staleTime: 2 * 60 * 1000,
         });
 
-        // Précharger les données du mois courant (history)
+        // Précharger les données du mois courant (statistics)
         await queryClient.prefetchQuery({
           queryKey: ['consumptions', 'month', user.uid, startOfCurrentMonth, endOfCurrentMonth],
           queryFn: () => getConsumptionsInRange(user.uid, startOfCurrentMonth, endOfCurrentMonth),

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Crown, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { FUNCTIONS_CONFIG } from '@/lib/functions-config';
 import toast from 'react-hot-toast';
 
 interface SubscriptionManagerProps {
@@ -36,7 +37,7 @@ export default function SubscriptionManager({
 
     try {
       // Appel de la Firebase Function
-      const response = await fetch(`https://createcheckoutsession-utblwfn7oa-uc.a.run.app?plan=${plan}&email=${encodeURIComponent(user.email)}`);
+      const response = await fetch(`${FUNCTIONS_CONFIG.createCheckoutSession}?plan=${plan}&email=${encodeURIComponent(user.email)}`);
       
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);

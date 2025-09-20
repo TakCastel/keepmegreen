@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { FUNCTIONS_CONFIG } from '@/lib/functions-config';
 import toast from 'react-hot-toast';
 import { 
   Lock, 
@@ -115,7 +116,7 @@ export default function Paywall({
 
     try {
       // Appel de la Firebase Function
-      const response = await fetch(`https://createcheckoutsession-utblwfn7oa-uc.a.run.app?plan=${selectedPlan}`);
+      const response = await fetch(`${FUNCTIONS_CONFIG.createCheckoutSession}?plan=${selectedPlan}`);
       
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);

@@ -53,7 +53,7 @@ export default function Navbar() {
   const mainNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/calendar', label: 'Calendrier', icon: Calendar },
-    { href: '/history', label: 'Historique', icon: History, isPremium: true },
+    { href: '/statistics', label: 'Statistiques', icon: BarChart3, isPremium: true },
   ];
 
   // Éléments secondaires
