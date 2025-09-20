@@ -22,13 +22,15 @@ interface PaywallProps {
   title?: string;
   description?: string;
   showComparison?: boolean;
+  onUpgrade?: () => void;
 }
 
 export default function Paywall({ 
   feature, 
   title, 
   description, 
-  showComparison = true 
+  showComparison = true,
+  onUpgrade
 }: PaywallProps) {
   const [selectedPlan, setSelectedPlan] = useState<'premium' | 'premium-plus'>('premium');
 
@@ -60,13 +62,6 @@ export default function Paywall({
           title: 'Calendrier Complet',
           description: 'Visualisez plusieurs années et naviguez dans votre historique complet',
           icon: Calendar,
-          color: 'emerald'
-        };
-      case 'export':
-        return {
-          title: 'Export des Données',
-          description: 'Téléchargez vos données en CSV, PDF ou image pour vos archives',
-          icon: Download,
           color: 'emerald'
         };
       case 'challenges':
@@ -111,6 +106,12 @@ export default function Paywall({
   const Icon = featureInfo.icon;
 
   const handleUpgrade = async () => {
+    // Si une fonction personnalisée est fournie, l'utiliser
+    if (onUpgrade) {
+      onUpgrade();
+      return;
+    }
+
     try {
       // Appel de la Firebase Function
       const response = await fetch(`https://us-central1-greenme-415fa.cloudfunctions.net/createCheckoutSession?plan=${selectedPlan}`);
@@ -199,10 +200,6 @@ export default function Paywall({
                 <div className="flex items-center gap-2 text-sm">
                   <Check className="w-4 h-4 text-emerald-600" />
                   <span className="text-gray-700">Calendrier complet</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  <span className="text-gray-700">Export des données</span>
                 </div>
               </div>
             </div>

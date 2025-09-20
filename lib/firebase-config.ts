@@ -26,7 +26,6 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
       connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
     } catch (error) {
       // L'émulateur est peut-être déjà connecté
-      console.log('Auth emulator déjà connecté ou non disponible');
     }
   }
 
@@ -35,7 +34,6 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
       connectFirestoreEmulator(db, 'localhost', 8080);
     } catch (error) {
       // L'émulateur est peut-être déjà connecté
-      console.log('Firestore emulator déjà connecté ou non disponible');
     }
   }
 }

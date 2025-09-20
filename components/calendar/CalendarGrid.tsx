@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { format, startOfYear, endOfYear, startOfWeek, eachDayOfInterval, endOfWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import Link from 'next/link';
-import { useAllConsumptions } from '@/hooks/useConsumptions';
+import { useAccessibleConsumptions } from '@/hooks/useConsumptions';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { generateCalendarData, getGreenDaysPercentage } from '@/utils/stats';
@@ -23,7 +23,7 @@ export default function CalendarGrid() {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth()); // Index du mois actuel (0-11)
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   
-  const { data: consumptions = [], isLoading } = useAllConsumptions(user?.uid);
+  const { data: consumptions = [], isLoading } = useAccessibleConsumptions(user?.uid);
 
   // Si le profil utilisateur est encore en cours de chargement, afficher un skeleton
   if (loading || !userProfile) {
@@ -228,7 +228,8 @@ export default function CalendarGrid() {
                         } as CalendarDay;
                         
                         // Vérifier si l'utilisateur peut accéder à cette date
-                        const dayDate = new Date(day.date);
+                        const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+                        const dayDate = new Date(year, month - 1, dayOfMonth);
                         const canAccess = canAccessPeriod(dayDate);
                         const isClickable = day.isCurrentMonth && !day.isFuture;
                         
@@ -237,18 +238,8 @@ export default function CalendarGrid() {
                             key={dayIndex}
                             onClick={() => {
                               if (isClickable) {
-                                if (canAccess) {
-                                  setSelectedDay(dayData);
-                                } else {
-                                  // Vérifier si l'utilisateur est premium simple
-                                  if (subscription?.plan === 'premium') {
-                                    // Pour les utilisateurs premium simple, afficher un message
-                                    setShowComingSoonModal(true);
-                                  } else {
-                                    // Pour les utilisateurs gratuits, rediriger vers le tunnel d'achat
-                                    window.location.href = '/subscription';
-                                  }
-                                }
+                                // Toujours afficher la modale, même pour les jours bloqués
+                                setSelectedDay(dayData);
                               }
                             }}
                             disabled={!day.isCurrentMonth || day.isFuture}
@@ -378,7 +369,8 @@ export default function CalendarGrid() {
                     } as CalendarDay;
                     
                     // Vérifier si l'utilisateur peut accéder à cette date (version mobile)
-                    const dayDate = new Date(day.date);
+                    const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+                    const dayDate = new Date(year, month - 1, dayOfMonth);
                     const canAccess = canAccessPeriod(dayDate);
                     
                     return (
@@ -386,18 +378,8 @@ export default function CalendarGrid() {
                         key={dayIndex}
                         onClick={() => {
                           if (day.isCurrentMonth && !day.isFuture) {
-                            if (canAccess) {
-                              setSelectedDay(dayData);
-                            } else {
-                              // Vérifier si l'utilisateur est premium simple
-                              if (subscription?.plan === 'premium') {
-                                // Pour les utilisateurs premium simple, afficher un message
-                                setShowComingSoonModal(true);
-                              } else {
-                                // Pour les utilisateurs gratuits, rediriger vers le tunnel d'achat
-                                window.location.href = '/subscription';
-                              }
-                            }
+                            // Toujours afficher la modale, même pour les jours bloqués
+                            setSelectedDay(dayData);
                           }
                         }}
                         disabled={!day.isCurrentMonth || day.isFuture}
@@ -501,28 +483,19 @@ export default function CalendarGrid() {
                       } as CalendarDay;
                       
                       // Vérifier si l'utilisateur peut accéder à cette date (version premium desktop)
-                      const dayDate = new Date(day.date);
+                      const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+                      const dayDate = new Date(year, month - 1, dayOfMonth);
                       const canAccess = canAccessPeriod(dayDate);
                       
                       return (
                         <button
                           key={dayIndex}
-                          onClick={() => {
-                            if (day.isCurrentMonth && !day.isFuture) {
-                              if (canAccess) {
-                                setSelectedDay(dayData);
-                              } else {
-                                // Vérifier si l'utilisateur est premium simple
-                                if (subscription?.plan === 'premium') {
-                                  // Pour les utilisateurs premium simple, afficher un message
-                                  setShowComingSoonModal(true);
-                                } else {
-                                  // Pour les utilisateurs gratuits, rediriger vers le tunnel d'achat
-                                  window.location.href = '/subscription';
-                                }
-                              }
-                            }
-                          }}
+                        onClick={() => {
+                          if (day.isCurrentMonth && !day.isFuture) {
+                            // Toujours afficher la modale, même pour les jours bloqués
+                            setSelectedDay(dayData);
+                          }
+                        }}
                           disabled={!day.isCurrentMonth || day.isFuture}
                           className={`
                             relative w-8 h-8 rounded-lg text-sm font-medium transition-all duration-200
@@ -594,6 +567,11 @@ export default function CalendarGrid() {
           day={selectedDay}
           dayConsumption={consumptions.find(c => c.date === selectedDay.date)}
           onClose={() => setSelectedDay(null)}
+          showPaywall={(() => {
+            const [year, month, dayOfMonth] = selectedDay.date.split('-').map(Number);
+            const dayDate = new Date(year, month - 1, dayOfMonth);
+            return !canAccessPeriod(dayDate);
+          })()}
         />
       )}
 

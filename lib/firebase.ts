@@ -30,7 +30,6 @@ export const db = getFirestore(app);
 //     connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
 //     connectFirestoreEmulator(db, 'localhost', 8080);
 //   } catch (error) {
-//     console.log('Émulateurs Firebase non disponibles');
 //   }
 // }
 

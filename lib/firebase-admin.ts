@@ -47,7 +47,6 @@ export async function updateUserSubscriptionAdmin(
   }
 
   await userRef.update(updateData);
-  console.log(`✅ Abonnement mis à jour avec Admin SDK: ${uid} -> ${plan}`);
 }
 
 // Fonction pour récupérer l'UID depuis l'email avec Admin SDK

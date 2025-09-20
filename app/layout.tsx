@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Comfortaa, Quicksand, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
+import { PaywallProvider } from "@/contexts/PaywallContext";
 import { Toaster } from 'react-hot-toast';
 
 const comfortaa = Comfortaa({
@@ -54,31 +55,33 @@ export default function RootLayout({
         className={`${comfortaa.variable} ${quicksand.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         <QueryProvider>
-          {children}
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: 'rgba(255, 255, 255, 0.95)',
-                color: '#2d3436',
-                border: '1px solid rgba(0, 184, 148, 0.2)',
-                borderRadius: '12px',
-                backdropFilter: 'blur(10px)',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#00b894',
-                  secondary: '#ffffff',
+          <PaywallProvider>
+            {children}
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                style: {
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  color: '#2d3436',
+                  border: '1px solid rgba(0, 184, 148, 0.2)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#e17055',
-                  secondary: '#ffffff',
+                success: {
+                  iconTheme: {
+                    primary: '#00b894',
+                    secondary: '#ffffff',
+                  },
                 },
-              },
-            }}
-          />
+                error: {
+                  iconTheme: {
+                    primary: '#e17055',
+                    secondary: '#ffffff',
+                  },
+                },
+              }}
+            />
+          </PaywallProvider>
         </QueryProvider>
       </body>
     </html>

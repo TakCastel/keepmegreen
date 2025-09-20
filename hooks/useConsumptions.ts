@@ -8,7 +8,8 @@ import {
   removeConsumption, 
   moveConsumption,
   getConsumptionsInRange,
-  getAllUserConsumptions
+  getAllUserConsumptions,
+  getAccessibleConsumptions
 } from '@/services/firestore';
 import { 
   DayConsumption, 
@@ -82,7 +83,23 @@ export const useAllConsumptions = (userId: string | undefined) => {
   return useQuery({
     queryKey: ['consumptions', 'all', userId],
     queryFn: () => userId ? getAllUserConsumptions(userId) : [],
-    enabled: !!userId && !loading && !!userProfile && hasAdvancedStats === true,
+    enabled: !!userId && !loading && !!userProfile, // Supprimé la condition hasAdvancedStats === true
+    staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
+    initialData: [], // Données initiales pour éviter le loading state
+  });
+};
+
+// Hook pour obtenir les consommations accessibles selon l'abonnement
+export const useAccessibleConsumptions = (userId: string | undefined) => {
+  const { hasAccess } = useSubscription();
+  const { userProfile, loading } = useAuth();
+  
+  const hasAdvancedStats = hasAccess('advancedStats');
+  
+  return useQuery({
+    queryKey: ['consumptions', 'accessible', userId, hasAdvancedStats],
+    queryFn: () => userId ? getAccessibleConsumptions(userId, hasAdvancedStats) : [],
+    enabled: !!userId && !loading && !!userProfile,
     staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
     initialData: [], // Données initiales pour éviter le loading state
   });

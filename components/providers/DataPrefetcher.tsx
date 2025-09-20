@@ -56,7 +56,6 @@ export default function DataPrefetcher() {
           });
         }, 500);
         
-        console.log('✅ Préchargement des données démarré en arrière-plan !');
       } catch (error) {
         console.warn('Erreur lors du préchargement des données:', error);
       }

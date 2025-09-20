@@ -37,7 +37,6 @@ export default function QueryProvider({
               queryClient.setQueryData(query.queryKey, query.data);
             }
           });
-          console.log('✅ Cache restauré depuis localStorage');
         }
       } catch (error) {
         console.warn('Impossible de restaurer le cache:', error);

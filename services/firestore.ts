@@ -212,3 +212,49 @@ export const getAllUserConsumptions = async (userId: string): Promise<DayConsump
     throw error;
   }
 };
+
+// Obtenir les consommations accessibles selon l'abonnement
+export const getAccessibleConsumptions = async (
+  userId: string, 
+  hasAdvancedStats: boolean
+): Promise<DayConsumption[]> => {
+  try {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    
+    let startDate: string;
+    let endDate: string;
+    
+    if (hasAdvancedStats) {
+      // Premium : accès à toute l'année courante
+      startDate = `${currentYear}-01-01`;
+      endDate = `${currentYear}-12-31`;
+    } else {
+      // Gratuit : accès aux 7 derniers jours
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      startDate = sevenDaysAgo.toISOString().split('T')[0];
+      endDate = today.toISOString().split('T')[0];
+    }
+    
+    const consumptionsRef = collection(db, 'users', userId, 'consumptions');
+    const q = query(
+      consumptionsRef, 
+      where('date', '>=', startDate),
+      where('date', '<=', endDate),
+      orderBy('date', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const consumptions: DayConsumption[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      consumptions.push(doc.data() as DayConsumption);
+    });
+    
+    return consumptions;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des consommations accessibles:', error);
+    throw error;
+  }
+};

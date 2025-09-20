@@ -29,18 +29,6 @@ const PREMIUM_FEATURES = [
     available: true,
   },
   {
-    name: 'Export des données',
-    icon: Download,
-    description: 'Téléchargez vos données en CSV, PDF ou image',
-    available: false,
-  },
-  {
-    name: 'Thèmes personnalisés',
-    icon: Palette,
-    description: 'Personnalisez l\'apparence de votre interface',
-    available: false,
-  },
-  {
     name: 'Défis et badges',
     icon: Trophy,
     description: 'Relevez des défis et gagnez des badges',

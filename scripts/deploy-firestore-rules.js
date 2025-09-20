@@ -21,15 +21,12 @@ if (!fs.existsSync(rulesFile)) {
 }
 
 try {
-  console.log(`🚀 Déploiement des règles Firestore pour le projet ${projectId}...`);
-  console.log(`📁 Utilisation du fichier: ${rulesFile}`);
   
   execSync(`firebase deploy --only firestore:rules --project ${projectId}`, {
     stdio: 'inherit',
     cwd: process.cwd()
   });
   
-  console.log('✅ Règles Firestore déployées avec succès !');
 } catch (error) {
   console.error('❌ Erreur lors du déploiement des règles Firestore:', error.message);
   process.exit(1);

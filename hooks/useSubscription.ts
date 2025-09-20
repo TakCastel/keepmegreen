@@ -96,10 +96,16 @@ export const useSubscription = () => {
   };
 
   const canAccessPeriod = (date: Date): boolean => {
-    if (!subscription) return false;
+    if (!subscription) {
+      return false;
+    }
     
+    // Normaliser les dates pour éviter les problèmes de fuseau horaire
     const now = new Date();
-    const daysDiff = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    const daysDiff = Math.floor((today.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
     
     return subscription.limits.maxHistoryDays === -1 || daysDiff <= subscription.limits.maxHistoryDays;
   };

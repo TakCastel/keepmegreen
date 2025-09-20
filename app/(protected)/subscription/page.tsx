@@ -106,8 +106,6 @@ export default function SubscriptionPage() {
         'Historique 1 an',
         'Calendrier complet',
         'Répartition détaillée',
-        'Export des données',
-        'Thèmes personnalisés',
       ],
       buttonText: currentPlan === 'free' ? 'Passer à Premium' : currentPlan === 'premium' ? 'Plan actuel' : 'Changer de plan',
       buttonStyle: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white',
@@ -473,7 +471,7 @@ export default function SubscriptionPage() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900">Fonctionnalités avancées</h3>
                 <p className="text-gray-600">
-                  Export, thèmes et personnalisation
+                  Fonctionnalités avancées et personnalisation
                 </p>
               </div>
             </div>

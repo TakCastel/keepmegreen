@@ -10,9 +10,7 @@ export function connectFirebaseEmulators() {
     try {
       connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
       connectFirestoreEmulator(db, 'localhost', 8080);
-      console.log('✅ Émulateurs Firebase connectés');
     } catch (error) {
-      console.log('❌ Impossible de connecter les émulateurs Firebase:', error);
     }
   }
 }
