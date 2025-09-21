@@ -49,14 +49,14 @@ export default function SubscriptionStatus() {
           name: 'Premium',
           color: 'amber',
           icon: Crown,
-          description: '1,99€/mois'
+          description: '3,99€/mois'
         };
       case 'premium-plus':
         return {
           name: 'Premium+',
           color: 'purple',
           icon: Crown,
-          description: '19,99€ à vie'
+          description: '39,99€ à vie'
         };
       default:
         return {
@@ -166,9 +166,9 @@ export default function SubscriptionStatus() {
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h5 className="font-medium text-amber-900">Premium</h5>
-                    <p className="text-amber-700 text-sm">1,99€ par mois</p>
+                    <p className="text-amber-700 text-sm">3,99€ par mois</p>
                   </div>
-                  <div className="text-2xl font-bold text-amber-600">1,99€</div>
+                  <div className="text-2xl font-bold text-amber-600">3,99€</div>
                 </div>
                 <SubscriptionManager plan="premium" />
               </div>
@@ -177,9 +177,9 @@ export default function SubscriptionStatus() {
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h5 className="font-medium text-purple-900">Premium+</h5>
-                    <p className="text-purple-700 text-sm">19,99€ à vie</p>
+                    <p className="text-purple-700 text-sm">39,99€ à vie</p>
                   </div>
-                  <div className="text-2xl font-bold text-purple-600">19,99€</div>
+                  <div className="text-2xl font-bold text-purple-600">39,99€</div>
                 </div>
                 <SubscriptionManager plan="premium-plus" />
               </div>
@@ -191,9 +191,9 @@ export default function SubscriptionStatus() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h5 className="font-medium text-purple-900">Premium+</h5>
-                  <p className="text-purple-700 text-sm">19,99€ à vie</p>
+                  <p className="text-purple-700 text-sm">39,99€ à vie</p>
                 </div>
-                <div className="text-2xl font-bold text-purple-600">19,99€</div>
+                <div className="text-2xl font-bold text-purple-600">39,99€</div>
               </div>
               <SubscriptionManager plan="premium-plus" />
             </div>

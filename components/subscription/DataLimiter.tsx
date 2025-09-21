@@ -43,7 +43,7 @@ export default function DataLimiter({
     <div className={`bg-blue-50 border border-blue-200 rounded-2xl p-6 ${className}`}>
       <div className="text-center">
         <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-lg">📊</span>
+          <span className="text-white font-bold text-lg">DATA</span>
         </div>
         <h3 className="text-lg font-semibold text-blue-800 mb-2">
           Limite atteinte

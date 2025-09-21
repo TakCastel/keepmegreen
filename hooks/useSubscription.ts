@@ -17,59 +17,83 @@ export const useSubscription = () => {
     switch (plan) {
       case 'free':
         return {
-          maxHistoryDays: 7,
-          maxCalendarYears: 1,
-          maxCustomCategories: 0,
-          maxThemes: 1,
-          hasAdvancedStats: false,
-          hasDetailedBreakdown: false,
-          hasExport: false,
-          hasChallenges: false,
-          hasMobileWidgets: false,
-          hasOfflineMode: false,
-          hasExclusiveResources: false,
+          calendarMonthsAccess: 1,
+          calendarYearsAccess: 1,
+          historyDaysAccess: 7,
+          advancedStats: false,
+          detailedBreakdown: false,
+          timeComparison: false,
+          exportEnabled: false,
+          exportFormats: [],
+          customThemes: false,
+          customCategories: false,
+          smartNotifications: false,
+          challenges: false,
+          badges: false,
+          widgets: false,
+          premiumResources: false,
+          offlineMode: false,
+          advancedSearch: false,
         };
       case 'premium':
         return {
-          maxHistoryDays: 365, // 1 an
-          maxCalendarYears: 3,
-          maxCustomCategories: 5,
-          maxThemes: 5,
-          hasAdvancedStats: true,
-          hasDetailedBreakdown: true,
-          hasExport: true,
-          hasChallenges: false,
-          hasMobileWidgets: false,
-          hasOfflineMode: false,
-          hasExclusiveResources: false,
+          calendarMonthsAccess: 12,
+          calendarYearsAccess: 3,
+          historyDaysAccess: 365,
+          advancedStats: true,
+          detailedBreakdown: true,
+          timeComparison: true,
+          exportEnabled: true,
+          exportFormats: ['csv', 'pdf'],
+          customThemes: true,
+          customCategories: true,
+          smartNotifications: true,
+          challenges: false,
+          badges: false,
+          widgets: false,
+          premiumResources: false,
+          offlineMode: false,
+          advancedSearch: true,
         };
       case 'premium-plus':
         return {
-          maxHistoryDays: -1, // Illimité
-          maxCalendarYears: -1, // Illimité
-          maxCustomCategories: -1, // Illimité
-          maxThemes: -1, // Illimité
-          hasAdvancedStats: true,
-          hasDetailedBreakdown: true,
-          hasExport: true,
-          hasChallenges: true,
-          hasMobileWidgets: true,
-          hasOfflineMode: true,
-          hasExclusiveResources: true,
+          calendarMonthsAccess: -1,
+          calendarYearsAccess: -1,
+          historyDaysAccess: -1,
+          advancedStats: true,
+          detailedBreakdown: true,
+          timeComparison: true,
+          exportEnabled: true,
+          exportFormats: ['csv', 'pdf', 'image'],
+          customThemes: true,
+          customCategories: true,
+          smartNotifications: true,
+          challenges: true,
+          badges: true,
+          widgets: true,
+          premiumResources: true,
+          offlineMode: true,
+          advancedSearch: true,
         };
       default:
         return {
-          maxHistoryDays: 7,
-          maxCalendarYears: 1,
-          maxCustomCategories: 0,
-          maxThemes: 1,
-          hasAdvancedStats: false,
-          hasDetailedBreakdown: false,
-          hasExport: false,
-          hasChallenges: false,
-          hasMobileWidgets: false,
-          hasOfflineMode: false,
-          hasExclusiveResources: false,
+          calendarMonthsAccess: 1,
+          calendarYearsAccess: 1,
+          historyDaysAccess: 7,
+          advancedStats: false,
+          detailedBreakdown: false,
+          timeComparison: false,
+          exportEnabled: false,
+          exportFormats: [],
+          customThemes: false,
+          customCategories: false,
+          smartNotifications: false,
+          challenges: false,
+          badges: false,
+          widgets: false,
+          premiumResources: false,
+          offlineMode: false,
+          advancedSearch: false,
         };
     }
   }, []);
@@ -107,7 +131,7 @@ export const useSubscription = () => {
     
     const daysDiff = Math.floor((today.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    return subscription.limits.maxHistoryDays === -1 || daysDiff <= subscription.limits.maxHistoryDays;
+    return subscription.limits.historyDaysAccess === -1 || daysDiff <= subscription.limits.historyDaysAccess;
   };
 
   const canAccessYear = (year: number): boolean => {
@@ -116,24 +140,30 @@ export const useSubscription = () => {
     const currentYear = new Date().getFullYear();
     const yearsDiff = Math.abs(currentYear - year);
     
-    return subscription.limits.maxCalendarYears === -1 || yearsDiff <= subscription.limits.maxCalendarYears;
+    return subscription.limits.calendarYearsAccess === -1 || yearsDiff <= subscription.limits.calendarYearsAccess;
   };
 
   const getLimits = (): SubscriptionLimits => {
     if (!subscription) {
       // Retourner les limites par défaut si pas d'abonnement
       return {
-        maxHistoryDays: 7,
-        maxCalendarYears: 1,
-        maxCustomCategories: 0,
-        maxThemes: 1,
-        hasAdvancedStats: false,
-        hasDetailedBreakdown: false,
-        hasExport: false,
-        hasChallenges: false,
-        hasMobileWidgets: false,
-        hasOfflineMode: false,
-        hasExclusiveResources: false,
+        calendarMonthsAccess: 1,
+        calendarYearsAccess: 1,
+        historyDaysAccess: 7,
+        advancedStats: false,
+        detailedBreakdown: false,
+        timeComparison: false,
+        exportEnabled: false,
+        exportFormats: [],
+        customThemes: false,
+        customCategories: false,
+        smartNotifications: false,
+        challenges: false,
+        badges: false,
+        widgets: false,
+        premiumResources: false,
+        offlineMode: false,
+        advancedSearch: false,
       };
     }
     return subscription.limits;

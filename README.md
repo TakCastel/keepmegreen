@@ -1,15 +1,15 @@
-# DrinkeatGreen
+# GrowDaily
 
-Application web Next.js 15 pour suivre et réduire vos excès quotidiens dans trois domaines : alcool, cigarettes et malbouffe.
+Application web Next.js 15 pour célébrer et suivre vos activités positives quotidiennes dans trois domaines : sport, social et nutrition.
 
 ## Fonctionnalités
 
-- **Dashboard interactif** : Enregistrez vos consommations en quelques clics
+- **Dashboard interactif** : Enregistrez vos activités positives en quelques clics
 - **Calendrier visuel** : Visualisez votre progression avec un calendrier coloré style GitHub
-- **Statistiques détaillées** : Analysez vos habitudes avec des graphiques et des métriques
-- **Gestion des données** : Modifiez et supprimez vos consommations
+- **Statistiques détaillées** : Analysez vos habitudes positives avec des graphiques et des métriques
+- **Gestion des données** : Modifiez et supprimez vos activités
 - **Authentification sécurisée** : Connexion via email/mot de passe ou Google
-- **Interface moderne** : Design sombre et responsive avec TailwindCSS
+- **Interface moderne** : Design moderne et responsive avec TailwindCSS
 
 ## Technologies utilisées
 
@@ -28,7 +28,7 @@ Application web Next.js 15 pour suivre et réduire vos excès quotidiens dans tr
 
 \`\`\`bash
 git clone <url-du-repo>
-cd keepmegreen
+cd growdaily
 \`\`\`
 
 ### 2. Installer les dépendances
@@ -78,7 +78,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Les utilisateurs ne peuvent accéder qu'à leurs propres données
-    match /users/{userId}/consumptions/{document=**} {
+    match /users/{userId}/activities/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
@@ -99,17 +99,17 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 - Créez un compte ou connectez-vous avec email/mot de passe ou Google
 - Vous serez automatiquement redirigé vers le dashboard
 
-### 2. Enregistrer des consommations
-- Sur le dashboard, cliquez sur une catégorie (Alcool, Cigarettes, Malbouffe)
+### 2. Enregistrer des activités positives
+- Sur le dashboard, cliquez sur une catégorie (Sport, Social, Nutrition)
 - Sélectionnez le type spécifique dans le sous-menu
-- La consommation est automatiquement enregistrée pour la date du jour
+- L'activité est automatiquement enregistrée pour la date du jour
 
 ### 3. Visualiser votre progression
 - **Calendrier** : Consultez la grille colorée style GitHub
-  - Vert : 0 consommation (objectif !)
-  - Jaune : 1-2 consommations
-  - Orange : 3-5 consommations
-  - Rouge : 6+ consommations
+  - Gris : Jour neutre
+  - Bleu clair : Quelques activités positives
+  - Bleu : Bonne journée d'activités
+  - Vert : Excellente journée d'activités
 
 ### 4. Analyser vos habitudes
 - **Historique** : Consultez les statistiques hebdomadaires/mensuelles
@@ -117,27 +117,27 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 - Métriques détaillées par catégorie
 
 ### 5. Gérer vos données
-- **Paramètres** : Modifiez ou supprimez des consommations
+- **Paramètres** : Modifiez ou supprimez des activités
 - Filtrez par date ou recherche textuelle
 - Gérez votre compte utilisateur
 
 ## Structure des données
 
-Chaque consommation est stockée par jour avec cette structure :
+Chaque activité est stockée par jour avec cette structure :
 
 \`\`\`typescript
 {
   date: "2025-09-19",
-  alcohol: [
-    { type: "beer", quantity: 2 },
-    { type: "wine", quantity: 1 }
+  sport: [
+    { type: "running", quantity: 1 },
+    { type: "yoga", quantity: 1 }
   ],
-  cigarettes: [
-    { type: "classic", quantity: 5 }
+  social: [
+    { type: "friends", quantity: 1 }
   ],
-  junkfood: [
-    { type: "burger", quantity: 1 },
-    { type: "soda", quantity: 2 }
+  nutrition: [
+    { type: "balanced_meal", quantity: 2 },
+    { type: "hydration", quantity: 1 }
   ],
   createdAt: "2025-09-19T12:00:00Z"
 }
@@ -145,12 +145,12 @@ Chaque consommation est stockée par jour avec cette structure :
 
 ## Customisation
 
-L'application utilise un design professionnel avec TailwindCSS. Les couleurs principales :
-- Vert : Succès, jours sans consommation
-- Jaune : Consommation modérée  
-- Orange : Attention
-- Rouge : Excès
-- Fond sombre pour un confort visuel
+L'application utilise un design moderne avec TailwindCSS. Les couleurs principales :
+- Gris : Jour neutre
+- Bleu clair : Quelques activités positives
+- Bleu : Bonne journée d'activités
+- Vert : Excellente journée d'activités
+- Fond clair pour un confort visuel
 
 ## Scripts disponibles
 
@@ -163,7 +163,7 @@ npm run lint         # Vérification ESLint
 
 ## Licence
 
-Ce projet est développé pour un usage personnel de suivi des habitudes de consommation.
+Ce projet est développé pour un usage personnel de suivi des activités positives.
 
 ## Support
 
@@ -175,4 +175,4 @@ Pour toute question ou problème :
 
 ---
 
-**Objectif : Gardez le maximum de jours verts possible !**
+**Objectif : Célébrez vos activités positives et remplissez votre calendrier de couleurs vives !**

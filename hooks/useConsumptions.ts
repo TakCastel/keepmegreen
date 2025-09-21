@@ -8,8 +8,7 @@ import {
   removeConsumption, 
   moveConsumption,
   getConsumptionsInRange,
-  getAllUserConsumptions,
-  getAccessibleConsumptions
+  getAllUserConsumptions
 } from '@/services/firestore';
 import { 
   DayConsumption, 
@@ -23,7 +22,7 @@ import { useAuth } from './useAuth';
 // Hook pour obtenir les consommations d'un jour
 export const useDayConsumption = (userId: string | undefined, date: string) => {
   return useQuery({
-    queryKey: ['consumption', userId, date],
+    queryKey: ['consumptions', userId, date],
     queryFn: () => userId ? getDayConsumption(userId, date) : null,
     enabled: !!userId,
     staleTime: 30 * 1000, // 30 secondes de cache pour éviter les refetch trop fréquents
@@ -83,26 +82,8 @@ export const useAllConsumptions = (userId: string | undefined) => {
   return useQuery({
     queryKey: ['consumptions', 'all', userId],
     queryFn: () => userId ? getAllUserConsumptions(userId) : [],
-    enabled: !!userId && !loading && !!userProfile, // Supprimé la condition hasAdvancedStats === true
-    staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
-    initialData: [], // Données initiales pour éviter le loading state
-  });
-};
-
-// Hook pour obtenir les consommations accessibles selon l'abonnement
-export const useAccessibleConsumptions = (userId: string | undefined) => {
-  const { hasAccess } = useSubscription();
-  const { userProfile, loading } = useAuth();
-  
-  const hasAdvancedStats = hasAccess('advancedStats');
-  
-  return useQuery({
-    queryKey: ['consumptions', 'accessible', userId, hasAdvancedStats],
-    queryFn: () => userId ? getAccessibleConsumptions(userId, hasAdvancedStats) : [],
     enabled: !!userId && !loading && !!userProfile,
     staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
-    refetchOnWindowFocus: true, // Refetch quand la fenêtre reprend le focus
-    refetchOnMount: true, // Refetch quand le composant se monte
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
@@ -127,7 +108,7 @@ export const useAddConsumption = () => {
     }) => addConsumption(userId, date, category, type, quantity),
     onSuccess: (_, variables) => {
       // Mise à jour optimiste du cache - ajouter directement l'élément
-      const queryKey = ['consumption', variables.userId, variables.date];
+      const queryKey = ['consumptions', variables.userId, variables.date];
       const currentData = queryClient.getQueryData(queryKey) as DayConsumption | null;
       
       if (currentData) {
@@ -253,14 +234,6 @@ export const useAddConsumption = () => {
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
-      });
-      
-      // Forcer le refetch immédiat pour le calendrier
-      queryClient.refetchQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
-      });
     },
   });
 };
@@ -285,7 +258,7 @@ export const useRemoveConsumption = () => {
     }) => removeConsumption(userId, date, category, type, quantity),
     onSuccess: (_, variables) => {
       // Mise à jour optimiste du cache - supprimer directement l'élément
-      const queryKey = ['consumption', variables.userId, variables.date];
+      const queryKey = ['consumptions', variables.userId, variables.date];
       const currentData = queryClient.getQueryData(queryKey) as DayConsumption | null;
       
       if (currentData) {
@@ -389,14 +362,6 @@ export const useRemoveConsumption = () => {
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'month', variables.userId] 
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
-      });
-      
-      // Forcer le refetch immédiat pour le calendrier
-      queryClient.refetchQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
-      });
     },
   });
 };
@@ -424,10 +389,10 @@ export const useMoveConsumption = () => {
     onSuccess: (_, variables) => {
       // Invalider les requêtes liées aux deux dates et cet utilisateur
       queryClient.invalidateQueries({ 
-        queryKey: ['consumption', variables.userId, variables.oldDate] 
+        queryKey: ['consumptions', variables.userId, variables.oldDate] 
       });
       queryClient.invalidateQueries({ 
-        queryKey: ['consumption', variables.userId, variables.newDate] 
+        queryKey: ['consumptions', variables.userId, variables.newDate] 
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'week', variables.userId] 
@@ -437,14 +402,6 @@ export const useMoveConsumption = () => {
       });
       queryClient.invalidateQueries({ 
         queryKey: ['consumptions', 'all', variables.userId] 
-      });
-      queryClient.invalidateQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
-      });
-      
-      // Forcer le refetch immédiat pour le calendrier
-      queryClient.refetchQueries({ 
-        queryKey: ['consumptions', 'accessible', variables.userId] 
       });
     },
   });

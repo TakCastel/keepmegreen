@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight, getDayMoodIcon } from '@/utils/stats';
+import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight, getConsumptionMoodIcon } from '@/utils/stats';
 import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils, Edit3 } from 'lucide-react';
 // import DayColorInfo from '@/components/ui/DayColorTooltip';
 import DynamicIcon from '@/components/ui/DynamicIcon';
@@ -43,7 +43,7 @@ export default function TodayStats() {
   const dayColor = getDayColorByWeight(weightedScore);
   
   // Obtenir l'icône, la couleur et le fond appropriés selon l'état d'équilibre réel
-  const { icon: MoodIcon, color: moodColor, bgGradient: moodBgGradient } = getDayMoodIcon(dayConsumption);
+  const { icon: MoodIcon, color: moodColor, bgGradient: moodBgGradient } = getConsumptionMoodIcon(dayConsumption);
   
   const colorConfig = {
     green: { bg: 'bg-emerald-500', text: 'Journée sereine !' },

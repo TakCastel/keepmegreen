@@ -3,6 +3,7 @@ import { Comfortaa, Quicksand, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { PaywallProvider } from "@/contexts/PaywallContext";
+import { UserProvider } from "@/contexts/UserContext";
 import { Toaster } from 'react-hot-toast';
 
 const comfortaa = Comfortaa({
@@ -32,8 +33,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DrinkeatGreen - Suivez vos excès quotidiens",
-  description: "Application pour tracker et réduire vos consommations d'alcool, cigarettes et malbouffe",
+  title: "GrowDaily - Votre bien-être au quotidien",
+  description: "Application pour célébrer vos activités positives et observer vos habitudes avec bienveillance",
 };
 
 export default function RootLayout({
@@ -56,31 +57,33 @@ export default function RootLayout({
       >
         <QueryProvider>
           <PaywallProvider>
-            {children}
-            <Toaster 
-              position="top-right"
-              toastOptions={{
-                style: {
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  color: '#2d3436',
-                  border: '1px solid rgba(0, 184, 148, 0.2)',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)',
-                },
-                success: {
-                  iconTheme: {
-                    primary: '#00b894',
-                    secondary: '#ffffff',
+            <UserProvider>
+              {children}
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  style: {
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    color: '#2d3436',
+                    border: '1px solid rgba(0, 184, 148, 0.2)',
+                    borderRadius: '12px',
+                    backdropFilter: 'blur(10px)',
                   },
-                },
-                error: {
-                  iconTheme: {
-                    primary: '#e17055',
-                    secondary: '#ffffff',
+                  success: {
+                    iconTheme: {
+                      primary: '#00b894',
+                      secondary: '#ffffff',
+                    },
                   },
-                },
-              }}
-            />
+                  error: {
+                    iconTheme: {
+                      primary: '#e17055',
+                      secondary: '#ffffff',
+                    },
+                  },
+                }}
+              />
+            </UserProvider>
           </PaywallProvider>
         </QueryProvider>
       </body>

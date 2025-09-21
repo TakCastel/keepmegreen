@@ -27,7 +27,7 @@ export default function LandingHeader() {
               <Sprout className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl text-gray-800 font-poppins tracking-tight">
-              <span className="font-bold text-emerald-600">Drinkeat</span><span className="font-light">Green</span>
+              <span className="font-bold text-emerald-600">Grow</span><span className="font-light">Daily</span>
             </span>
           </Link>
 
@@ -46,13 +46,6 @@ export default function LandingHeader() {
               className="text-gray-600 hover:text-emerald-600 transition-colors font-medium cursor-pointer"
             >
               Comment ça marche
-            </a>
-            <a 
-              href="#testimonials" 
-              onClick={(e) => handleSmoothScroll(e, 'testimonials')}
-              className="text-gray-600 hover:text-emerald-600 transition-colors font-medium cursor-pointer"
-            >
-              Avis
             </a>
           </nav>
 

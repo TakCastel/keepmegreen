@@ -17,6 +17,7 @@ export const useAuth = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -118,6 +119,40 @@ export const useAuth = () => {
     }
   };
 
+  // Fonction pour forcer la mise à jour de l'utilisateur Firebase Auth
+  const refreshUser = async () => {
+    if (auth.currentUser) {
+      try {
+        // Recharger l'utilisateur depuis Firebase Auth pour obtenir les dernières données
+        await auth.currentUser.reload();
+        
+        // Attendre un petit délai pour s'assurer que les données sont bien mises à jour
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Forcer la mise à jour de l'état local avec les nouvelles données
+        const updatedUser = auth.currentUser;
+        setUser(updatedUser);
+        
+        // Mettre à jour le profil utilisateur dans Firestore si nécessaire
+        if (updatedUser) {
+          try {
+            const profile = await createOrUpdateUserProfile(updatedUser);
+            setUserProfile(profile);
+          } catch (profileError) {
+            console.error('Erreur lors de la mise à jour du profil:', profileError);
+          }
+        }
+        
+        // Forcer un re-render en incrémentant la clé de refresh
+        setRefreshKey(prev => prev + 1);
+        
+        console.log('Utilisateur rafraîchi:', updatedUser.displayName);
+      } catch (error) {
+        console.error('Erreur lors du rafraîchissement de l\'utilisateur:', error);
+      }
+    }
+  };
+
   // Fonction utilitaire pour obtenir le plan effectif
   const getCurrentPlan = useCallback((): 'free' | 'premium' | 'premium-plus' | null => {
     if (!userProfile) return null; // Retourner null si pas encore chargé
@@ -151,6 +186,8 @@ export const useAuth = () => {
         return plan === 'premium' || plan === 'premium-plus';
       case 'customCategories':
         return plan === 'premium' || plan === 'premium-plus';
+      case 'advancedSearch':
+        return plan === 'premium' || plan === 'premium-plus';
       case 'challenges':
         return plan === 'premium-plus';
       case 'mobileWidgets':
@@ -174,8 +211,10 @@ export const useAuth = () => {
     signInWithGoogle,
     logout,
     refreshProfile,
+    refreshUser,
     getCurrentPlan,
     hasAccess,
+    refreshKey,
   };
 };
 

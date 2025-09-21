@@ -1,31 +1,32 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useAddConsumption } from '@/hooks/useConsumptions';
+import { useAddActivity } from '@/hooks/useActivities';
 import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
-import ConsumptionButton from '@/components/dashboard/ConsumptionButton';
-import TodayStats from '@/components/dashboard/TodayStats';
+import ActivityButton from '@/components/dashboard/ActivityButton';
+import TodayActivities from '@/components/dashboard/TodayActivities';
 import SubscriptionStatus from '@/components/dashboard/SubscriptionStatus';
 import InfoBanner from '@/components/ui/InfoBanner';
-// import { ConsumptionButtonSkeleton } from '@/components/ui/Skeleton';
-import { AlcoholType, CigaretteType, JunkfoodType } from '@/types';
+import CalendarDebug from '@/components/debug/CalendarDebug';
+// import { ActivityButtonSkeleton } from '@/components/ui/Skeleton';
+import { SportType, SocialType, NutritionType } from '@/types';
 import { Sprout, Heart, Leaf, Flower, LifeBuoy } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const addConsumption = useAddConsumption();
+  const addActivity = useAddActivity();
 
-  const handleAddConsumption = async (
-    category: 'alcohol' | 'cigarettes' | 'junkfood',
-    type: AlcoholType | CigaretteType | JunkfoodType
+  const handleAddActivity = async (
+    category: 'sport' | 'social' | 'nutrition',
+    type: SportType | SocialType | NutritionType
   ) => {
     if (!user) return;
 
     const today = format(new Date(), 'yyyy-MM-dd');
 
     try {
-      await addConsumption.mutateAsync({
+      await addActivity.mutateAsync({
         userId: user.uid,
         date: today,
         category,
@@ -34,11 +35,11 @@ export default function Dashboard() {
       });
       
       // Toast de succès
-      toast.success('Consommation ajoutée !', {
+      toast.success('Activité ajoutée !', {
         duration: 2000,
       });
     } catch {
-      toast.error('Erreur lors de l\'ajout de la consommation');
+      toast.error('Erreur lors de l\'ajout de l\'activité');
     }
   };
 
@@ -51,39 +52,39 @@ export default function Dashboard() {
             <Sprout className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl md:text-2xl font-light text-gray-800">
-            Votre espace de <span className="font-semibold text-emerald-600">suivi</span>
+            Votre espace de <span className="font-semibold text-emerald-600">bien-être</span>
           </h1>
         </div>
         <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
-          Enregistrez vos consommations quotidiennes et comprenez vos habitudes de consommation
+          Enregistrez vos activités positives quotidiennes et célébrez vos progrès
         </p>
       </div>
 
-      {/* Boutons d'ajout de consommations */}
+      {/* Boutons d'ajout d'activités */}
       <div className="relative z-10">
         <InfoBanner />
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <ConsumptionButton
-            category="alcohol"
-            onAdd={(type) => handleAddConsumption('alcohol', type as AlcoholType)}
-            disabled={addConsumption.isPending}
+          <ActivityButton
+            category="sport"
+            onAdd={(type) => handleAddActivity('sport', type as SportType)}
+            disabled={addActivity.isPending}
           />
           
-          <ConsumptionButton
-            category="cigarettes"
-            onAdd={(type) => handleAddConsumption('cigarettes', type as CigaretteType)}
-            disabled={addConsumption.isPending}
+          <ActivityButton
+            category="social"
+            onAdd={(type) => handleAddActivity('social', type as SocialType)}
+            disabled={addActivity.isPending}
           />
           
-          <ConsumptionButton
-            category="junkfood"
-            onAdd={(type) => handleAddConsumption('junkfood', type as JunkfoodType)}
-            disabled={addConsumption.isPending}
+          <ActivityButton
+            category="nutrition"
+            onAdd={(type) => handleAddActivity('nutrition', type as NutritionType)}
+            disabled={addActivity.isPending}
           />
         </div>
 
-        {addConsumption.isPending && (
+        {addActivity.isPending && (
           <div className="mt-8 text-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-50 rounded-full">
               <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
@@ -93,20 +94,23 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Statistiques du jour */}
-      <TodayStats />
+      {/* Activités du jour */}
+      <TodayActivities />
+
+      {/* Debug calendrier */}
+      <CalendarDebug />
 
       {/* Statut d'abonnement */}
       <SubscriptionStatus />
 
-      {/* Conseils zen */}
+      {/* Conseils motivationnels */}
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-8 border border-emerald-100">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl flex items-center justify-center">
             <Heart className="w-6 h-6 text-white" />
           </div>
           <h3 className="text-xl font-light text-gray-800">
-            Conseils <span className="font-semibold text-emerald-600">pratiques</span>
+            Conseils <span className="font-semibold text-emerald-600">motivationnels</span>
           </h3>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -114,13 +118,13 @@ export default function Dashboard() {
             <div className="flex items-start gap-3">
               <Sprout className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Soyez <span className="text-emerald-600 font-medium">bienveillant</span> envers vous-même
+                Célébrez chaque <span className="text-emerald-600 font-medium">petite victoire</span>
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Leaf className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Observez vos habitudes avec curiosité
+                Construisez des habitudes positives progressivement
               </p>
             </div>
           </div>
@@ -128,13 +132,13 @@ export default function Dashboard() {
             <div className="flex items-start gap-3">
               <Flower className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Notez chaque <span className="text-emerald-600 font-medium">observation</span>
+                Notez chaque <span className="text-emerald-600 font-medium">activité positive</span>
               </p>
             </div>
             <div className="flex items-start gap-3">
               <LifeBuoy className="w-5 h-5 text-emerald-500 mt-1" />
               <p className="text-gray-700">
-                Comprenez vos patterns, sans jugement
+                Visualisez vos progrès et restez motivé
               </p>
             </div>
           </div>
@@ -153,8 +157,8 @@ export default function Dashboard() {
             <div className="flex items-start gap-2">
               <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
               <p>
-                <strong>Usage personnel :</strong> Cette application sert uniquement à prendre conscience de vos habitudes. 
-                Aucun jugement n'est porté sur vos choix personnels.
+                <strong>Usage motivationnel :</strong> Cette application vous aide à célébrer vos activités positives. 
+                Chaque petite action compte dans votre parcours de bien-être.
               </p>
             </div>
             <div className="flex items-start gap-2">

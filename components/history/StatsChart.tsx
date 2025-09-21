@@ -11,9 +11,8 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { DayConsumption } from '@/types';
+import { DayActivities } from '@/types';
 import { getAggregatedStats } from '@/utils/stats';
-import { CATEGORY_COLORS } from '@/constants/colors';
 
 ChartJS.register(
   CategoryScale,
@@ -26,57 +25,52 @@ ChartJS.register(
 );
 
 interface StatsChartProps {
-  consumptions: DayConsumption[];
+  activities: DayActivities[];
   type: 'weekly' | 'monthly';
 }
 
-export default function StatsChart({ consumptions, type }: StatsChartProps) {
-  const stats = getAggregatedStats(consumptions);
+export default function StatsChart({ activities, type }: StatsChartProps) {
+  const stats = getAggregatedStats(activities);
 
   // Configuration pour le graphique en barres (évolution temporelle)
-  const timeLabels = consumptions
+  const timeLabels = activities
     .slice(0, 10) // Limiter à 10 derniers points
     .reverse()
-    .map(c => {
-      const date = new Date(c.date);
+    .map(a => {
+      const date = new Date(a.date);
       return type === 'weekly' 
         ? date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })
         : date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
     });
 
-  // const timeData = consumptions
-  //   .slice(0, 10)
-  //   .reverse()
-  //   .map(c => stats.alcohol.total + stats.cigarettes.total + stats.junkfood.total);
-
   const barData = {
     labels: timeLabels,
     datasets: [
       {
-        label: 'Alcool',
-        data: consumptions.slice(0, 10).reverse().map(c => 
-          c.alcohol.reduce((sum, item) => sum + item.quantity, 0)
+        label: 'Sport',
+        data: activities.slice(0, 10).reverse().map(a => 
+          a.sport.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: `${CATEGORY_COLORS.alcohol.chart}80`,
-        borderColor: CATEGORY_COLORS.alcohol.chart,
+        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+        borderColor: 'rgb(34, 197, 94)',
         borderWidth: 1,
       },
       {
-        label: 'Cigarettes',
-        data: consumptions.slice(0, 10).reverse().map(c => 
-          c.cigarettes.reduce((sum, item) => sum + item.quantity, 0)
+        label: 'Social',
+        data: activities.slice(0, 10).reverse().map(a => 
+          a.social.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: `${CATEGORY_COLORS.cigarettes.chart}80`,
-        borderColor: CATEGORY_COLORS.cigarettes.chart,
+        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+        borderColor: 'rgb(59, 130, 246)',
         borderWidth: 1,
       },
       {
         label: 'Nutrition',
-        data: consumptions.slice(0, 10).reverse().map(c => 
-          c.junkfood.reduce((sum, item) => sum + item.quantity, 0)
+        data: activities.slice(0, 10).reverse().map(a => 
+          a.nutrition.reduce((sum, item) => sum + item.quantity, 0)
         ),
-        backgroundColor: `${CATEGORY_COLORS.junkfood.chart}80`,
-        borderColor: CATEGORY_COLORS.junkfood.chart,
+        backgroundColor: 'rgba(168, 85, 247, 0.8)',
+        borderColor: 'rgb(168, 85, 247)',
         borderWidth: 1,
       },
     ],
@@ -84,19 +78,19 @@ export default function StatsChart({ consumptions, type }: StatsChartProps) {
 
   // Configuration pour le graphique en camembert (répartition par catégorie)
   const doughnutData = {
-    labels: ['Alcool', 'Cigarettes', 'Nutrition'],
+    labels: ['Sport', 'Social', 'Nutrition'],
     datasets: [
       {
-        data: [stats.alcohol.total, stats.cigarettes.total, stats.junkfood.total],
+        data: [stats.sport.total, stats.social.total, stats.nutrition.total],
         backgroundColor: [
-          `${CATEGORY_COLORS.alcohol.chart}80`,
-          `${CATEGORY_COLORS.cigarettes.chart}80`,
-          `${CATEGORY_COLORS.junkfood.chart}80`,
+          'rgba(34, 197, 94, 0.8)',
+          'rgba(59, 130, 246, 0.8)',
+          'rgba(168, 85, 247, 0.8)',
         ],
         borderColor: [
-          CATEGORY_COLORS.alcohol.chart,
-          CATEGORY_COLORS.cigarettes.chart,
-          CATEGORY_COLORS.junkfood.chart,
+          'rgb(34, 197, 94)',
+          'rgb(59, 130, 246)',
+          'rgb(168, 85, 247)',
         ],
         borderWidth: 2,
       },

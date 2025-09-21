@@ -1,40 +1,40 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown, Plus, Wine, Cigarette, Beef } from 'lucide-react';
+import { ChevronDown, Plus, Zap, Users, Apple } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import { 
-  ALCOHOL_CONFIG, 
-  CIGARETTE_CONFIG, 
-  JUNKFOOD_CONFIG
+  SPORT_CONFIG, 
+  SOCIAL_CONFIG, 
+  NUTRITION_CONFIG
 } from '@/types';
 import { CATEGORY_COLORS, CategoryType } from '@/constants/colors';
 
-interface ConsumptionButtonProps {
-  category: 'alcohol' | 'cigarettes' | 'junkfood';
+interface ActivityButtonProps {
+  category: 'sport' | 'social' | 'nutrition';
   onAdd: (type: string) => void;
   disabled?: boolean;
 }
 
 const CATEGORY_CONFIG = {
-  alcohol: {
-    icon: Wine,
-    label: 'Alcool',
-    config: ALCOHOL_CONFIG,
+  sport: {
+    icon: Zap,
+    label: 'Sport',
+    config: SPORT_CONFIG,
   },
-  cigarettes: {
-    icon: Cigarette,
-    label: 'Cigarettes',
-    config: CIGARETTE_CONFIG,
+  social: {
+    icon: Users,
+    label: 'Social',
+    config: SOCIAL_CONFIG,
   },
-  junkfood: {
-    icon: Beef,
+  nutrition: {
+    icon: Apple,
     label: 'Nutrition',
-    config: JUNKFOOD_CONFIG,
+    config: NUTRITION_CONFIG,
   },
 };
 
-export default function ConsumptionButton({ category, onAdd, disabled }: ConsumptionButtonProps) {
+export default function ActivityButton({ category, onAdd, disabled }: ActivityButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [isClosing, setIsClosing] = useState(false);
@@ -225,7 +225,7 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
               </div>
               <div className="text-left">
                 <span className="text-lg md:text-xl font-semibold block">{categoryData.label}</span>
-                <span className="text-xs md:text-sm opacity-90">Prise de conscience</span>
+                <span className="text-xs md:text-sm opacity-90">Activités positives</span>
               </div>
             </div>
             <ChevronDown 
@@ -247,6 +247,8 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
           } ${
             !isMobile && (isClosing ? 'animate-fadeOut' : 'animate-fadeIn')
           }`}>
+            {/* Conteneur avec hauteur maximale et scroll */}
+            <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {Object.entries(categoryData.config).map(([type, config], index) => (
               <div
                 key={type}
@@ -270,8 +272,8 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
                     </div>
                     <div>
                       <div className="text-gray-800 font-medium text-sm md:text-base">{config.label}</div>
-                      {config.volume && (
-                        <div className="text-gray-500 text-xs md:text-sm">{config.volume}</div>
+                      {config.description && (
+                        <div className="text-gray-500 text-xs md:text-sm">{config.description}</div>
                       )}
                     </div>
                   </div>
@@ -287,6 +289,7 @@ export default function ConsumptionButton({ category, onAdd, disabled }: Consump
                 </button>
               </div>
             ))}
+            </div>
           </div>
         )}
       </div>

@@ -31,6 +31,9 @@ export interface SubscriptionLimits {
   // Support
   premiumResources: boolean; // Ressources exclusives
   offlineMode: boolean; // Mode hors-ligne
+  
+  // Recherche
+  advancedSearch: boolean; // Recherche avancée par date
 }
 
 export interface UserSubscription {
@@ -61,6 +64,7 @@ export const SUBSCRIPTION_LIMITS: Record<SubscriptionPlan, SubscriptionLimits> =
     widgets: false,
     premiumResources: false,
     offlineMode: false,
+    advancedSearch: false,
   },
   premium: {
     calendarMonthsAccess: 12, // 12 mois
@@ -79,6 +83,7 @@ export const SUBSCRIPTION_LIMITS: Record<SubscriptionPlan, SubscriptionLimits> =
     widgets: false,
     premiumResources: false,
     offlineMode: false,
+    advancedSearch: true,
   },
   'premium-plus': {
     calendarMonthsAccess: -1, // Illimité
@@ -97,13 +102,14 @@ export const SUBSCRIPTION_LIMITS: Record<SubscriptionPlan, SubscriptionLimits> =
     widgets: true,
     premiumResources: true,
     offlineMode: true,
+    advancedSearch: true,
   },
 };
 
 // Prix des abonnements (en euros)
 export const SUBSCRIPTION_PRICES = {
-  premium: 1.99,
-  'premium-plus': 19.99,
+  premium: 3.99,
+  'premium-plus': 39.99,
 };
 
 // Fonction pour vérifier si une fonctionnalité est accessible

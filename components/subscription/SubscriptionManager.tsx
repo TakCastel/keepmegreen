@@ -69,7 +69,7 @@ export default function SubscriptionManager({
       case 'premium':
         return {
           name: 'Premium',
-          price: '1,99€',
+          price: '3,99€',
           period: 'par mois',
           color: 'amber',
           bgColor: 'from-amber-500 to-orange-500',
@@ -78,7 +78,7 @@ export default function SubscriptionManager({
       case 'premium-plus':
         return {
           name: 'Premium+',
-          price: '19,99€',
+          price: '39,99€',
           period: 'à vie',
           color: 'purple',
           bgColor: 'from-purple-500 to-purple-600',
@@ -87,7 +87,7 @@ export default function SubscriptionManager({
       default:
         return {
           name: 'Premium',
-          price: '1,99€',
+          price: '3,99€',
           period: 'par mois',
           color: 'amber',
           bgColor: 'from-amber-500 to-orange-500',

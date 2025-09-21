@@ -112,7 +112,7 @@ export default function PaymentStatus() {
         <div className="mt-4 pt-4 border-t border-green-200">
           <div className="flex items-center justify-between">
             <p className="text-green-700 text-sm">
-              🎉 Félicitations ! Vous avez maintenant accès à toutes les fonctionnalités Premium.
+              Félicitations ! Vous avez maintenant accès à toutes les fonctionnalités Premium.
             </p>
             <button
               onClick={async () => {

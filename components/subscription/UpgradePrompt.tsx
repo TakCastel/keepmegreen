@@ -54,10 +54,10 @@ export default function UpgradePrompt({
 
   const getUpgradeButtonText = () => {
     if (currentPlan === 'free') {
-      return 'Essayer Premium - 1,99€/mois';
+      return 'Essayer Premium - 3,99€/mois';
     }
     if (currentPlan === 'premium') {
-      return 'Passer à Premium+ - 19,99€ à vie';
+      return 'Passer à Premium+ - 39,99€ à vie';
     }
     return '';
   };
@@ -105,7 +105,7 @@ export default function UpgradePrompt({
             <div className="mt-4 pt-4 border-t border-amber-200">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-amber-800">Premium (1,99€/mois)</h4>
+                  <h4 className="font-semibold text-amber-800">Premium (3,99€/mois)</h4>
                   <ul className="space-y-1 text-amber-700">
                     <li>• Historique complet (1 an vs 7 jours)</li>
                     <li>• Statistiques avancées</li>
@@ -115,7 +115,7 @@ export default function UpgradePrompt({
                   </ul>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-amber-800">Premium+ (19,99€ à vie)</h4>
+                  <h4 className="font-semibold text-amber-800">Premium+ (39,99€ à vie)</h4>
                   <ul className="space-y-1 text-amber-700">
                     <li>• Tout Premium +</li>
                     <li>• Défis et badges</li>

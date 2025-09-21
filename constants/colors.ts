@@ -1,5 +1,50 @@
-// Couleurs globales pour les catégories de consommation
+// Couleurs globales pour les catégories d'activités positives
 export const CATEGORY_COLORS = {
+  sport: {
+    primary: 'from-emerald-50 to-green-100',
+    primaryHover: 'hover:from-emerald-100 hover:to-green-200',
+    text: 'text-gray-800',
+    iconBg: 'bg-emerald-200/60',
+    iconColor: 'text-gray-800',
+    // Pour les charts et autres éléments
+    chart: '#10b981', // emerald-500
+    chartLight: '#d1fae5', // emerald-100
+    chartDark: '#059669', // emerald-600
+    // Pour les textes dans les paramètres
+    textDark: 'text-emerald-800',
+    textMedium: 'text-emerald-700',
+    textLight: 'text-emerald-600',
+  },
+  social: {
+    primary: 'from-blue-50 to-sky-100',
+    primaryHover: 'hover:from-blue-100 hover:to-sky-200',
+    text: 'text-gray-800',
+    iconBg: 'bg-blue-200/60',
+    iconColor: 'text-gray-800',
+    // Pour les charts et autres éléments
+    chart: '#3b82f6', // blue-500
+    chartLight: '#dbeafe', // blue-100
+    chartDark: '#2563eb', // blue-600
+    // Pour les textes dans les paramètres
+    textDark: 'text-blue-800',
+    textMedium: 'text-blue-700',
+    textLight: 'text-blue-600',
+  },
+  nutrition: {
+    primary: 'from-orange-50 to-amber-100',
+    primaryHover: 'hover:from-orange-100 hover:to-amber-200',
+    text: 'text-gray-800',
+    iconBg: 'bg-orange-200/60',
+    iconColor: 'text-gray-800',
+    // Pour les charts et autres éléments
+    chart: '#f97316', // orange-500
+    chartLight: '#fed7aa', // orange-100
+    chartDark: '#ea580c', // orange-600
+    // Pour les textes dans les paramètres
+    textDark: 'text-orange-800',
+    textMedium: 'text-orange-700',
+    textLight: 'text-orange-600',
+  },
   alcohol: {
     primary: 'from-pink-50 to-rose-100',
     primaryHover: 'hover:from-pink-100 hover:to-rose-200',
@@ -7,43 +52,43 @@ export const CATEGORY_COLORS = {
     iconBg: 'bg-pink-200/60',
     iconColor: 'text-gray-800',
     // Pour les charts et autres éléments
-    chart: '#f472b6', // pink-400
+    chart: '#ec4899', // pink-500
     chartLight: '#fce7f3', // pink-100
-    chartDark: '#ec4899', // pink-500
+    chartDark: '#db2777', // pink-600
     // Pour les textes dans les paramètres
     textDark: 'text-pink-800',
     textMedium: 'text-pink-700',
     textLight: 'text-pink-600',
   },
   cigarettes: {
-    primary: 'from-violet-50 to-purple-100',
-    primaryHover: 'hover:from-violet-100 hover:to-purple-200',
+    primary: 'from-slate-50 to-gray-100',
+    primaryHover: 'hover:from-slate-100 hover:to-gray-200',
     text: 'text-gray-800',
-    iconBg: 'bg-violet-200/60',
+    iconBg: 'bg-slate-200/60',
     iconColor: 'text-gray-800',
     // Pour les charts et autres éléments
-    chart: '#a78bfa', // violet-400
-    chartLight: '#ede9fe', // violet-100
-    chartDark: '#8b5cf6', // violet-500
+    chart: '#64748b', // slate-500
+    chartLight: '#f1f5f9', // slate-100
+    chartDark: '#475569', // slate-600
     // Pour les textes dans les paramètres
-    textDark: 'text-violet-800',
-    textMedium: 'text-violet-700',
-    textLight: 'text-violet-600',
+    textDark: 'text-slate-800',
+    textMedium: 'text-slate-700',
+    textLight: 'text-slate-600',
   },
   junkfood: {
-    primary: 'from-blue-50 to-sky-100',
-    primaryHover: 'hover:from-blue-100 hover:to-sky-200',
+    primary: 'from-amber-50 to-yellow-100',
+    primaryHover: 'hover:from-amber-100 hover:to-yellow-200',
     text: 'text-gray-800',
-    iconBg: 'bg-blue-200/60',
+    iconBg: 'bg-amber-200/60',
     iconColor: 'text-gray-800',
     // Pour les charts et autres éléments
-    chart: '#60a5fa', // blue-400
-    chartLight: '#dbeafe', // blue-100
-    chartDark: '#3b82f6', // blue-500
+    chart: '#f59e0b', // amber-500
+    chartLight: '#fef3c7', // amber-100
+    chartDark: '#d97706', // amber-600
     // Pour les textes dans les paramètres
-    textDark: 'text-blue-800',
-    textMedium: 'text-blue-700',
-    textLight: 'text-blue-600',
+    textDark: 'text-amber-800',
+    textMedium: 'text-amber-700',
+    textLight: 'text-amber-600',
   },
 } as const;
 

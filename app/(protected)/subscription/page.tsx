@@ -100,7 +100,7 @@ export default function SubscriptionPage() {
     {
       id: 'premium',
       name: 'Premium',
-      price: '1,99€',
+      price: '3,99€',
       period: 'par mois',
       description: 'Toutes les fonctionnalités',
       features: [
@@ -116,7 +116,7 @@ export default function SubscriptionPage() {
     {
       id: 'premium-plus',
       name: 'Premium+',
-      price: '19,99€',
+      price: '39,99€',
       period: 'à vie',
       description: 'Accès complet',
       features: [
@@ -418,7 +418,7 @@ export default function SubscriptionPage() {
 
               <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-purple-600">19,99€</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-purple-600">39,99€</div>
                   <div className="text-sm sm:text-base text-gray-500">à vie</div>
                 </div>
               </div>

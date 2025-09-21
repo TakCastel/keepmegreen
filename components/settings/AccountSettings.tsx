@@ -1,29 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserContext } from '@/contexts/UserContext';
 import { updateProfile, deleteUser } from 'firebase/auth';
 import { User, Mail, Trash2, Shield } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function AccountSettings() {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
+  const { updateDisplayName } = useUserContext();
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  // Synchroniser le state local avec les changements de l'utilisateur
+  useEffect(() => {
+    setDisplayName(user?.displayName || '');
+  }, [user?.displayName]);
 
   const handleUpdateProfile = async () => {
     if (!user) return;
 
     setIsUpdating(true);
     try {
+      // Mettre à jour le profil Firebase Auth
       await updateProfile(user, {
         displayName: displayName || null,
       });
 
+      console.log('Profil Firebase mis à jour:', displayName);
+
+      // Attendre un petit délai pour s'assurer que Firebase a bien mis à jour
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Forcer la mise à jour de l'utilisateur dans le contexte d'authentification
+      await refreshUser();
+
+      // Maintenant que Firebase Auth est mis à jour, mettre à jour le contexte utilisateur
+      updateDisplayName(displayName || null);
+
       toast.success('Profil mis à jour !');
-    } catch {
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du profil:', error);
       toast.error('Erreur lors de la mise à jour');
     } finally {
       setIsUpdating(false);

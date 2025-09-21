@@ -67,10 +67,10 @@ export default function PremiumFeatures() {
 
   const getUpgradePrice = () => {
     if (subscription.plan === 'free') {
-      return '1,99€/mois';
+      return '3,99€/mois';
     }
     if (subscription.plan === 'premium') {
-      return '19,99€ à vie';
+      return '39,99€ à vie';
     }
     return '';
   };

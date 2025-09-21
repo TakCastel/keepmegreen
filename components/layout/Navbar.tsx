@@ -3,19 +3,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useUserContext } from '@/contexts/UserContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { LogOut, User, Calendar, History, Settings, BarChart3, Sprout, Crown, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, userProfile, loading, logout, getCurrentPlan } = useAuth();
+  const { user, userProfile, loading, logout, getCurrentPlan, refreshKey } = useAuth();
   const { hasAccess } = useSubscription();
+  const { displayName } = useUserContext();
   const router = useRouter();
   const pathname = usePathname();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Forcer un re-render quand la clé de refresh change (pour la mise à jour du nom)
+  useEffect(() => {
+    // Cet effet force un re-render quand refreshKey ou user.displayName change
+    console.log('Navbar re-render:', { refreshKey, displayName: user?.displayName });
+  }, [refreshKey, user?.displayName]);
 
   // Fermer les menus quand on clique en dehors
   useEffect(() => {
@@ -94,10 +102,10 @@ export default function Navbar() {
               </div>
               <div>
                 <span className="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">
-                  DrinkeatGreen
+                  GrowDaily
                 </span>
                 <div className="text-xs text-gray-500 -mt-0.5">
-                  Suivez vos consos
+                  Votre bien-être au quotidien
                 </div>
               </div>
             </Link>
@@ -150,7 +158,7 @@ export default function Navbar() {
                   </div>
                   <div className="text-left">
                     <div className="text-sm font-medium text-gray-900">
-                      {user?.displayName || user?.email?.split('@')[0] || 'Utilisateur'}
+                      {displayName || user?.email?.split('@')[0] || 'Utilisateur'}
                     </div>
                     <div className={`text-xs flex items-center gap-1 ${getPlanColor()}`}>
                       {getPlanIcon()}
@@ -174,7 +182,7 @@ export default function Navbar() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-semibold text-gray-900 truncate">
-                            {user?.displayName || user?.email?.split('@')[0] || 'Utilisateur'}
+                            {displayName || user?.email?.split('@')[0] || 'Utilisateur'}
                           </div>
                           <div className="text-xs text-gray-500 truncate">
                             {user?.email}
@@ -251,7 +259,7 @@ export default function Navbar() {
                 </div>
                 <div>
                   <div className="text-lg font-semibold text-gray-900">
-                    {user?.displayName || user?.email?.split('@')[0] || 'Utilisateur'}
+                    {displayName || user?.email?.split('@')[0] || 'Utilisateur'}
                   </div>
                   <div className={`text-xs flex items-center gap-1 ${getPlanColor()}`}>
                     {getPlanIcon()}

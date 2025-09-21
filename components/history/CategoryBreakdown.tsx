@@ -1,7 +1,7 @@
 'use client';
 
 import { DayConsumption, ConsumptionConfig } from '@/types';
-import { getAggregatedStats } from '@/utils/stats';
+import { getAggregatedConsumptionStats } from '@/utils/stats';
 import { 
   ALCOHOL_CONFIG, 
   CIGARETTE_CONFIG, 
@@ -29,7 +29,7 @@ interface CategoryData {
 }
 
 export default function CategoryBreakdown({ consumptions }: CategoryBreakdownProps) {
-  const stats = getAggregatedStats(consumptions);
+  const stats = getAggregatedConsumptionStats(consumptions);
 
   const categories: CategoryData[] = [
     {

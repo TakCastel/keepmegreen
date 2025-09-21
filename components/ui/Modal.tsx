@@ -34,13 +34,13 @@ export default function Modal({
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl'
+    lg: 'max-w-4xl',
+    xl: 'max-w-6xl'
   };
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-[99999] p-4">
-      <div className={`bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl ${sizeClasses[size]} w-full max-h-[80vh] flex flex-col border border-white/20 ${className}`}>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[99999] p-6">
+      <div className={`bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl ${sizeClasses[size]} w-full max-h-[85vh] flex flex-col border border-white/20 ${className}`}>
         {/* En-tête fixe */}
         {(title || subtitle || headerActions || showCloseButton) && (
           <div className="flex items-center justify-between p-8 border-b border-gray-200 flex-shrink-0">

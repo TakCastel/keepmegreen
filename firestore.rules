@@ -16,6 +16,12 @@ service cloud.firestore {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
       
+      // Règles pour les activités de l'utilisateur
+      match /activities/{activityId} {
+        // L'utilisateur peut lire et écrire ses propres activités
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
       // Règles pour l'historique (limité selon le plan)
       match /history/{historyId} {
         // Lecture conditionnelle selon le plan

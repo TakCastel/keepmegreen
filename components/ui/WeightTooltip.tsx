@@ -29,7 +29,7 @@ const WeightTooltip = () => {
             {/* Cigarettes */}
             <div className="mb-4">
               <h4 className="text-xs font-medium text-orange-600 mb-2 flex items-center gap-1">
-                🚬 Cigarettes (plus grave)
+Cigarettes (plus grave)
               </h4>
               <div className="space-y-1 text-xs text-gray-600">
                 <div className="flex justify-between">
@@ -50,7 +50,7 @@ const WeightTooltip = () => {
             {/* Alcool */}
             <div className="mb-4">
               <h4 className="text-xs font-medium text-purple-600 mb-2 flex items-center gap-1">
-                🍷 Alcool (modéré à élevé)
+Alcool (modéré à élevé)
               </h4>
               <div className="space-y-1 text-xs text-gray-600">
                 <div className="flex justify-between">
@@ -75,7 +75,7 @@ const WeightTooltip = () => {
             {/* Nutrition */}
             <div className="mb-4">
               <h4 className="text-xs font-medium text-blue-600 mb-2 flex items-center gap-1">
-                🍕 Nutrition (faible à modéré)
+Nutrition (faible à modéré)
               </h4>
               <div className="space-y-1 text-xs text-gray-600">
                 <div className="flex justify-between">
@@ -108,19 +108,19 @@ const WeightTooltip = () => {
               </h4>
               <div className="space-y-1 text-xs text-gray-600">
                 <div className="flex justify-between items-center">
-                  <span>🟢 Sérénité</span>
+                  <span>Sérénité</span>
                   <span className="font-medium">0 pt</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>🟡 Éveil</span>
+                  <span>Éveil</span>
                   <span className="font-medium">≤ 2 pts</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>🟠 Vigilance</span>
+                  <span>Vigilance</span>
                   <span className="font-medium">≤ 6 pts</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>🔴 Attention</span>
+                  <span>Attention</span>
                   <span className="font-medium">&gt; 6 pts</span>
                 </div>
               </div>

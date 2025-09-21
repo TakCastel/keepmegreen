@@ -65,7 +65,7 @@ export default function LoginPage() {
                 <Sprout className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-5xl text-gray-800 font-poppins tracking-tight">
-                <span className="font-bold text-emerald-600 bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">Drinkeat</span><span className="font-light">Green</span>
+                <span className="font-bold text-emerald-600 bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">Grow</span><span className="font-light">Daily</span>
               </h1>
             </div>
             
