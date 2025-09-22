@@ -28,7 +28,7 @@ const colorClasses = {
   'light-blue': 'bg-blue-100 text-blue-800',
   blue: 'bg-blue-200 text-blue-900',
   'dark-blue': 'bg-blue-300 text-blue-900',
-  'blue-purple': 'bg-purple-200 text-purple-900',
+  'blue-purple': 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white',
 };
 
 const sizeClasses = {

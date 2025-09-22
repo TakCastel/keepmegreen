@@ -9,6 +9,7 @@ import { getTotalConsumptions, calculateDayWeight, getDayColorByWeight, getConsu
 import { Flower2, Leaf, Sun, Sunrise, Wine, Cigarette, Utensils, Edit3 } from 'lucide-react';
 // import DayColorInfo from '@/components/ui/DayColorTooltip';
 import DynamicIcon from '@/components/ui/DynamicIcon';
+import AnimatedPip from '@/components/ui/AnimatedPip';
 import { 
   ALCOHOL_CONFIG, 
   CIGARETTE_CONFIG, 
@@ -53,6 +54,28 @@ export default function TodayStats() {
   };
 
   const currentColorConfig = colorConfig[dayColor];
+
+  // Affichage façon "points de vie" (pips) pour représenter les quantités
+  const renderPips = (count: number, colorClass: string) => {
+    const maxVisible = 12;
+    const visible = Math.min(count, maxVisible);
+    const extra = count - visible;
+    return (
+      <div className="flex items-center gap-1 flex-wrap">
+        {Array.from({ length: visible }).map((_, i) => (
+          <AnimatedPip
+            key={i}
+            colorClass={colorClass}
+            index={i}
+            totalCount={visible}
+          />
+        ))}
+        {extra > 0 && (
+          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 animate-pulse">+{extra}</span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="bg-transparent md:bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:shadow-xl md:border md:border-white/20">
@@ -123,7 +146,9 @@ export default function TodayStats() {
                         <DynamicIcon name={ALCOHOL_CONFIG[item.type].icon} className="w-4 h-4" />
                         {ALCOHOL_CONFIG[item.type].label}
                       </span>
-                      <span className={`${CATEGORY_COLORS.alcohol.textDark} font-medium`}>×{item.quantity}</span>
+                      <span className="flex items-center">
+                        {renderPips(item.quantity, CATEGORY_COLORS.alcohol.bgDot || 'bg-pink-500')}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -144,7 +169,9 @@ export default function TodayStats() {
                         <DynamicIcon name={CIGARETTE_CONFIG[item.type].icon} className="w-4 h-4" />
                         {CIGARETTE_CONFIG[item.type].label}
                       </span>
-                      <span className={`${CATEGORY_COLORS.cigarettes.textDark} font-medium`}>×{item.quantity}</span>
+                      <span className="flex items-center">
+                        {renderPips(item.quantity, CATEGORY_COLORS.cigarettes.bgDot || 'bg-violet-500')}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -165,7 +192,9 @@ export default function TodayStats() {
                         <DynamicIcon name={JUNKFOOD_CONFIG[item.type].icon} className="w-4 h-4" />
                         {JUNKFOOD_CONFIG[item.type].label}
                       </span>
-                      <span className={`${CATEGORY_COLORS.junkfood.textDark} font-medium`}>×{item.quantity}</span>
+                      <span className="flex items-center">
+                        {renderPips(item.quantity, CATEGORY_COLORS.junkfood.bgDot || 'bg-blue-500')}
+                      </span>
                     </div>
                   ))}
                 </div>

@@ -148,8 +148,27 @@ export const useAddConsumption = () => {
         // Mettre à jour le cache immédiatement
         queryClient.setQueryData(queryKey, updatedData);
       } else {
-        // Si pas de données en cache, invalider pour déclencher un refetch
-        queryClient.invalidateQueries({ queryKey });
+        // Si pas de données en cache pour ce jour, créer une journée et la placer en cache immédiatement
+        const newDay: DayConsumption = {
+          date: variables.date,
+          alcohol: variables.category === 'alcohol' ? [{
+            type: variables.type as AlcoholType,
+            quantity: variables.quantity || 1,
+            timestamp: new Date().toISOString()
+          }] : [],
+          cigarettes: variables.category === 'cigarettes' ? [{
+            type: variables.type as CigaretteType,
+            quantity: variables.quantity || 1,
+            timestamp: new Date().toISOString()
+          }] : [],
+          junkfood: variables.category === 'junkfood' ? [{
+            type: variables.type as JunkfoodType,
+            quantity: variables.quantity || 1,
+            timestamp: new Date().toISOString()
+          }] : []
+        };
+
+        queryClient.setQueryData(queryKey, newDay);
       }
       
       // Mise à jour optimiste de useAllConsumptions

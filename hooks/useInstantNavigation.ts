@@ -1,50 +1,35 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
-import { format, startOfWeek, endOfWeek } from 'date-fns';
+import { useAuth } from './useAuth';
 
-export const useInstantNavigation = () => {
-  const router = useRouter();
+/**
+ * Hook pour forcer le refetch des données lors de la navigation
+ * Utilisé pour s'assurer que les données sont à jour quand l'utilisateur navigue
+ */
+export function useInstantNavigation() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  const navigateInstant = (href: string) => {
-    // Naviguer IMMÉDIATEMENT sans attendre les données
-    router.push(href);
-
-    // Précharger les données en arrière-plan (sans bloquer la navigation)
-    if (!user?.uid) return;
-
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const startOfCurrentWeek = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
-    const endOfCurrentWeek = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
-
-    // Précharger en arrière-plan sans attendre
-    const prefetchInBackground = () => {
-      // Dashboard - données du jour
-      queryClient.prefetchQuery({
-        queryKey: ['consumption', user.uid, today],
-        staleTime: 2 * 60 * 1000,
+  useEffect(() => {
+    if (user?.uid && !loading) {
+      // Invalider toutes les requêtes d'activités pour forcer un refetch
+      queryClient.invalidateQueries({ 
+        queryKey: ['activities'],
+        exact: false // Invalider toutes les requêtes qui commencent par 'activities'
       });
+    }
+  }, [user?.uid, loading, queryClient]);
 
-      // History - données de la semaine
-      queryClient.prefetchQuery({
-        queryKey: ['consumptions', 'week', user.uid, startOfCurrentWeek, endOfCurrentWeek],
-        staleTime: 2 * 60 * 1000,
-      });
-
-      // Calendar - toutes les données
-      queryClient.prefetchQuery({
-        queryKey: ['consumptions', 'all', user.uid],
-        staleTime: 5 * 60 * 1000,
-      });
-    };
-
-    // Précharger en arrière-plan sans bloquer
-    prefetchInBackground();
+  return {
+    invalidateActivities: () => {
+      if (user?.uid) {
+        queryClient.invalidateQueries({ 
+          queryKey: ['activities'],
+          exact: false
+        });
+      }
+    }
   };
-
-  return { navigateInstant };
-};
+}

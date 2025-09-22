@@ -14,6 +14,7 @@ interface ActivityButtonProps {
   category: 'sport' | 'social' | 'nutrition';
   onAdd: (type: string) => void;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 const CATEGORY_CONFIG = {
@@ -34,7 +35,7 @@ const CATEGORY_CONFIG = {
   },
 };
 
-export default function ActivityButton({ category, onAdd, disabled }: ActivityButtonProps) {
+export default function ActivityButton({ category, onAdd, disabled, isLoading }: ActivityButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [isClosing, setIsClosing] = useState(false);
@@ -228,11 +229,15 @@ export default function ActivityButton({ category, onAdd, disabled }: ActivityBu
                 <span className="text-xs md:text-sm opacity-90">Activités positives</span>
               </div>
             </div>
-            <ChevronDown 
-              className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
-                isOpen ? 'rotate-180' : 'rotate-0'
-              }`} 
-            />
+            {isLoading ? (
+              <div className="w-5 h-5 md:w-6 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <ChevronDown 
+                className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
+                  isOpen ? 'rotate-180' : 'rotate-0'
+                }`} 
+              />
+            )}
           </div>
         </button>
 
@@ -249,6 +254,14 @@ export default function ActivityButton({ category, onAdd, disabled }: ActivityBu
           }`}>
             {/* Conteneur avec hauteur maximale et scroll */}
             <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            {isLoading && (
+              <div className="p-4 text-center border-b border-gray-100">
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-50 rounded-full">
+                  <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-emerald-700 font-medium text-sm">Enregistrement...</span>
+                </div>
+              </div>
+            )}
             {Object.entries(categoryData.config).map(([type, config], index) => (
               <div
                 key={type}

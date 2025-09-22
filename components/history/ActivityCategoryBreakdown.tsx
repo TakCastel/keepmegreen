@@ -223,7 +223,7 @@ export default function ActivityCategoryBreakdown({ activities }: ActivityCatego
                 {/* Barre de progression */}
                 <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                   <div 
-                    className={`h-full ${category.progressColor} rounded-full transition-all duration-1000 ease-out`}
+                    className={`h-full ${category.progressColor} rounded-full transition-all duration-2000 ease-out`}
                     style={{ width: `${percentage}%` }}
                   ></div>
                 </div>

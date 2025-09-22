@@ -2,8 +2,12 @@
 
 import CalendarGrid from '@/components/calendar/CalendarGrid';
 import { Calendar, User, BarChart3, Flower, Leaf } from 'lucide-react';
+import { useInstantNavigation } from '@/hooks/useInstantNavigation';
 
 export default function CalendarPage() {
+  // Forcer le refetch des données à chaque navigation vers cette page
+  useInstantNavigation();
+
   return (
     <div className="space-y-6 md:space-y-10">
       {/* En-tête */}

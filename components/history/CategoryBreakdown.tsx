@@ -140,7 +140,7 @@ export default function CategoryBreakdown({ consumptions }: CategoryBreakdownPro
                       {/* Barre de progression */}
                       <div className="w-full bg-white/50 rounded-full h-3 backdrop-blur-sm">
                         <div
-                          className={`h-3 rounded-full ${category.progressColor} shadow-sm`}
+                          className={`h-3 rounded-full ${category.progressColor} shadow-sm transition-all duration-2000 ease-out`}
                           style={{ width: `${percentage}%` }}
                         />
                       </div>

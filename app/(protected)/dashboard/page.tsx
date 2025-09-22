@@ -69,29 +69,24 @@ export default function Dashboard() {
             category="sport"
             onAdd={(type) => handleAddActivity('sport', type as SportType)}
             disabled={addActivity.isPending}
+            isLoading={addActivity.isPending}
           />
           
           <ActivityButton
             category="social"
             onAdd={(type) => handleAddActivity('social', type as SocialType)}
             disabled={addActivity.isPending}
+            isLoading={addActivity.isPending}
           />
           
           <ActivityButton
             category="nutrition"
             onAdd={(type) => handleAddActivity('nutrition', type as NutritionType)}
             disabled={addActivity.isPending}
+            isLoading={addActivity.isPending}
           />
         </div>
 
-        {addActivity.isPending && (
-          <div className="mt-8 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-50 rounded-full">
-              <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-emerald-700 font-medium">Enregistrement en cours...</span>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Activités du jour */}

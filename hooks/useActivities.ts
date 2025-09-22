@@ -103,6 +103,9 @@ export const useAllActivities = (userId: string | undefined) => {
     queryFn: () => userId ? getAllUserActivities(userId) : [],
     enabled: !!userId && !loading && !!userProfile,
     staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
     initialData: [], // Données initiales pour éviter le loading state
   });
 };
@@ -110,18 +113,23 @@ export const useAllActivities = (userId: string | undefined) => {
 // Hook pour obtenir les activités accessibles selon l'abonnement
 export const useAccessibleActivities = (userId: string | undefined) => {
   const { hasAccess } = useSubscription();
-  const { userProfile, loading } = useAuth();
-  
   const hasAdvancedStats = hasAccess('advancedStats');
   
   return useQuery({
     queryKey: ['activities', 'accessible', userId, hasAdvancedStats],
     queryFn: () => userId ? getAccessibleActivities(userId, hasAdvancedStats) : [],
-    enabled: !!userId && !loading && !!userProfile,
-    staleTime: 0, // Pas de cache pour voir les nouvelles données immédiatement
-    refetchOnWindowFocus: true, // Refetch quand la fenêtre reprend le focus
-    refetchOnMount: true, // Refetch quand le composant se monte
-    initialData: [], // Données initiales pour éviter le loading state
+    enabled: !!userId, // déclenche la première requête dès que l'utilisateur est connu
+    staleTime: 0, // Pas de cache - toujours considérer les données comme obsolètes
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true, // Refetch quand la connexion est rétablie
+    // Forcer un refetch à chaque navigation en ne gardant pas de données initiales
+    initialData: undefined,
+    placeholderData: undefined, // Pas de placeholder pour forcer le loading state
+    // Invalider le cache à chaque montage pour s'assurer d'avoir les dernières données
+    meta: {
+      refetchOnMount: 'always'
+    }
   });
 };
 

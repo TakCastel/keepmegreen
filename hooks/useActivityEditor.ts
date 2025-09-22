@@ -56,6 +56,13 @@ export function useActivityEditor(presetDate?: string) {
   const [showSearchPaywall, setShowSearchPaywall] = useState(false);
   const itemsPerPage = 10;
 
+  // Mettre à jour la date sélectionnée quand presetDate change
+  useEffect(() => {
+    if (presetDate) {
+      setSelectedDate(presetDate);
+    }
+  }, [presetDate]);
+
   // États des modales
   const [editModal, setEditModal] = useState<EditModalState>({
     isOpen: false,

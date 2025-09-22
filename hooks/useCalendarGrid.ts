@@ -7,6 +7,7 @@ import { useAccessibleActivities } from '@/hooks/useActivities';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { generateCalendarData, getActiveDaysPercentage } from '@/utils/stats';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function useCalendarGrid() {
   const { user, userProfile, loading } = useAuth();
@@ -19,7 +20,20 @@ export function useCalendarGrid() {
   // États pour le carousel
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   
-  const { data: activities = [], isLoading: activitiesLoading } = useAccessibleActivities(user?.uid);
+  const queryClient = useQueryClient();
+  const { data: activities = [], isLoading: activitiesLoading, refetch: refetchActivities } = useAccessibleActivities(user?.uid);
+
+  // Forcer un refetch des activités quand on arrive sur la page calendrier
+  useEffect(() => {
+    if (user?.uid && !loading) {
+      // Invalider le cache des activités pour forcer un refetch complet
+      queryClient.invalidateQueries({ 
+        queryKey: ['activities', 'accessible', user.uid] 
+      });
+      // Refetch les activités pour s'assurer d'avoir les dernières données
+      refetchActivities();
+    }
+  }, [user?.uid, loading, refetchActivities, queryClient]);
 
   // Détecter la taille d'écran
   useEffect(() => {

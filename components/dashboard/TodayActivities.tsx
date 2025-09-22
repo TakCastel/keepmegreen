@@ -3,12 +3,14 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useDayActivities } from '@/hooks/useActivities';
+import { useDayActivities, useRemoveActivity } from '@/hooks/useActivities';
 import { useAuth } from '@/hooks/useAuth';
 import { getTotalActivities, calculateDayScore, getDayMoodIcon } from '@/utils/stats';
-import { Zap, Users, Apple, Calendar, TrendingUp, Target, Edit3 } from 'lucide-react';
+import { Zap, Users, Apple, Calendar, TrendingUp, Target, Edit3, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import DynamicIcon from '@/components/ui/DynamicIcon';
+import Gauge from '@/components/ui/Gauge';
+import AnimatedLabel from '@/components/ui/AnimatedLabel';
 import { SPORT_CONFIG, SOCIAL_CONFIG, NUTRITION_CONFIG } from '@/types';
 
 export default function TodayActivities() {
@@ -16,25 +18,14 @@ export default function TodayActivities() {
   const router = useRouter();
   const today = format(new Date(), 'yyyy-MM-dd');
   const { data: dayActivities, isLoading } = useDayActivities(user?.uid, today);
+  const removeActivity = useRemoveActivity();
 
   const handleEditToday = () => {
     router.push(`/settings?date=${today}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 shadow-lg">
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Ne pas afficher de skeleton complet pour éviter les sauts d'interface
+  // On affiche le contenu avec des données vides si isLoading
 
   const totalActivities = dayActivities ? getTotalActivities(dayActivities) : 0;
   const positiveScore = dayActivities ? calculateDayScore(dayActivities) : 0;
@@ -43,6 +34,23 @@ export default function TodayActivities() {
   const safeTotalActivities = isNaN(totalActivities) ? 0 : totalActivities;
   const safePositiveScore = isNaN(positiveScore) ? 0 : positiveScore;
   const moodIcon = getDayMoodIcon(dayActivities);
+
+  // Calcul pondéré par catégorie en réutilisant calculateDayScore
+  const getCategoryWeightedScore = (category: 'sport' | 'social' | 'nutrition') => {
+    if (!dayActivities) return 0;
+    const emptyDay = { date: dayActivities.date, sport: [], social: [], nutrition: [] } as typeof dayActivities;
+    const catDay = { ...emptyDay, [category]: dayActivities[category] } as typeof dayActivities;
+    const score = calculateDayScore(catDay);
+    return isNaN(score) ? 0 : score;
+  };
+
+  // Convertit un score pondéré en progression de jauge sur une cible de 5
+  const getGaugeProgress = (weightedScore: number) => {
+    const target = 5; // 5 sections à remplir
+    const progress = Math.max(0, Math.min(1, weightedScore / target));
+    return progress;
+  };
+
 
   const getActivityConfig = (category: 'sport' | 'social' | 'nutrition', type: string) => {
     switch (category) {
@@ -56,6 +64,33 @@ export default function TodayActivities() {
         return { icon: 'Circle', label: 'Activité', description: '' };
     }
   };
+
+  const categoryStyles: Record<'sport' | 'social' | 'nutrition', { bg: string; hover: string; icon: string }> = {
+    sport: { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-600', icon: 'text-emerald-600' },
+    social: { bg: 'bg-blue-500', hover: 'hover:bg-blue-600', icon: 'text-blue-600' },
+    nutrition: { bg: 'bg-orange-500', hover: 'hover:bg-orange-600', icon: 'text-orange-600' },
+  };
+
+  const handleRemoveActivity = async (
+    category: 'sport' | 'social' | 'nutrition',
+    type: string,
+    quantity: number
+  ) => {
+    if (!user) return;
+    
+    try {
+      await removeActivity.mutateAsync({
+        userId: user.uid,
+        date: today,
+        category,
+        type: type as any,
+        quantity: 1, // Supprimer une unité à la fois
+      });
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+    }
+  };
+
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 shadow-lg">
@@ -80,120 +115,120 @@ export default function TodayActivities() {
           className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-200 text-slate-700 hover:text-slate-800 text-sm font-medium"
           title="Modifier les données d'aujourd'hui"
         >
-          <Edit3 className="w-4 h-4" />
-          <span className="hidden sm:inline">Modifier</span>
+          {isLoading ? (
+            <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            <Edit3 className="w-4 h-4" />
+          )}
+          <span className="hidden sm:inline">{isLoading ? 'Chargement...' : 'Modifier'}</span>
         </button>
       </div>
 
-      {/* Score et humeur */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-4 border border-emerald-100">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${moodIcon.bgGradient}`}>
-              <moodIcon.icon className={`w-5 h-5 ${moodIcon.color}`} />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-emerald-700">{safePositiveScore}</div>
-              <div className="text-xs text-emerald-600 font-medium">Score positif</div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-2xl p-4 border border-blue-100">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-200 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-blue-700" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-700">{safeTotalActivities}</div>
-              <div className="text-xs text-blue-600 font-medium">Activités totales</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Section des cartes supprimée */}
 
       {/* Activités par catégorie */}
       <div className="space-y-4">
         {/* Sport */}
-        {dayActivities?.sport && dayActivities.sport.length > 0 && (
-          <div className="space-y-2">
+        <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
                 <Zap className="w-4 h-4 text-emerald-600" />
               </div>
               <h4 className="font-medium text-emerald-700">Sport</h4>
+            {dayActivities && (
               <span className="text-sm text-emerald-600">
                 ({dayActivities.sport.length} activité{dayActivities.sport.length > 1 ? 's' : ''})
               </span>
+            )}
             </div>
-            <div className="space-y-1">
-              {dayActivities.sport.map((activity, index) => {
+          <Gauge progress={getGaugeProgress(getCategoryWeightedScore('sport'))} category="sport" className="gauge-slow" />
+            <div className="flex flex-wrap gap-2 pt-1">
+            {(dayActivities?.sport ?? []).map((activity, index) => {
                 const config = getActivityConfig('sport', activity.type);
                 return (
-                  <div key={index} className="flex items-center gap-3 text-sm">
-                    <DynamicIcon name={config.icon} className="w-4 h-4 text-emerald-600" />
-                    <span className="text-gray-700">{config.label}</span>
-                    <span className="text-emerald-600 font-medium">×{activity.quantity}</span>
-                  </div>
+                  <AnimatedLabel
+                    key={`${activity.type}-${index}`}
+                    category="sport"
+                    iconName={config.icon}
+                    label={config.label}
+                    quantity={activity.quantity}
+                    type={activity.type}
+                    onRemove={() => handleRemoveActivity('sport', activity.type, activity.quantity)}
+                    disabled={removeActivity.isPending}
+                    index={index}
+                  />
                 );
               })}
             </div>
-          </div>
-        )}
+        </div>
 
         {/* Social */}
-        {dayActivities?.social && dayActivities.social.length > 0 && (
-          <div className="space-y-2">
+        <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Users className="w-4 h-4 text-blue-600" />
               </div>
               <h4 className="font-medium text-blue-700">Social</h4>
+            {dayActivities && (
               <span className="text-sm text-blue-600">
                 ({dayActivities.social.length} activité{dayActivities.social.length > 1 ? 's' : ''})
               </span>
+            )}
             </div>
-            <div className="space-y-1">
-              {dayActivities.social.map((activity, index) => {
+          <Gauge progress={getGaugeProgress(getCategoryWeightedScore('social'))} category="social" className="gauge-slow" />
+            <div className="flex flex-wrap gap-2 pt-1">
+            {(dayActivities?.social ?? []).map((activity, index) => {
                 const config = getActivityConfig('social', activity.type);
                 return (
-                  <div key={index} className="flex items-center gap-3 text-sm">
-                    <DynamicIcon name={config.icon} className="w-4 h-4 text-blue-600" />
-                    <span className="text-gray-700">{config.label}</span>
-                    <span className="text-blue-600 font-medium">×{activity.quantity}</span>
-                  </div>
+                  <AnimatedLabel
+                    key={`${activity.type}-${index}`}
+                    category="social"
+                    iconName={config.icon}
+                    label={config.label}
+                    quantity={activity.quantity}
+                    type={activity.type}
+                    onRemove={() => handleRemoveActivity('social', activity.type, activity.quantity)}
+                    disabled={removeActivity.isPending}
+                    index={index}
+                  />
                 );
               })}
             </div>
-          </div>
-        )}
+        </div>
 
         {/* Nutrition */}
-        {dayActivities?.nutrition && dayActivities.nutrition.length > 0 && (
-          <div className="space-y-2">
+        <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center">
                 <Apple className="w-4 h-4 text-orange-600" />
               </div>
               <h4 className="font-medium text-orange-700">Nutrition</h4>
+            {dayActivities && (
               <span className="text-sm text-orange-600">
                 ({dayActivities.nutrition.length} activité{dayActivities.nutrition.length > 1 ? 's' : ''})
               </span>
+            )}
             </div>
-            <div className="space-y-1">
-              {dayActivities.nutrition.map((activity, index) => {
+          <Gauge progress={getGaugeProgress(getCategoryWeightedScore('nutrition'))} category="nutrition" className="gauge-slow" />
+            <div className="flex flex-wrap gap-2 pt-1">
+            {(dayActivities?.nutrition ?? []).map((activity, index) => {
                 const config = getActivityConfig('nutrition', activity.type);
                 return (
-                  <div key={index} className="flex items-center gap-3 text-sm">
-                    <DynamicIcon name={config.icon} className="w-4 h-4 text-orange-600" />
-                    <span className="text-gray-700">{config.label}</span>
-                    <span className="text-orange-600 font-medium">×{activity.quantity}</span>
-                  </div>
+                  <AnimatedLabel
+                    key={`${activity.type}-${index}`}
+                    category="nutrition"
+                    iconName={config.icon}
+                    label={config.label}
+                    quantity={activity.quantity}
+                    type={activity.type}
+                    onRemove={() => handleRemoveActivity('nutrition', activity.type, activity.quantity)}
+                    disabled={removeActivity.isPending}
+                    index={index}
+                  />
                 );
               })}
             </div>
-          </div>
-        )}
+        </div>
 
         {/* Message si aucune activité */}
         {safeTotalActivities === 0 && (

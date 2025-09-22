@@ -67,6 +67,21 @@ html {
   transition: all 0.2s ease-in-out;
 }
 
+/* Transitions spécifiques pour les barres de progression */
+.progress-bar {
+  transition: width 2s ease-out, background-color 0.5s ease-in-out;
+}
+
+/* Animation fluide pour les jauges */
+.gauge-fill {
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease-in-out;
+}
+
+/* Animation lente pour les jauges du dashboard */
+.gauge-slow {
+  transition: width 2.5s ease-out, background-color 0.6s ease-in-out;
+}
+
 /* Améliorations typographiques */
 p, li, span {
   text-rendering: optimizeLegibility;

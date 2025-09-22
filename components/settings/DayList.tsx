@@ -3,7 +3,6 @@
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Plus, Search } from 'lucide-react';
-import ConsumptionItem from './ConsumptionItem';
 import ActivityItem from './ActivityItem';
 
 interface DayListProps {
@@ -14,17 +13,10 @@ interface DayListProps {
   setCurrentPage: (page: number) => void;
   getTotalItems: (day: any) => number;
   setAddModal: (modal: { isOpen: boolean; date: string }) => void;
-  onRemoveConsumption: (date: string, category: 'alcohol' | 'cigarettes' | 'junkfood', type: any, currentQuantity: number) => void;
-  onAddQuantity: (date: string, category: 'alcohol' | 'cigarettes' | 'junkfood', type: any) => void;
-  onEditConsumption: (date: string, category: 'alcohol' | 'cigarettes' | 'junkfood', type: any, quantity: number) => void;
-  onDeleteConsumption: (date: string, category: 'alcohol' | 'cigarettes' | 'junkfood', type: any) => void;
   onRemoveActivity: (date: string, category: 'sport' | 'social' | 'nutrition', type: any, currentQuantity: number) => void;
   onAddActivity: (date: string, category: 'sport' | 'social' | 'nutrition', type: any) => void;
   onEditActivity: (date: string, category: 'sport' | 'social' | 'nutrition', type: any, quantity: number) => void;
   onDeleteActivity: (date: string, category: 'sport' | 'social' | 'nutrition', type: any) => void;
-  isRemoveConsumptionPending: boolean;
-  isAddConsumptionPending: boolean;
-  isMoveConsumptionPending: boolean;
   isRemoveActivityPending: boolean;
   isAddActivityPending: boolean;
   isMoveActivityPending: boolean;
@@ -46,9 +38,6 @@ export default function DayList({
   onAddActivity,
   onEditActivity,
   onDeleteActivity,
-  isRemoveConsumptionPending,
-  isAddConsumptionPending,
-  isMoveConsumptionPending,
   isRemoveActivityPending,
   isAddActivityPending,
   isMoveActivityPending
@@ -125,66 +114,7 @@ export default function DayList({
             </div>
 
             <div className="space-y-3">
-              {/* Observations */}
-              {day.consumptions?.alcohol
-                ?.map((item: { type: string; quantity: number }, index: number) => (
-                  <ConsumptionItem
-                    key={`alcohol-${index}`}
-                    day={day.consumptions}
-                    category="alcohol"
-                    item={item}
-                    index={index}
-                    onRemove={onRemoveConsumption}
-                    onAdd={onAddQuantity}
-                    onEdit={onEditConsumption}
-                    onDelete={onDeleteConsumption}
-                    isRemovePending={isRemoveConsumptionPending}
-                    isAddPending={isAddConsumptionPending}
-                    isMovePending={isMoveConsumptionPending}
-                  />
-                ))
-                .filter(Boolean)
-              }
-              
-              {day.consumptions?.cigarettes
-                ?.map((item: { type: string; quantity: number }, index: number) => (
-                  <ConsumptionItem
-                    key={`cigarettes-${index}`}
-                    day={day.consumptions}
-                    category="cigarettes"
-                    item={item}
-                    index={index}
-                    onRemove={onRemoveConsumption}
-                    onAdd={onAddQuantity}
-                    onEdit={onEditConsumption}
-                    onDelete={onDeleteConsumption}
-                    isRemovePending={isRemoveConsumptionPending}
-                    isAddPending={isAddConsumptionPending}
-                    isMovePending={isMoveConsumptionPending}
-                  />
-                ))
-                .filter(Boolean)
-              }
-              
-              {day.consumptions?.junkfood
-                ?.map((item: { type: string; quantity: number }, index: number) => (
-                  <ConsumptionItem
-                    key={`junkfood-${index}`}
-                    day={day.consumptions}
-                    category="junkfood"
-                    item={item}
-                    index={index}
-                    onRemove={onRemoveConsumption}
-                    onAdd={onAddQuantity}
-                    onEdit={onEditConsumption}
-                    onDelete={onDeleteConsumption}
-                    isRemovePending={isRemoveConsumptionPending}
-                    isAddPending={isAddConsumptionPending}
-                    isMovePending={isMoveConsumptionPending}
-                  />
-                ))
-                .filter(Boolean)
-              }
+              {/* Observations supprimées (paradigme positif) */}
 
               {/* Activités */}
               {day.activities?.sport

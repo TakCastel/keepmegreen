@@ -29,7 +29,7 @@ interface CalendarDayModalProps {
 
 export default function CalendarDayModal({ day, dayActivities, onClose, showPaywall = false }: CalendarDayModalProps) {
   const { user } = useAuth();
-  const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { subscription, loading: subscriptionLoading, canAccessPeriod } = useSubscription();
   const router = useRouter();
   const [showEditPaywall, setShowEditPaywall] = useState(false);
   
@@ -94,7 +94,19 @@ export default function CalendarDayModal({ day, dayActivities, onClose, showPayw
   // 3. Sinon → Afficher l'historique directement (les données sont déjà disponibles)
 
   const handleEditDay = () => {
-    setShowEditPaywall(true);
+    // Vérifier si l'utilisateur peut accéder à cette date
+    const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+    const dayDate = new Date(year, month - 1, dayOfMonth);
+    const canAccessThisDate = canAccessPeriod(dayDate);
+    
+    if (canAccessThisDate) {
+      // L'utilisateur peut accéder à cette date, rediriger vers les paramètres avec la date présélectionnée
+      router.push(`/settings?date=${day.date}`);
+      onClose();
+    } else {
+      // L'utilisateur ne peut pas accéder à cette date, afficher le paywall
+      setShowEditPaywall(true);
+    }
   };
 
   const handleUpgrade = () => {
@@ -144,7 +156,7 @@ export default function CalendarDayModal({ day, dayActivities, onClose, showPayw
           <div className="w-20 h-20 bg-gradient-to-br from-slate-300 to-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Sprout className="w-10 h-10 text-white" />
           </div>
-          <p className="text-slate-600 text-xl font-semibold mb-2">Journée vierge</p>
+          <p className="text-slate-600 text-xl font-semibold mb-2">Journée libre</p>
           <p className="text-gray-600">Une nouvelle page à écrire, un nouveau jour à observer</p>
         </div>
       ) : (

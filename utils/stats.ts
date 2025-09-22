@@ -137,9 +137,9 @@ export const getDayMoodIcon = (dayActivities: DayActivities | null): {
   // Journée exceptionnelle - activités intenses
   return { 
     icon: Heart, 
-    color: 'text-blue-800', 
-    bgGradient: 'from-blue-400 to-purple-400' 
-  }; // Cœur vert - journée parfaite
+    color: 'text-white', 
+    bgGradient: 'from-fuchsia-500 to-purple-600' 
+  }; // Cœur rose-violet - journée exceptionnelle
 };
 
 // Fonction pour compatibilité avec l'ancien système

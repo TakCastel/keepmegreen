@@ -4,7 +4,7 @@ import { Calendar, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-interface ConsumptionFiltersProps {
+interface ActivityFiltersProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   selectedDate: string;
@@ -14,7 +14,7 @@ interface ConsumptionFiltersProps {
   presetDate?: string;
 }
 
-export default function ConsumptionFilters({
+export default function ActivityFilters({
   searchTerm,
   setSearchTerm,
   selectedDate,
@@ -22,7 +22,7 @@ export default function ConsumptionFilters({
   hasAdvancedSearch,
   setShowSearchPaywall,
   presetDate
-}: ConsumptionFiltersProps) {
+}: ActivityFiltersProps) {
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Filtres</h3>
@@ -43,7 +43,6 @@ export default function ConsumptionFilters({
               value={searchTerm}
               onChange={(e) => {
                 if (!hasAdvancedSearch && e.target.value) {
-                  // Si l'utilisateur n'a pas accès et qu'il tape quelque chose, ne pas mettre à jour
                   return;
                 }
                 setSearchTerm(e.target.value);
@@ -100,7 +99,7 @@ export default function ConsumptionFilters({
               setSelectedDate('');
             }}
             className="text-slate-600 hover:text-slate-800 text-sm font-medium transition-colors"
-          >
+         >
             Effacer les filtres
           </button>
         </div>
@@ -108,3 +107,5 @@ export default function ConsumptionFilters({
     </div>
   );
 }
+
+

@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useActivityEditor } from '@/hooks/useActivityEditor';
-import ConsumptionFilters from './ConsumptionFilters';
+import ActivityFilters from './ActivityFilters';
 import DayList from './DayList';
-import ConsumptionModals from './ConsumptionModals';
+import ActivityModals from './ActivityModals';
 import Paywall from '@/components/subscription/Paywall';
 import Modal from '@/components/ui/Modal';
 import { 
@@ -120,7 +120,7 @@ export default function ActivityEditor({ presetDate }: ActivityEditorProps) {
   return (
     <div className="space-y-6">
       {/* Filtres */}
-      <ConsumptionFilters
+      <ActivityFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         selectedDate={selectedDate}
@@ -139,56 +139,27 @@ export default function ActivityEditor({ presetDate }: ActivityEditorProps) {
         setCurrentPage={setCurrentPage}
         getTotalItems={getTotalItems}
         setAddModal={setAddModal}
-        onRemoveConsumption={() => {}} // Pas utilisé pour les activités
-        onAddQuantity={() => {}} // Pas utilisé pour les activités
-        onEditConsumption={() => {}} // Pas utilisé pour les activités
-        onDeleteConsumption={() => {}} // Pas utilisé pour les activités
         onRemoveActivity={handleRemoveActivity}
         onAddActivity={handleAddActivity}
         onEditActivity={handleEditActivity}
         onDeleteActivity={handleDeleteActivity}
-        isRemoveConsumptionPending={false}
-        isAddConsumptionPending={false}
-        isMoveConsumptionPending={false}
         isRemoveActivityPending={removeActivity.isPending}
         isAddActivityPending={addActivity.isPending}
         isMoveActivityPending={moveActivity.isPending}
       />
 
       {/* Modales */}
-      <ConsumptionModals
-        editModal={{
-          ...editModal,
-          isActivity: true
-        }}
-        setEditModal={(modal) => setEditModal({
-          isOpen: modal.isOpen,
-          date: modal.date,
-          category: modal.category as 'sport' | 'social' | 'nutrition',
-          type: modal.type as SportType | SocialType | NutritionType,
-          quantity: modal.quantity,
-          newDate: modal.newDate,
-        })}
-        deleteModal={{
-          ...deleteModal,
-          isActivity: true
-        }}
-        setDeleteModal={(modal) => setDeleteModal({
-          isOpen: modal.isOpen,
-          date: modal.date,
-          category: modal.category as 'sport' | 'social' | 'nutrition',
-          type: modal.type as SportType | SocialType | NutritionType,
-          quantity: modal.quantity,
-          label: modal.label,
-        })}
+      <ActivityModals
+        editModal={editModal}
+        setEditModal={setEditModal}
+        deleteModal={deleteModal}
+        setDeleteModal={setDeleteModal}
         addModal={addModal}
         setAddModal={setAddModal}
-        onMoveConsumption={handleMoveActivity}
+        onMoveActivity={handleMoveActivity}
         onConfirmDelete={confirmDeleteActivity}
         onAddActivity={handleAddActivity}
-        isMoveConsumptionPending={false}
         isMoveActivityPending={moveActivity.isPending}
-        isRemoveConsumptionPending={false}
         isRemoveActivityPending={removeActivity.isPending}
         isAddActivityPending={addActivity.isPending}
       />

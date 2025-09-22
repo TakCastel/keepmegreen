@@ -13,41 +13,37 @@ import {
   SocialType,
   NutritionType
 } from '@/types';
-import { EditModalState, DeleteModalState, AddModalState } from '@/hooks/useConsumptionEditor';
+import { EditModalState, DeleteModalState, AddModalState } from '@/hooks/useActivityEditor';
 
-interface ConsumptionModalsProps {
+interface ActivityModalsProps {
   editModal: EditModalState;
   setEditModal: (modal: EditModalState) => void;
   deleteModal: DeleteModalState;
   setDeleteModal: (modal: DeleteModalState) => void;
   addModal: AddModalState;
   setAddModal: (modal: AddModalState) => void;
-  onMoveConsumption: () => void;
+  onMoveActivity: () => void;
   onConfirmDelete: () => void;
   onAddActivity: (date: string, category: 'sport' | 'social' | 'nutrition', type: SportType | SocialType | NutritionType) => void;
-  isMoveConsumptionPending: boolean;
   isMoveActivityPending: boolean;
-  isRemoveConsumptionPending: boolean;
   isRemoveActivityPending: boolean;
   isAddActivityPending: boolean;
 }
 
-export default function ConsumptionModals({
+export default function ActivityModals({
   editModal,
   setEditModal,
   deleteModal,
   setDeleteModal,
   addModal,
   setAddModal,
-  onMoveConsumption,
+  onMoveActivity,
   onConfirmDelete,
   onAddActivity,
-  isMoveConsumptionPending,
   isMoveActivityPending,
-  isRemoveConsumptionPending,
   isRemoveActivityPending,
   isAddActivityPending
-}: ConsumptionModalsProps) {
+}: ActivityModalsProps) {
   return (
     <>
       {/* Modal de modification de date */}
@@ -55,12 +51,12 @@ export default function ConsumptionModals({
         <div className="fixed inset-0 bg-black/10 flex items-center justify-center p-4 z-[99999]">
           <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 w-full max-w-md border border-white/20">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Modifier le moment
+              Modifier le moment de l'activité
             </h3>
             
             <div className="mb-6">
               <p className="text-sm text-gray-600 mb-4">
-                Déplacer cette {editModal.isActivity ? 'activité' : 'observation'} vers une nouvelle date :
+                Déplacer cette activité vers une nouvelle date :
               </p>
               
               <div className="bg-gray-50 rounded-lg p-3 mb-4">
@@ -91,11 +87,11 @@ export default function ConsumptionModals({
                 Annuler
               </button>
               <button
-                onClick={onMoveConsumption}
-                disabled={(editModal.isActivity ? isMoveActivityPending : isMoveConsumptionPending) || !editModal.newDate || editModal.newDate === editModal.date}
+                onClick={onMoveActivity}
+                disabled={isMoveActivityPending || !editModal.newDate || editModal.newDate === editModal.date}
                 className="flex-1 px-4 py-3 bg-slate-500 text-white rounded-xl hover:bg-slate-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
               >
-                {(editModal.isActivity ? isMoveActivityPending : isMoveConsumptionPending) ? 'Modification...' : 'Confirmer'}
+                {isMoveActivityPending ? 'Modification...' : 'Confirmer'}
               </button>
             </div>
           </div>
@@ -114,11 +110,11 @@ export default function ConsumptionModals({
               </div>
               
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Supprimer la consommation
+                Supprimer l'activité
               </h3>
               
               <p className="text-gray-600 text-sm mb-4">
-                Cette action est irréversible. Voulez-vous vraiment supprimer cette consommation ?
+                Cette action est irréversible. Voulez-vous vraiment supprimer cette activité ?
               </p>
             </div>
             
@@ -146,10 +142,10 @@ export default function ConsumptionModals({
               </button>
               <button
                 onClick={onConfirmDelete}
-                disabled={deleteModal.isActivity ? isRemoveActivityPending : isRemoveConsumptionPending}
+                disabled={isRemoveActivityPending}
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed transition-colors font-medium"
               >
-                {(deleteModal.isActivity ? isRemoveActivityPending : isRemoveConsumptionPending) ? 'Suppression...' : 'Supprimer'}
+                {isRemoveActivityPending ? 'Suppression...' : 'Supprimer'}
               </button>
             </div>
           </div>
@@ -248,3 +244,5 @@ export default function ConsumptionModals({
     </>
   );
 }
+
+
