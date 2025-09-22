@@ -52,8 +52,8 @@ export default function Home() {
                 </h1>
                 
                 <p className="text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed px-4 lg:px-0">
-                  Une approche motivante pour enregistrer vos activités sportives, sociales et nutritionnelles. 
-                  Remplissez votre calendrier de couleurs vives et célébrez vos progrès !
+                  Enregistrez en un clic vos activités sportives, sociales et nutritionnelles. 
+                  Votre calendrier se colore automatiquement et des statistiques simples vous montrent vos progrès pour rester motivé jour après jour.
                 </p>
               </div>
 
@@ -71,6 +71,20 @@ export default function Home() {
                 >
                   Voir la démo
                 </Link>
+              </div>
+
+              {/* Avatars des utilisateurs */}
+              <div className="px-4 lg:px-0">
+                <div className="mt-4 md:mt-6 flex items-center gap-3">
+                  <div className="flex -space-x-3">
+                    <img src="https://i.pravatar.cc/64?img=5" alt="Marie L." className="w-9 h-9 md:w-10 md:h-10 rounded-full ring-2 ring-white shadow" />
+                    <img src="https://i.pravatar.cc/64?img=12" alt="Thomas R." className="w-9 h-9 md:w-10 md:h-10 rounded-full ring-2 ring-white shadow" />
+                    <img src="https://i.pravatar.cc/64?img=31" alt="Nadia B." className="w-9 h-9 md:w-10 md:h-10 rounded-full ring-2 ring-white shadow" />
+                  </div>
+                  <div className="text-sm md:text-base text-gray-600">
+                    Rejoignez <span className="font-semibold text-gray-800">1 200+</span> autres utilisateurs
+                  </div>
+                </div>
               </div>
 
               {/* Stats rapides */}
@@ -428,6 +442,91 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* Avis / Témoignages */}
+      <section id="testimonials" className="py-16 md:py-24 bg-white/60 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 md:mb-14">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-3 md:mb-4">
+              Ils <span className="font-semibold text-emerald-600">adorent</span> célébrer
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
+              Quelques retours d'utilisateurs qui suivent leurs activités positives au quotidien
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {/* Card 1 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl border border-emerald-100">
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src="https://i.pravatar.cc/80?img=5"
+                  alt="Avatar de Marie L."
+                  className="w-12 h-12 rounded-full shadow-sm border border-white/70"
+                />
+                <div>
+                  <div className="font-semibold text-gray-800">Marie L.</div>
+                  <div className="text-xs text-gray-500">Paris</div>
+                </div>
+              </div>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                « Je vois enfin mes progrès. Le calendrier coloré me motive chaque jour à continuer. »
+              </p>
+              <div className="flex items-center gap-1 text-emerald-500">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Heart key={i} className="w-4 h-4 fill-current" />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl border border-emerald-100">
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src="https://i.pravatar.cc/80?img=12"
+                  alt="Avatar de Thomas R."
+                  className="w-12 h-12 rounded-full shadow-sm border border-white/70"
+                />
+                <div>
+                  <div className="font-semibold text-gray-800">Thomas R.</div>
+                  <div className="text-xs text-gray-500">Lyon</div>
+                </div>
+              </div>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                « Simple et positif. J'enregistre sport, social et nutrition sans pression, juste de la fierté. »
+              </p>
+              <div className="flex items-center gap-1 text-emerald-500">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Heart key={i} className="w-4 h-4 fill-current" />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl border border-emerald-100">
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src="https://i.pravatar.cc/80?img=31"
+                  alt="Avatar de Nadia B."
+                  className="w-12 h-12 rounded-full shadow-sm border border-white/70"
+                />
+                <div>
+                  <div className="font-semibold text-gray-800">Nadia B.</div>
+                  <div className="text-xs text-gray-500">Marseille</div>
+                </div>
+              </div>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                « L'approche par célébration change tout. Je me sens encouragée, pas jugée. »
+              </p>
+              <div className="flex items-center gap-1 text-emerald-500">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Heart key={i} className="w-4 h-4 fill-current" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Final */}
       <section className="py-12 md:py-16 lg:py-20">

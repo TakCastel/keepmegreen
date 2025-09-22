@@ -47,6 +47,13 @@ export default function LandingHeader() {
             >
               Comment ça marche
             </a>
+            <a 
+              href="#testimonials" 
+              onClick={(e) => handleSmoothScroll(e, 'testimonials')}
+              className="text-gray-600 hover:text-emerald-600 transition-colors font-medium cursor-pointer"
+            >
+              Avis
+            </a>
           </nav>
 
           {/* Bouton de connexion */}
