@@ -38,10 +38,10 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
             <Sprout className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl text-gray-800 mb-2 font-poppins tracking-tight">
-            <span className="font-bold text-emerald-600">Drinkeat</span><span className="font-light">Green</span>
+            <span className="font-bold text-emerald-600">Grow</span><span className="font-light">Daily</span>
           </h1>
           <p className="text-gray-600">
-            {mode === 'signin' ? 'Retrouvez votre espace de suivi' : 'Créez votre espace personnel'}
+            {mode === 'signin' ? 'Reprenez le contrôle de votre vie' : 'Créez votre espace personnel'}
           </p>
         </div>
 
