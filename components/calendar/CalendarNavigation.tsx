@@ -21,6 +21,21 @@ export default function CalendarNavigation({
   goToNextMonth,
   goToCurrentMonth
 }: CalendarNavigationProps) {
+  // Déterminer le titre affiché
+  const isMobileView = maxMonths === 1;
+  // Sommes-nous sur la dernière fenêtre (donc les X derniers mois) ?
+  const isLastWindow = hasAdvancedStats && !isMobileView && currentMonthIndex === Math.max(0, 12 - maxMonths);
+  const firstIdx = currentMonthIndex;
+  const lastIdx = Math.min(currentMonthIndex + maxMonths - 1, (monthsData?.length || 1) - 1);
+
+  const title = hasAdvancedStats
+    ? (isMobileView
+        ? (monthsData[currentMonthIndex]?.name || 'Chargement...')
+        : (isLastWindow
+            ? `${maxMonths} derniers mois`
+            : `${monthsData[firstIdx]?.shortName || ''} – ${monthsData[lastIdx]?.shortName || ''}`))
+    : (monthsData[currentMonthIndex]?.name || 'Chargement...');
+
   return (
     <div className="flex items-center justify-between mb-6">
       <button
@@ -38,7 +53,7 @@ export default function CalendarNavigation({
       
       <div className="text-center">
         <h3 className="text-xl font-semibold text-gray-800 capitalize">
-          {monthsData[currentMonthIndex]?.name || 'Chargement...'}
+          {title}
         </h3>
         {hasAdvancedStats && (
           <button

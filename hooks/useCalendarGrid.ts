@@ -53,20 +53,6 @@ export function useCalendarGrid() {
     return () => window.removeEventListener('resize', updateScreenSize);
   }, []);
 
-  // Ajuster l'index du mois selon le type d'abonnement et la taille d'écran
-  useEffect(() => {
-    if (subscription && !activitiesLoading) {
-      const hasAdvancedStats = subscription?.plan === 'premium' || subscription?.plan === 'premium-plus';
-      if (hasAdvancedStats) {
-        // Pour les utilisateurs premium, commencer sur le mois en cours (index du mois actuel)
-        setCurrentMonthIndex(currentMonth);
-      } else {
-        // Pour les utilisateurs gratuits, commencer sur l'index 0 (seul mois disponible)
-        setCurrentMonthIndex(0);
-      }
-    }
-  }, [subscription, activitiesLoading, screenSize]);
-
   // Générer les données du calendrier pour l'année sélectionnée
   const startDate = startOfYear(new Date(selectedYear, 0, 1));
   const endDate = endOfYear(new Date(selectedYear, 0, 1));
@@ -93,6 +79,22 @@ export function useCalendarGrid() {
   
   const maxMonths = getMaxMonths();
   const startMonth = hasAdvancedStats ? 0 : currentMonth; // Premium = tous les mois de l'année
+
+  // Ajuster l'index du mois selon le type d'abonnement et la taille d'écran
+  useEffect(() => {
+    if (subscription && !activitiesLoading) {
+      const hasAdvancedStats = subscription?.plan === 'premium' || subscription?.plan === 'premium-plus';
+      if (hasAdvancedStats) {
+        // Pour les utilisateurs premium, positionner par défaut sur aujourd'hui
+        // en affichant le mois courant dans le dernier slot visible
+        const startIndex = Math.max(0, currentMonth - maxMonths + 1);
+        setCurrentMonthIndex(startIndex);
+      } else {
+        // Pour les utilisateurs gratuits, commencer sur l'index 0 (seul mois disponible)
+        setCurrentMonthIndex(0);
+      }
+    }
+  }, [subscription, activitiesLoading, screenSize, maxMonths]);
   
   // Pour les utilisateurs gratuits, forcer l'année courante
   const displayYear = hasAdvancedStats ? selectedYear : currentYear;
@@ -163,9 +165,12 @@ export function useCalendarGrid() {
 
   const goToCurrentMonth = () => {
     const now = new Date();
-    // Pour les utilisateurs premium, aller au mois en cours
+    // Pour les utilisateurs premium, positionner pour que le mois en cours soit visible
     if (hasAdvancedStats) {
-      setCurrentMonthIndex(now.getMonth());
+      const currentMonthIndex = now.getMonth();
+      // Positionner le carousel pour que le mois en cours soit dans le dernier slot si possible
+      const startIndex = Math.max(0, currentMonthIndex - maxMonths + 1);
+      setCurrentMonthIndex(startIndex);
       setSelectedYear(now.getFullYear()); // Remettre l'année courante
     } else {
       setCurrentMonthIndex(0);
