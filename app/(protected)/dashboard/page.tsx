@@ -8,7 +8,7 @@ import ActivityButton from '@/components/dashboard/ActivityButton';
 import TodayActivities from '@/components/dashboard/TodayActivities';
 import SubscriptionStatus from '@/components/dashboard/SubscriptionStatus';
 import InfoBanner from '@/components/ui/InfoBanner';
-import CalendarDebug from '@/components/debug/CalendarDebug';
+// Debug calendrier supprimé
 // import { ActivityButtonSkeleton } from '@/components/ui/Skeleton';
 import { SportType, SocialType, NutritionType } from '@/types';
 import { Sprout, Heart, Leaf, Flower, LifeBuoy } from 'lucide-react';
@@ -92,8 +92,7 @@ export default function Dashboard() {
       {/* Activités du jour */}
       <TodayActivities />
 
-      {/* Debug calendrier */}
-      <CalendarDebug />
+      {/* Debug calendrier retiré */}
 
       {/* Statut d'abonnement */}
       <SubscriptionStatus />

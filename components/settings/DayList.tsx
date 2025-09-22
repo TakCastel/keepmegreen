@@ -72,24 +72,26 @@ export default function DayList({
         </div>
       ) : (
         paginatedData.map((day) => (
-          <div key={day.date} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
-            <div className="mb-4">
-              {/* Version mobile - Layout vertical */}
+          <div key={day.date} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="mb-4 md:mb-4">
+              {/* Version mobile - Layout vertical avec card header */}
               <div className="block sm:hidden">
-                <h4 className="text-lg font-medium text-gray-800 mb-1">
-                  {format(new Date(day.date), 'EEEE dd MMMM yyyy', { locale: fr })}
-                </h4>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 text-sm">
-                    {getTotalItems(day)} élément{getTotalItems(day) > 1 ? 's' : ''}
-                  </span>
-                  <button
-                    onClick={() => setAddModal({ isOpen: true, date: day.date })}
-                    className="flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium text-sm shadow-md hover:shadow-lg"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">Ajouter</span>
-                  </button>
+                <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    {format(new Date(day.date), 'EEEE dd MMMM yyyy', { locale: fr })}
+                  </h4>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm font-medium">
+                      {getTotalItems(day)} élément{getTotalItems(day) > 1 ? 's' : ''}
+                    </span>
+                    <button
+                      onClick={() => setAddModal({ isOpen: true, date: day.date })}
+                      className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium text-sm shadow-md hover:shadow-lg"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Ajouter</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -113,7 +115,7 @@ export default function DayList({
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 md:space-y-3">
               {/* Observations supprimées (paradigme positif) */}
 
               {/* Activités */}
@@ -179,22 +181,23 @@ export default function DayList({
 
               {/* Bouton d'ajout si le jour est vide */}
               {getTotalItems(day) === 0 && (
-                <div className="text-center py-12">
+                <div className="text-center py-8 md:py-12">
                   <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Plus className="w-8 h-8 text-slate-600" />
                   </div>
-                  <h3 className="text-xl font-medium text-gray-800 mb-2">
+                  <h3 className="text-lg md:text-xl font-medium text-gray-800 mb-2">
                     En fait, j'ai oublié quelque chose...
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 text-sm md:text-base px-4">
                     Cette journée était sereine, mais tu veux ajouter quelque chose que tu n'avais pas noté ?
                   </p>
                   <button
                     onClick={() => setAddModal({ isOpen: true, date: day.date })}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium shadow-md hover:shadow-lg"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium shadow-md hover:shadow-lg text-sm md:text-base"
                   >
                     <Plus className="w-5 h-5" />
-                    Oui, j'ai oublié quelque chose
+                    <span className="hidden sm:inline">Oui, j'ai oublié quelque chose</span>
+                    <span className="sm:hidden">Oui, ajouter</span>
                   </button>
                 </div>
               )}

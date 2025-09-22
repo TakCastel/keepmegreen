@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import ActivityEditor from '@/components/settings/ActivityEditor';
 import AccountSettings from '@/components/settings/AccountSettings';
 import PremiumFeatures from '@/components/settings/PremiumFeatures';
-import TestDataGenerator from '@/components/settings/TestDataGenerator';
+// Générateur de données de test supprimé
 import { Edit3, User, Settings as SettingsIcon, Lightbulb, Shield, ExternalLink } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -282,8 +282,7 @@ export default function SettingsPage() {
       {/* Fonctionnalités Premium */}
       <PremiumFeatures />
 
-      {/* Générateur de données de test */}
-      <TestDataGenerator />
+      {/* Générateur de données de test retiré */}
 
       {/* Aide */}
       <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-3xl p-8 border border-slate-200">
