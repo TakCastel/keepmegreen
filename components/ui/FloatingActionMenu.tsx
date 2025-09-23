@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Plus, X, Dumbbell, Users, Utensils } from 'lucide-react';
 import {
   SPORT_CONFIG,
@@ -26,6 +26,7 @@ export default function FloatingActionMenu({ onSelect, disabled }: FloatingActio
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [animateCategories, setAnimateCategories] = useState(false);
 
   const categoryButtons = useMemo(
     () => [
@@ -69,6 +70,11 @@ export default function FloatingActionMenu({ onSelect, disabled }: FloatingActio
     if (!isOpen) {
       setIsOpen(true);
       setStep(1);
+      // Déclencher l'animation après le montage
+      setAnimateCategories(false);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setAnimateCategories(true));
+      });
     } else {
       closeAll();
     }
@@ -100,7 +106,7 @@ export default function FloatingActionMenu({ onSelect, disabled }: FloatingActio
       )}
 
       {/* Conteneur FAB */}
-      <div className="fixed left-auto right-4 bottom-5 z-50">
+      <div className="fixed left-auto right-2 bottom-5 z-50">
         {/* Etape 2 : options de la catégorie sélectionnée */}
         {step === 2 && selectedCategory && (
           <div className="mb-3 mr-1 origin-bottom-right transform transition-all duration-200 ease-out opacity-100 scale-100 flex justify-end">
@@ -142,18 +148,17 @@ export default function FloatingActionMenu({ onSelect, disabled }: FloatingActio
 
         {/* Etape 1 : choix des catégories (menu vertical ascendant, icônes alignées sur le +) */}
         {step === 1 && (
-          <div className="absolute left-auto right-4 bottom-[4.25rem] flex flex-col items-end z-50">
+          <div className="absolute left-auto right-2 bottom-[4.25rem] flex flex-col items-end z-50">
             {categoryButtons.map((c, idx) => (
               <button
                 key={c.key}
                 onClick={() => handlePickCategory(c.key)}
                 className="mb-2 focus:outline-none"
-                style={{ transitionDelay: `${idx * 70}ms` }}
+                style={{ transitionDelay: `${(categoryButtons.length - 1 - idx) * 140}ms` }}
               >
                 <div
-                  className={`flex items-center justify-end gap-2 translate-y-2 opacity-0
-                    transition-all duration-200 ease-out
-                    ${isOpen ? 'translate-y-0 opacity-100' : ''}`}
+                  className={`flex items-center justify-end gap-2 will-change-transform transition-all duration-240 ease-out
+                    ${animateCategories ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-3 scale-95 opacity-0'}`}
                 >
                   {/* Label à gauche */}
                   <div className="px-3 py-2 rounded-2xl shadow-lg bg-white/95 border border-white/60 backdrop-blur-xl">
@@ -174,21 +179,18 @@ export default function FloatingActionMenu({ onSelect, disabled }: FloatingActio
           aria-label={isOpen ? 'Fermer' : 'Ajouter'}
           onClick={handleMain}
           disabled={disabled}
-          className={`relative inline-flex items-center gap-2 h-14 rounded-2xl shadow-2xl border border-white/40 backdrop-blur-xl active:scale-95 overflow-hidden will-change-transform
-            ${isOpen ? 'w-14 justify-center px-0' : 'w-[128px] justify-between pl-4 pr-5'}
-            transition-[width,padding] duration-200 ease-out
+          className={`relative inline-flex items-center h-14 rounded-2xl shadow-2xl border border-white/40 backdrop-blur-xl active:scale-95 overflow-hidden will-change-transform
+            w-[128px] pl-4 pr-4
             ${disabled ? 'bg-gray-300 text-white' : 'bg-gradient-to-br from-emerald-500 to-green-500 text-white hover:brightness-110'}
           `}
         >
-          <span
-            className={`text-[13px] font-medium whitespace-nowrap transition-opacity duration-150 ${
-              isOpen ? 'opacity-0' : 'opacity-100'
-            }`}
-          >
-            Ajouter
-          </span>
-          <div className={`transition-transform duration-200 will-change-transform ${isOpen ? 'rotate-45' : 'rotate-0'}`}>
-            <Plus className="w-6 h-6" />
+          <div className={`flex w-full items-center justify-between`}>
+            <span className="text-[13px] font-medium whitespace-nowrap">
+              Ajouter
+            </span>
+            <div className={`relative w-6 h-6 shrink-0 transition-transform duration-240 ease-in-out will-change-transform ${isOpen ? 'rotate-45' : 'rotate-0'}`}>
+              <Plus className="absolute inset-0 w-6 h-6" />
+            </div>
           </div>
         </button>
       </div>
