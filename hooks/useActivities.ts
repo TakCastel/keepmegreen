@@ -113,19 +113,22 @@ export const useAllActivities = (userId: string | undefined) => {
 // Hook pour obtenir les activités accessibles selon l'abonnement
 export const useAccessibleActivities = (userId: string | undefined) => {
   const { hasAccess } = useSubscription();
-  const hasAdvancedStats = hasAccess('advancedStats');
+  const hasAdvancedStatsTriState = hasAccess('advancedStats');
+  const isReady = !!userId && hasAdvancedStatsTriState !== null;
   
   return useQuery({
-    queryKey: ['activities', 'accessible', userId, hasAdvancedStats],
-    queryFn: () => userId ? getAccessibleActivities(userId, hasAdvancedStats) : [],
-    enabled: !!userId, // déclenche la première requête dès que l'utilisateur est connu
+    queryKey: ['activities', 'accessible', userId, hasAdvancedStatsTriState === true],
+    queryFn: () => (userId && hasAdvancedStatsTriState !== null) 
+      ? getAccessibleActivities(userId, hasAdvancedStatsTriState === true) 
+      : [],
+    enabled: isReady, // attendre que le plan soit résolu (true/false)
     staleTime: 0, // Pas de cache - toujours considérer les données comme obsolètes
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true, // Refetch quand la connexion est rétablie
     // Forcer un refetch à chaque navigation en ne gardant pas de données initiales
-    initialData: undefined,
-    placeholderData: undefined, // Pas de placeholder pour forcer le loading state
+    initialData: [],
+    placeholderData: [], // éviter un état indéfini
     // Invalider le cache à chaque montage pour s'assurer d'avoir les dernières données
     meta: {
       refetchOnMount: 'always'
@@ -193,8 +196,9 @@ export const useAddActivity = () => {
         // Mettre à jour le cache immédiatement
         queryClient.setQueryData(queryKey, updatedData);
       } else {
-        // Si pas de données en cache, invalider pour déclencher un refetch
+        // Si pas de données en cache, forcer un refetch immédiat de la journée
         queryClient.invalidateQueries({ queryKey });
+        queryClient.refetchQueries({ queryKey });
       }
       
       // Mise à jour optimiste de useAllActivities
@@ -243,8 +247,8 @@ export const useAddActivity = () => {
           };
           
           queryClient.setQueryData(allActivitiesKey, updatedAllData);
-        } else {
-          // Créer une nouvelle journée
+        } else if (allActivitiesData) {
+          // Créer une nouvelle journée si le cache existe déjà
           const newDay: DayActivities = {
             date: variables.date,
             sport: variables.category === 'sport' ? [{
@@ -269,6 +273,10 @@ export const useAddActivity = () => {
           );
           
           queryClient.setQueryData(allActivitiesKey, updatedAllData);
+        } else {
+          // Si pas de cache pour "all", invalider et refetch pour récupérer les données incluant la première activité
+          queryClient.invalidateQueries({ queryKey: allActivitiesKey });
+          queryClient.refetchQueries({ queryKey: allActivitiesKey });
         }
       }
       

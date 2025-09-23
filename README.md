@@ -26,16 +26,16 @@ Application web Next.js 15 pour célébrer et suivre vos activités positives qu
 
 ### 1. Cloner le projet
 
-\`\`\`bash
+```bash
 git clone <url-du-repo>
 cd growdaily
-\`\`\`
+```
 
 ### 2. Installer les dépendances
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 3. Configuration Firebase
 
@@ -57,9 +57,9 @@ npm install
 
 ### 4. Variables d'environnement
 
-Créez un fichier \`.env.local\` à la racine du projet :
+Créez un fichier `.env.local` à la racine du projet :
 
-\`\`\`env
+```env
 # Firebase Configuration
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
@@ -67,13 +67,16 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-\`\`\`
+
+# (Dev) Activer les émulateurs Firebase côté app (Auth/Firestore)
+NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true
+```
 
 ### 5. Règles de sécurité Firestore
 
 Dans la console Firebase, allez dans "Firestore Database" > "Règles" et configurez :
 
-\`\`\`javascript
+```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -83,15 +86,37 @@ service cloud.firestore {
     }
   }
 }
-\`\`\`
+```
 
 ### 6. Lancer l'application
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
+
+### 7. (Optionnel) Utiliser les émulateurs Firebase en local
+
+Les émulateurs permettent de développer sans toucher aux données de production.
+
+1) Pré-requis (une seule fois):
+```bash
+npm i -g firebase-tools
+firebase login
+```
+
+2) Démarrer les émulateurs dans un second terminal:
+```bash
+firebase emulators:start --only auth,firestore
+```
+
+3) Côté app, assurez-vous d’avoir dans `.env.local`:
+```env
+NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true
+```
+
+Par défaut: Auth sur 127.0.0.1:9099, Firestore sur 127.0.0.1:8080, UI Emulator Suite sur http://localhost:4000.
 
 ## Utilisation
 
@@ -125,7 +150,7 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 
 Chaque activité est stockée par jour avec cette structure :
 
-\`\`\`typescript
+```typescript
 {
   date: "2025-09-19",
   sport: [
@@ -141,7 +166,7 @@ Chaque activité est stockée par jour avec cette structure :
   ],
   createdAt: "2025-09-19T12:00:00Z"
 }
-\`\`\`
+```
 
 ## Customisation
 
@@ -154,12 +179,17 @@ L'application utilise un design moderne avec TailwindCSS. Les couleurs principal
 
 ## Scripts disponibles
 
-\`\`\`bash
+```bash
 npm run dev          # Développement avec Turbopack
 npm run build        # Build de production avec Turbopack
 npm start            # Lancement en production
 npm run lint         # Vérification ESLint
-\`\`\`
+```
+
+## Notes techniques
+
+- Persistance React Query: la couche de cache utilise `@tanstack/react-query-persist-client` + localStorage pour améliorer l’UX et préserver les données entre rafraîchissements. La persistance est configurée dans `components/providers/QueryProvider.tsx`.
+- Abonnements: la matrice des fonctionnalités/limites par plan est centralisée dans `constants/subscription.ts` et consommée par les hooks (`useAuth`, `useSubscription`).
 
 ## Licence
 

@@ -3,12 +3,22 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Règles pour les utilisateurs
     match /users/{userId} {
-      // L'utilisateur peut lire et écrire son propre profil
-      // Permettre la création initiale du profil
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Permettre la création du profil lors de la première connexion
-      allow create: if request.auth != null && request.auth.uid == userId;
+      // Lecture du profil par son propriétaire
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Création du profil par l'utilisateur, sans champs sensibles
+      allow create: if request.auth != null && request.auth.uid == userId
+        && !('plan' in request.resource.data)
+        && !('stripeCustomerId' in request.resource.data)
+        && !('stripeSubscriptionId' in request.resource.data)
+        && !('subscriptionEnds' in request.resource.data);
+
+      // Mise à jour du profil par l'utilisateur, sans modifier les champs sensibles
+      allow update: if request.auth != null && request.auth.uid == userId
+        && !('plan' in request.resource.data.diff().changedKeys())
+        && !('stripeCustomerId' in request.resource.data.diff().changedKeys())
+        && !('stripeSubscriptionId' in request.resource.data.diff().changedKeys())
+        && !('subscriptionEnds' in request.resource.data.diff().changedKeys());
       
       // Règles pour les consommations de l'utilisateur
       match /consumptions/{consumptionId} {

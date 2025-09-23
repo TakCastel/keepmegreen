@@ -60,7 +60,12 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
   // Fermer le dropdown quand on clique ailleurs
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (!dropdownRef.current) return;
+      const target = event.target as Node;
+      const clickedInsideDropdown = dropdownRef.current.contains(target);
+      const clickedButton = buttonRef.current?.contains(target);
+      // Ne fermer que si le clic est à l'extérieur du bouton et du dropdown
+      if (!clickedInsideDropdown && !clickedButton) {
         handleClose();
       }
     };
@@ -148,7 +153,7 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
 
   const handleTypeSelect = (type: string) => {
     onAdd(type);
-    handleClose();
+    // Ne pas fermer le menu ici pour permettre des sélections multiples
   };
 
   return (
@@ -216,7 +221,7 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
         <button
           ref={buttonRef}
           onClick={() => isOpen ? handleClose() : handleOpen()}
-          disabled={disabled}
+          disabled={disabled || isLoading}
           className={`w-full p-4 md:p-8 rounded-2xl md:rounded-3xl bg-gradient-to-br ${colors.primary} ${colors.primaryHover} disabled:opacity-50 disabled:cursor-not-allowed ${colors.text} font-medium transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg md:shadow-xl hover:shadow-xl md:hover:shadow-2xl`}
         >
           <div className="flex items-center justify-between">
@@ -229,15 +234,11 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
                 <span className="text-xs md:text-sm opacity-90">Activités positives</span>
               </div>
             </div>
-            {isLoading ? (
-              <div className="w-5 h-5 md:w-6 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <ChevronDown 
-                className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
-                  isOpen ? 'rotate-180' : 'rotate-0'
-                }`} 
-              />
-            )}
+            <ChevronDown 
+              className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
+                isOpen ? 'rotate-180' : 'rotate-0'
+              }`}
+            />
           </div>
         </button>
 
@@ -254,14 +255,7 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
           }`}>
             {/* Conteneur avec hauteur maximale et scroll */}
             <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            {isLoading && (
-              <div className="p-4 text-center border-b border-gray-100">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-50 rounded-full">
-                  <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-emerald-700 font-medium text-sm">Enregistrement...</span>
-                </div>
-              </div>
-            )}
+            {/* Aucun indicateur de chargement dans le menu; on désactive les items */}
             {Object.entries(categoryData.config).map(([type, config], index) => (
               <div
                 key={type}
@@ -277,7 +271,10 @@ export default function ActivityButton({ category, onAdd, disabled, isLoading }:
               >
                 <button
                   onClick={() => handleTypeSelect(type)}
-                  className="w-full p-3 md:p-4 text-left hover:bg-white/60 transition-all border-b border-gray-100 last:border-b-0 flex items-center justify-between group"
+                  disabled={isLoading || disabled}
+                  className={`w-full p-3 md:p-4 text-left transition-all border-b border-gray-100 last:border-b-0 flex items-center justify-between group ${
+                    (isLoading || disabled) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/60'
+                  }`}
                 >
                   <div className="flex items-center gap-2 md:gap-3">
                     <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-100 to-green-100 rounded-lg md:rounded-xl flex items-center justify-center">

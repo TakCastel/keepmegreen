@@ -50,8 +50,8 @@ export default function CalendarGrid() {
     goToCurrentMonth,
   } = useCalendarGrid();
 
-  // Si le profil utilisateur est encore en cours de chargement, afficher un skeleton
-  if (loading || !userProfile) {
+  // Afficher un skeleton uniquement pendant le chargement d'auth
+  if (loading) {
     return <CalendarSkeleton />;
   }
 

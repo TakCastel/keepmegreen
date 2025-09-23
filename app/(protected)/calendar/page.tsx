@@ -3,10 +3,32 @@
 import CalendarGrid from '@/components/calendar/CalendarGrid';
 import { Calendar, User, BarChart3, Flower, Leaf } from 'lucide-react';
 import { useInstantNavigation } from '@/hooks/useInstantNavigation';
+import FloatingActionMenu from '@/components/ui/FloatingActionMenu';
+import { useAuth } from '@/hooks/useAuth';
+import { useAddActivity } from '@/hooks/useActivities';
+import { format } from 'date-fns';
+import { SportType, SocialType, NutritionType } from '@/types';
 
 export default function CalendarPage() {
   // Forcer le refetch des données à chaque navigation vers cette page
   useInstantNavigation();
+  const { user } = useAuth();
+  const addActivity = useAddActivity();
+
+  const handleAddActivity = async (
+    category: 'sport' | 'social' | 'nutrition',
+    type: SportType | SocialType | NutritionType
+  ) => {
+    if (!user) return;
+    const today = format(new Date(), 'yyyy-MM-dd');
+    await addActivity.mutateAsync({
+      userId: user.uid,
+      date: today,
+      category,
+      type,
+      quantity: 1,
+    });
+  };
 
   return (
     <div className="space-y-6 md:space-y-10">
@@ -29,6 +51,17 @@ export default function CalendarPage() {
       <div className="bg-white/70 backdrop-blur-lg rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-xl border border-white/20">
         <CalendarGrid />
       </div>
+
+      {/* FAB mobile flottant */}
+      <FloatingActionMenu
+        disabled={addActivity.isPending}
+        onSelect={(category, type) =>
+          handleAddActivity(
+            category,
+            type as SportType | SocialType | NutritionType
+          )
+        }
+      />
 
       {/* Conseils zen */}
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl md:rounded-3xl p-4 md:p-8 border border-emerald-100">

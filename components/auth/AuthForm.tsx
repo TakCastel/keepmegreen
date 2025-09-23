@@ -13,8 +13,9 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [resetInfo, setResetInfo] = useState<string | null>(null);
   
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, loading, error } = useAuth();
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle, sendPasswordReset, loading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +29,18 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
+  };
+
+  const handlePasswordReset = async () => {
+    setResetInfo(null);
+    if (!email) {
+      setResetInfo("Veuillez saisir votre email ci-dessus, puis réessayez.");
+      return;
+    }
+    const result = await sendPasswordReset(email);
+    if (result && 'success' in result && result.success) {
+      setResetInfo("Email de réinitialisation envoyé. Vérifiez votre boîte de réception.");
+    }
   };
 
   return (
@@ -48,6 +61,12 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6">
             <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        {resetInfo && (
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6">
+            <p className="text-emerald-700 text-sm">{resetInfo}</p>
           </div>
         )}
 
@@ -94,6 +113,18 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
+            {mode === 'signin' && (
+              <div className="mt-2 text-right">
+                <button
+                  type="button"
+                  onClick={handlePasswordReset}
+                  disabled={loading}
+                  className="text-sm text-emerald-600 hover:text-emerald-700 disabled:text-emerald-300 font-medium"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </div>
+            )}
           </div>
 
           <button

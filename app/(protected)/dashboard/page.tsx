@@ -5,6 +5,7 @@ import { useAddActivity } from '@/hooks/useActivities';
 import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import ActivityButton from '@/components/dashboard/ActivityButton';
+import FloatingActionMenu from '@/components/ui/FloatingActionMenu';
 import TodayActivities from '@/components/dashboard/TodayActivities';
 import SubscriptionStatus from '@/components/dashboard/SubscriptionStatus';
 import InfoBanner from '@/components/ui/InfoBanner';
@@ -60,11 +61,11 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Boutons d'ajout d'activités */}
+      {/* Boutons d'ajout d'activités (desktop) + FAB mobile */}
       <div className="relative z-10">
         <InfoBanner />
-        
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Desktop/Tablet grid */}
+        <div className="hidden md:grid grid-cols-1 xl:grid-cols-3 gap-6">
           <ActivityButton
             category="sport"
             onAdd={(type) => handleAddActivity('sport', type as SportType)}
@@ -86,6 +87,17 @@ export default function Dashboard() {
             isLoading={addActivity.isPending}
           />
         </div>
+
+        {/* FAB mobile flottant */}
+        <FloatingActionMenu
+          disabled={addActivity.isPending}
+          onSelect={(category, type) =>
+            handleAddActivity(
+              category,
+              type as SportType | SocialType | NutritionType
+            )
+          }
+        />
 
       </div>
 

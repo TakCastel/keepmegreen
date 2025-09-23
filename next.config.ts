@@ -9,14 +9,14 @@ const nextConfig: NextConfig = {
   },
   
   
-  // Désactiver ESLint pendant le build pour éviter les erreurs
+  // Désactiver ESLint pendant le build uniquement hors prod
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: process.env.NODE_ENV !== 'production',
   },
   
-  // Désactiver TypeScript pendant le build pour éviter les erreurs
+  // Désactiver TypeScript pendant le build uniquement hors prod
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: process.env.NODE_ENV !== 'production',
   },
   
   // Optimisations pour la navigation

@@ -6,12 +6,16 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "lint:ci": "eslint . --max-warnings=0",
     "export": "next build",
     "deploy": "npm run export && firebase deploy"
   },
   "dependencies": {
+    "@tanstack/query-sync-storage-persister": "^5.90.2",
     "@tanstack/react-query": "^5.89.0",
+    "@tanstack/react-query-persist-client": "^5.90.2",
     "@types/react-query": "^1.2.8",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",

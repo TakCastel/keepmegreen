@@ -8,6 +8,10 @@ import { defineSecret } from "firebase-functions/params";
 // Définir les secrets
 const stripeSecret = defineSecret("STRIPE_SECRET");
 const stripeWebhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
+const priceId = defineSecret("PRICE_ID");
+const successUrl = defineSecret("SUCCESS_URL");
+const cancelUrl = defineSecret("CANCEL_URL");
+const allowedOriginsSecret = defineSecret("ALLOWED_ORIGINS");
 
 // Init Firebase Admin
 admin.initializeApp();
@@ -16,43 +20,39 @@ const db = admin.firestore();
 // Options globales
 setGlobalOptions({ 
   maxInstances: 10,
-  secrets: [stripeSecret, stripeWebhookSecret]
+  secrets: [stripeSecret, stripeWebhookSecret, priceId, successUrl, cancelUrl, allowedOriginsSecret]
 });
 
 // Fonction utilitaire pour configurer CORS
 const setupCORS = (req: any, res: any) => {
-  // Origines autorisées : production + localhost pour le développement
-  const allowedOrigins = [
-    'https://greenme-415fa.web.app', // URL de production
-    'http://localhost:3000',          // Localhost pour le développement
-    'http://127.0.0.1:3000'          // Alternative localhost
-  ];
-  
+  const originsFromSecret = allowedOriginsSecret.value();
+  const allowedOrigins = originsFromSecret
+    ? originsFromSecret.split(',').map((s) => s.trim())
+    : [
+        'https://greenme-415fa.web.app',
+        'https://greenme-415fa.firebaseapp.com',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+      ];
+
   const origin = req.headers.origin;
-  
-  // Log pour debug
   logger.info(`CORS Debug - Origin: ${origin}, Method: ${req.method}`);
-  
+
   if (origin && allowedOrigins.includes(origin)) {
     res.set('Access-Control-Allow-Origin', origin);
-    logger.info(`CORS: Allowed origin ${origin}`);
-  } else {
-    res.set('Access-Control-Allow-Origin', allowedOrigins[0]); // Fallback sur la production
-    logger.info(`CORS: Using fallback origin ${allowedOrigins[0]}`);
   }
-  
+
+  res.set('Vary', 'Origin');
   res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.set('Access-Control-Allow-Credentials', 'true');
-  
-  // Gérer les requêtes OPTIONS (preflight)
+
   if (req.method === 'OPTIONS') {
-    logger.info('CORS: Handling OPTIONS preflight request');
     res.status(204).send('');
-    return true; // Indique que la requête a été gérée
+    return true;
   }
-  
-  return false; // Indique que la requête doit continuer
+
+  return false;
 };
 
 /**
@@ -60,38 +60,46 @@ const setupCORS = (req: any, res: any) => {
  * Appelé depuis ton frontend → retourne une URL Stripe Checkout
  */
 export const createCheckoutSession = onRequest(
-  { secrets: [stripeSecret] },
+  { secrets: [stripeSecret, priceId, successUrl, cancelUrl] },
   async (req, res) => {
     // Configuration CORS - TOUJOURS définir les headers CORS en premier
     if (setupCORS(req, res)) return;
 
     try {
-      const { email, plan } = req.query;
-      
-      if (!email) {
-        res.status(400).json({ error: "Missing email parameter" });
+      // Vérifier l'ID token Firebase (Authorization: Bearer <idToken>)
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.startsWith('Bearer ')
+        ? authHeader.substring('Bearer '.length)
+        : null;
+      if (!token) {
+        res.status(401).json({ error: 'Missing Authorization Bearer token' });
         return;
       }
 
-      if (!plan) {
-        res.status(400).json({ error: "Missing plan parameter" });
+      const decoded = await admin.auth().verifyIdToken(token);
+      const uid = decoded.uid;
+
+      const { plan } = req.query;
+      if (!plan || (plan !== 'premium' && plan !== 'premium-plus')) {
+        res.status(400).json({ error: 'Missing or invalid plan parameter' });
         return;
       }
 
       const stripe = new Stripe(stripeSecret.value(), {});
-
       const session = await stripe.checkout.sessions.create({
-        mode: "subscription",
-        payment_method_types: ["card"],
+        mode: 'subscription',
+        payment_method_types: ['card'],
         line_items: [
           {
-            price: "price_1S9OvlLI33YQ9pkLcBNpgyra", // Prix GreenMe Premium
+            price: priceId.value(),
             quantity: 1,
           },
         ],
-        success_url: "https://greenme-415fa.web.app/success",
-        cancel_url: "https://greenme-415fa.web.app/cancel",
-        customer_email: email as string, // Email du client
+        success_url: successUrl.value(),
+        cancel_url: cancelUrl.value(),
+        client_reference_id: uid,
+        metadata: { uid, plan: String(plan) },
+        customer_email: decoded.email || undefined,
       });
 
       res.json({ id: session.id, url: session.url });
@@ -124,10 +132,9 @@ export const stripeWebhook = onRequest(
     let event: Stripe.Event;
 
     try {
-      // Dans Firebase Functions v2, on utilise req.body directement
-      const body = Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body));
+      const rawBody = (req as any).rawBody || (Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body)));
       event = Stripe.webhooks.constructEvent(
-        body,
+        rawBody,
         sig as string,
         endpointSecret
       );
@@ -137,21 +144,60 @@ export const stripeWebhook = onRequest(
       return;
     }
 
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const uid = session.client_reference_id;
-
-      if (uid) {
-        await db.collection("users").doc(uid).set(
-          {
-            plan: "premium",
-            subscriptionId: session.subscription,
-            updatedAt: new Date().toISOString(),
-          },
-          { merge: true }
-        );
-        logger.info(`🔥 User ${uid} est passé premium`);
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const uid = session.client_reference_id;
+        if (uid) {
+          await db.collection('users').doc(uid).set(
+            {
+              plan: 'premium',
+              stripeSubscriptionId: session.subscription,
+              updatedAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+          logger.info(`🔥 User ${uid} est passé premium`);
+        }
+        break;
       }
+      case 'invoice.paid': {
+        // Paiement récurrent OK → rien de spécial si déjà premium
+        break;
+      }
+      case 'customer.subscription.updated': {
+        const sub = event.data.object as Stripe.Subscription;
+        const uid = (sub.metadata && (sub.metadata as any).uid) || undefined;
+        if (uid) {
+          await db.collection('users').doc(uid).set(
+            {
+              plan: 'premium',
+              stripeSubscriptionId: sub.id,
+              updatedAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+        }
+        break;
+      }
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription;
+        const uid = (sub.metadata && (sub.metadata as any).uid) || undefined;
+        if (uid) {
+          await db.collection('users').doc(uid).set(
+            {
+              plan: 'free',
+              stripeSubscriptionId: admin.firestore.FieldValue.delete(),
+              updatedAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+          logger.info(`🔻 User ${uid} rétrogradé suite à annulation`);
+        }
+        break;
+      }
+      default:
+        break;
     }
 
     res.json({ received: true });

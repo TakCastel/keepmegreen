@@ -7,16 +7,19 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { createOrUpdateUserProfile, getUserProfile, UserProfile, getEffectivePlan } from '@/lib/firestore';
+import { FEATURE_MATRIX, Plan } from '@/constants/subscription';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -27,32 +30,24 @@ export const useAuth = () => {
         // Attendre un peu pour s'assurer que l'authentification est complète
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // Créer ou mettre à jour le profil utilisateur
+        setProfileError(null);
+        // Charger le profil; si absent, le créer; sinon ne pas masquer les erreurs
         try {
-          const profile = await createOrUpdateUserProfile(user);
-          setUserProfile(profile);
-        } catch (error) {
-          console.error('Erreur lors de la création/mise à jour du profil:', error);
-          // En cas d'erreur, essayer de récupérer le profil existant
-          try {
-            const existingProfile = await getUserProfile(user.uid);
+          const existingProfile = await getUserProfile(user.uid);
+          if (existingProfile) {
             setUserProfile(existingProfile);
-          } catch (profileError) {
-            console.error('Erreur lors de la récupération du profil:', profileError);
-            // Créer un profil par défaut en cas d'échec
-            setUserProfile({
-              uid: user.uid,
-              email: user.email || '',
-              displayName: user.displayName || null,
-              photoURL: user.photoURL || null,
-              plan: 'free',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            });
+          } else {
+            const created = await createOrUpdateUserProfile(user);
+            setUserProfile(created);
           }
+        } catch (e: any) {
+          console.error('Erreur profil utilisateur:', e);
+          setProfileError('Impossible de charger le profil utilisateur.');
+          setUserProfile(null);
         }
       } else {
         setUserProfile(null);
+        setProfileError(null);
       }
       
       // Ne mettre loading à false qu'après avoir chargé le profil utilisateur
@@ -93,6 +88,20 @@ export const useAuth = () => {
       await signInWithPopup(auth, googleProvider);
     } catch (error: any) {
       setError(getErrorMessage(error.code));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendPasswordReset = async (email: string) => {
+    try {
+      setError(null);
+      setLoading(true);
+      await sendPasswordResetEmail(auth, email);
+      return { success: true } as const;
+    } catch (error: any) {
+      setError(getErrorMessage(error.code));
+      return { success: false, error: getErrorMessage(error.code) } as const;
     } finally {
       setLoading(false);
     }
@@ -154,51 +163,45 @@ export const useAuth = () => {
   };
 
   // Fonction utilitaire pour obtenir le plan effectif
-  const getCurrentPlan = useCallback((): 'free' | 'premium' | 'premium-plus' | null => {
+  const getCurrentPlan = useCallback((): Plan | null => {
     if (!userProfile) return null; // Retourner null si pas encore chargé
     
     try {
-      return getEffectivePlan(userProfile);
+      return getEffectivePlan(userProfile) as Plan;
     } catch (error) {
       console.error('Erreur lors de la récupération du plan effectif:', error);
       // En cas d'erreur, retourner le plan stocké directement
-      return userProfile.plan || 'free';
+      return (userProfile.plan || 'free') as Plan;
     }
   }, [userProfile]);
 
   // Fonction utilitaire pour vérifier si l'utilisateur a accès à une fonctionnalité
   const hasAccess = (feature: string): boolean | null => {
     const plan = getCurrentPlan();
-    
-    // Si le plan n'est pas encore chargé, retourner null
     if (plan === null) return null;
-    
-    switch (feature) {
-      case 'advancedStats':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'detailedBreakdown':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'unlimitedHistory':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'fullCalendar':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'customThemes':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'customCategories':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'advancedSearch':
-        return plan === 'premium' || plan === 'premium-plus';
-      case 'challenges':
-        return plan === 'premium-plus';
-      case 'mobileWidgets':
-        return plan === 'premium-plus';
-      case 'offlineMode':
-        return plan === 'premium-plus';
-      case 'exclusiveResources':
-        return plan === 'premium-plus';
-      default:
-        return false;
-    }
+
+    const aliasMap: Record<string, keyof typeof FEATURE_MATRIX.free> = {
+      advancedStats: 'advancedStats',
+      detailedBreakdown: 'detailedBreakdown',
+      unlimitedHistory: 'historyDaysAccess',
+      fullCalendar: 'calendarMonthsAccess',
+      customThemes: 'customThemes',
+      customCategories: 'customCategories',
+      advancedSearch: 'advancedSearch',
+      challenges: 'challenges',
+      mobileWidgets: 'widgets',
+      offlineMode: 'offlineMode',
+      exclusiveResources: 'premiumResources',
+    };
+
+    const key = aliasMap[feature];
+    if (!key) return false;
+
+    const limitsForPlan = FEATURE_MATRIX[plan];
+    const value = limitsForPlan[key as keyof typeof limitsForPlan];
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'number') return value === -1 || value > 0;
+    return false;
   };
 
   return {
@@ -206,9 +209,11 @@ export const useAuth = () => {
     userProfile,
     loading,
     error,
+    profileError,
     signInWithEmail,
     signUpWithEmail,
     signInWithGoogle,
+    sendPasswordReset,
     logout,
     refreshProfile,
     refreshUser,

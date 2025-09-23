@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,16 +21,14 @@ export const googleProvider = new GoogleAuthProvider();
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 
-// Note: Pour utiliser les émulateurs Firebase en développement,
-// décommentez les lignes ci-dessous et assurez-vous que les émulateurs sont démarrés
-// avec: firebase emulators:start
-
-// if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-//   try {
-//     connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-//     connectFirestoreEmulator(db, 'localhost', 8080);
-//   } catch (error) {
-//   }
-// }
+// Connexion aux émulateurs pilotée par variable d'env (dev/local)
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === 'true') {
+  try {
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  } catch {}
+  try {
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  } catch {}
+}
 
 export default app;

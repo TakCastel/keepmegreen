@@ -2,6 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
 export default function QueryProvider({ 
   children 
@@ -24,50 +26,25 @@ export default function QueryProvider({
     },
   }));
 
-  // Sauvegarder et restaurer le cache dans localStorage pour la persistance
+  // Persistance officielle via TanStack
   useEffect(() => {
-    // Restaurer le cache au démarrage
-    const restoreCache = () => {
-      try {
-        const cachedData = localStorage.getItem('query-cache');
-        if (cachedData) {
-          const queries = JSON.parse(cachedData);
-          queries.forEach((query: unknown) => {
-            if (query.data !== undefined) {
-              queryClient.setQueryData(query.queryKey, query.data);
-            }
-          });
-        }
-      } catch (error) {
-        console.warn('Impossible de restaurer le cache:', error);
-      }
-    };
-
-    // Sauvegarder le cache avant de quitter
-    const handleBeforeUnload = () => {
-      const cache = queryClient.getQueryCache();
-      const queries = cache.getAll();
-      const cacheData = queries.map(query => ({
-        queryKey: query.queryKey,
-        data: query.state.data,
-        dataUpdatedAt: query.state.dataUpdatedAt,
-      }));
-      
-      try {
-        localStorage.setItem('query-cache', JSON.stringify(cacheData));
-      } catch (error) {
-        console.warn('Impossible de sauvegarder le cache:', error);
-      }
-    };
-
-    // Restaurer immédiatement
-    restoreCache();
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+    if (typeof window === 'undefined') return;
+    const persister = createSyncStoragePersister({
+      storage: window.localStorage,
+      key: 'rq-cache',
+      throttleTime: 1000,
+    });
+    persistQueryClient({
+      queryClient,
+      persister,
+      maxAge: 30 * 60 * 1000,
+      dehydrateOptions: {
+        shouldDehydrateQuery: (query) => {
+          // éviter de persister les queries en erreur
+          return query.state.status === 'success';
+        },
+      },
+    });
   }, [queryClient]);
 
   return (

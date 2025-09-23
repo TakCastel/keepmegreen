@@ -2,118 +2,41 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from './useAuth';
-import { SubscriptionPlan, SubscriptionLimits } from '@/types/subscription';
+import { FEATURE_MATRIX, getLimitsFor, Plan } from '@/constants/subscription';
 
 export const useSubscription = () => {
   const { userProfile, getCurrentPlan, hasAccess: authHasAccess } = useAuth();
   const [subscription, setSubscription] = useState<{
-    plan: SubscriptionPlan;
-    limits: SubscriptionLimits;
+    plan: Plan;
+    limits: typeof FEATURE_MATRIX.free;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Définir les limites selon le plan (mémorisé pour éviter les recalculs)
-  const getLimitsForPlan = useMemo(() => (plan: SubscriptionPlan): SubscriptionLimits => {
-    switch (plan) {
-      case 'free':
-        return {
-          calendarMonthsAccess: 1,
-          calendarYearsAccess: 1,
-          historyDaysAccess: 7,
-          advancedStats: false,
-          detailedBreakdown: false,
-          timeComparison: false,
-          exportEnabled: false,
-          exportFormats: [],
-          customThemes: false,
-          customCategories: false,
-          smartNotifications: false,
-          challenges: false,
-          badges: false,
-          widgets: false,
-          premiumResources: false,
-          offlineMode: false,
-          advancedSearch: false,
-        };
-      case 'premium':
-        return {
-          calendarMonthsAccess: 12,
-          calendarYearsAccess: 3,
-          historyDaysAccess: 365,
-          advancedStats: true,
-          detailedBreakdown: true,
-          timeComparison: true,
-          exportEnabled: true,
-          exportFormats: ['csv', 'pdf'],
-          customThemes: true,
-          customCategories: true,
-          smartNotifications: true,
-          challenges: false,
-          badges: false,
-          widgets: false,
-          premiumResources: false,
-          offlineMode: false,
-          advancedSearch: true,
-        };
-      case 'premium-plus':
-        return {
-          calendarMonthsAccess: -1,
-          calendarYearsAccess: -1,
-          historyDaysAccess: -1,
-          advancedStats: true,
-          detailedBreakdown: true,
-          timeComparison: true,
-          exportEnabled: true,
-          exportFormats: ['csv', 'pdf', 'image'],
-          customThemes: true,
-          customCategories: true,
-          smartNotifications: true,
-          challenges: true,
-          badges: true,
-          widgets: true,
-          premiumResources: true,
-          offlineMode: true,
-          advancedSearch: true,
-        };
-      default:
-        return {
-          calendarMonthsAccess: 1,
-          calendarYearsAccess: 1,
-          historyDaysAccess: 7,
-          advancedStats: false,
-          detailedBreakdown: false,
-          timeComparison: false,
-          exportEnabled: false,
-          exportFormats: [],
-          customThemes: false,
-          customCategories: false,
-          smartNotifications: false,
-          challenges: false,
-          badges: false,
-          widgets: false,
-          premiumResources: false,
-          offlineMode: false,
-          advancedSearch: false,
-        };
-    }
-  }, []);
-
   useEffect(() => {
+    // Si le profil n'est pas encore disponible, rester en chargement
     if (!userProfile) {
       setSubscription(null);
-      setLoading(false);
+      setLoading(true);
       return;
     }
 
     const currentPlan = getCurrentPlan();
+
+    // Si le plan n'est pas encore résolu (tri-state), rester en chargement
+    if (!currentPlan) {
+      setSubscription(null);
+      setLoading(true);
+      return;
+    }
+
     const subscriptionData = {
-      plan: currentPlan,
-      limits: getLimitsForPlan(currentPlan)
+      plan: currentPlan as Plan,
+      limits: getLimitsFor(currentPlan as Plan)
     };
 
     setSubscription(subscriptionData);
     setLoading(false);
-  }, [userProfile, getCurrentPlan, getLimitsForPlan]);
+  }, [userProfile, getCurrentPlan]);
 
   const hasAccessToFeature = (feature: string): boolean | null => {
     return authHasAccess(feature);

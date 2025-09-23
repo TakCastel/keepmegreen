@@ -26,12 +26,12 @@ export function useCalendarGrid() {
   // Forcer un refetch des activités quand on arrive sur la page calendrier
   useEffect(() => {
     if (user?.uid && !loading) {
-      // Invalider le cache des activités pour forcer un refetch complet
-      queryClient.invalidateQueries({ 
-        queryKey: ['activities', 'accessible', user.uid] 
-      });
-      // Refetch les activités pour s'assurer d'avoir les dernières données
-      refetchActivities();
+      queryClient.invalidateQueries({ queryKey: ['activities', 'accessible', user.uid] });
+      // Attendre la fin du tour d'event loop pour éviter la course avec l'init de QueryClient
+      const t = setTimeout(() => {
+        refetchActivities();
+      }, 0);
+      return () => clearTimeout(t);
     }
   }, [user?.uid, loading, refetchActivities, queryClient]);
 

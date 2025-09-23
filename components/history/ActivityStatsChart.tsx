@@ -10,7 +10,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Bar, Doughnut } from 'react-chartjs-2';
+import dynamic from 'next/dynamic';
 import { DayActivities } from '@/types';
 import { getAggregatedStats } from '@/utils/stats';
 
@@ -23,6 +23,10 @@ ChartJS.register(
   Legend,
   ArcElement
 );
+
+// Chargement dynamique pour réduire le bundle initial
+const Bar = dynamic(() => import('react-chartjs-2').then(m => m.Bar), { ssr: false });
+const Doughnut = dynamic(() => import('react-chartjs-2').then(m => m.Doughnut), { ssr: false });
 
 interface ActivityStatsChartProps {
   activities: DayActivities[];
